@@ -6,7 +6,7 @@ import ZoneTldr from '@/components/lectures/ZoneTldr';
 import ZoneNotes from '@/components/lectures/ZoneNotes';
 import ZoneVisualizer from '@/components/lectures/ZoneVisualizer';
 import ZonePlayground from '@/components/lectures/ZonePlayground';
-import { ArrowLeft, ArrowRight, BookOpen } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 
 interface LecturePageProps {
   params: {
@@ -31,20 +31,23 @@ export default function LecturePage({ params }: LecturePageProps) {
   const prevLecture = currentIndex > 0 ? allLectures[currentIndex - 1] : null;
   const nextLecture = currentIndex < allLectures.length - 1 ? allLectures[currentIndex + 1] : null;
 
+  const visType = lecture.visualizer?.type || lecture.visualizerType || 'none';
+  const demoIds = (lecture as any).playgroundDemoIds || (lecture.playgroundDemoId ? [lecture.playgroundDemoId] : []);
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-12 pb-12">
       {/* Zone 1: TL;DR & Title Header */}
       <ZoneTldr lecture={lecture} />
 
       {/* Zone 3: 3D / Interactive Concept Visualizer (if applicable) */}
-      {lecture.visualizerType !== 'none' && (
-        <ZoneVisualizer type={lecture.visualizerType} />
+      {visType !== 'none' && (
+        <ZoneVisualizer type={visType} />
       )}
 
       {/* Zone 2: Structured Notes */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-brand-indigo" />
+          <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan" />
           <span className="text-xs font-bold uppercase tracking-wider font-mono text-zinc-400">
             Zone 2 — Structured Notes & Concepts
           </span>
@@ -53,21 +56,21 @@ export default function LecturePage({ params }: LecturePageProps) {
       </div>
 
       {/* Zone 4: Practical Playground Panel */}
-      {lecture.playgroundDemoIds && lecture.playgroundDemoIds.length > 0 && (
-        <ZonePlayground demoIds={lecture.playgroundDemoIds} />
+      {demoIds.length > 0 && (
+        <ZonePlayground demoIds={demoIds} />
       )}
 
       {/* Footer Navigation (Prev / Next) */}
-      <div className="pt-6 border-t border-surface-border flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="pt-8 border-t border-surface-border flex flex-col sm:flex-row items-center justify-between gap-4">
         {prevLecture ? (
           <Link
             href={`/lectures/${prevLecture.slug}`}
-            className="w-full sm:w-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-surface-border hover:border-brand-cyan/40 text-xs font-semibold text-zinc-300 transition"
+            className="qt-card w-full sm:w-auto p-4 flex items-center gap-3 text-xs font-semibold text-zinc-300 group"
           >
-            <ArrowLeft className="w-4 h-4 text-brand-cyan" />
+            <ArrowLeft className="w-4 h-4 text-brand-cyan group-hover:-translate-x-1 transition" />
             <div className="text-left">
               <div className="text-[10px] text-zinc-500 font-mono">Previous Lecture</div>
-              <div className="truncate max-w-[200px]">{prevLecture.title}</div>
+              <div className="truncate max-w-[220px] font-bold text-white group-hover:text-brand-cyan transition">{prevLecture.title}</div>
             </div>
           </Link>
         ) : <div />}
@@ -75,13 +78,13 @@ export default function LecturePage({ params }: LecturePageProps) {
         {nextLecture ? (
           <Link
             href={`/lectures/${nextLecture.slug}`}
-            className="w-full sm:w-auto flex items-center justify-end gap-2 px-4 py-2.5 rounded-xl bg-surface border border-surface-border hover:border-brand-cyan/40 text-xs font-semibold text-zinc-300 transition"
+            className="qt-card w-full sm:w-auto p-4 flex items-center justify-end gap-3 text-xs font-semibold text-zinc-300 group"
           >
             <div className="text-right">
               <div className="text-[10px] text-zinc-500 font-mono">Next Lecture</div>
-              <div className="truncate max-w-[200px]">{nextLecture.title}</div>
+              <div className="truncate max-w-[220px] font-bold text-white group-hover:text-brand-cyan transition">{nextLecture.title}</div>
             </div>
-            <ArrowRight className="w-4 h-4 text-brand-cyan" />
+            <ArrowRight className="w-4 h-4 text-brand-cyan group-hover:translate-x-1 transition" />
           </Link>
         ) : <div />}
       </div>

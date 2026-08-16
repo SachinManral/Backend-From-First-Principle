@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Play, Copy, Check, Terminal, Download, Clock, ShieldCheck, ArrowUpRight, FileCode, Layers, Radio } from 'lucide-react';
+import { Play, Copy, Check, Terminal, Download, Clock, ShieldCheck, ArrowUpRight, FileCode, Layers, Radio, Sparkles } from 'lucide-react';
 import { DemoEndpoint } from '@/lib/types';
 import { API_BASE_URL, generateCurlSnippet } from '@/lib/demos';
 
@@ -205,25 +205,25 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
   };
 
   return (
-    <div className="w-full bg-surface border border-surface-border rounded-2xl p-5 md:p-6 shadow-2xl space-y-5">
+    <div className="qt-card p-6 md:p-8 space-y-6 shadow-2xl">
       {/* Console Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-surface-border">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-surface-border">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
+          <div className="flex items-center gap-2.5">
+            <span className="px-3 py-0.5 rounded-full text-xs font-bold font-mono bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
               Live Practical Playground
             </span>
-            <span className="text-xs text-zinc-400 font-mono">Real HTTP Endpoint</span>
+            <span className="text-xs text-zinc-400 font-mono">Port 4000 Express Socket</span>
           </div>
-          <h4 className="text-base font-bold text-zinc-100 mt-1">
+          <h4 className="text-lg font-bold text-white mt-1.5">
             {demo.title}
           </h4>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={copyCurl}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-muted hover:bg-surface-highlight text-zinc-300 border border-surface-border text-xs transition"
+            className="qt-btn-secondary py-2 px-3.5 text-xs"
             title="Copy cURL snippet"
           >
             {copiedCurl ? <Check className="w-3.5 h-3.5 text-brand-emerald" /> : <Copy className="w-3.5 h-3.5" />}
@@ -235,31 +235,31 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
             download="backend-first-principles.postman_collection.json"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-muted hover:bg-surface-highlight text-brand-amber border border-surface-border text-xs transition"
+            className="qt-btn-secondary py-2 px-3.5 text-xs hover:text-brand-amber hover:border-amber-500/40"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>Postman Export</span>
+            <Download className="w-3.5 h-3.5 text-brand-amber" />
+            <span>Postman</span>
           </a>
         </div>
       </div>
 
-      <p className="text-xs text-zinc-400 leading-relaxed">
+      <p className="text-xs md:text-sm text-zinc-400 leading-relaxed font-normal">
         {demo.description}
       </p>
 
       {/* Dynamic Controls if present */}
       {demo.customControls && demo.customControls.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3.5 bg-surface-muted border border-surface-border rounded-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-surface-muted border border-surface-border rounded-2xl">
           {demo.customControls.map(ctrl => (
-            <div key={ctrl.key} className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block">
+            <div key={ctrl.key} className="space-y-2">
+              <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
                 {ctrl.label}
               </label>
               {ctrl.type === 'select' && ctrl.options && (
                 <select
                   value={controlValues[ctrl.key] || ctrl.defaultValue}
                   onChange={(e) => setControlValues(prev => ({ ...prev, [ctrl.key]: e.target.value }))}
-                  className="w-full bg-background border border-surface-border rounded-lg px-3 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-brand-cyan"
+                  className="w-full bg-background border border-surface-border rounded-xl px-3.5 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-cyan transition"
                 >
                   {ctrl.options.map(opt => (
                     <option key={opt.value} value={opt.value}>
@@ -274,10 +274,10 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
                     <button
                       key={opt.value}
                       onClick={() => setControlValues(prev => ({ ...prev, [ctrl.key]: opt.value }))}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition ${
                         (controlValues[ctrl.key] || ctrl.defaultValue) === opt.value
-                          ? 'bg-brand-cyan text-black'
-                          : 'bg-background text-zinc-400 border border-surface-border'
+                          ? 'bg-brand-cyan text-black shadow-md shadow-cyan-500/20'
+                          : 'bg-background text-zinc-400 border border-surface-border hover:text-white'
                       }`}
                     >
                       {opt.label}
@@ -291,16 +291,16 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
       )}
 
       {/* Request Bar & Fire Button */}
-      <div className="flex flex-col md:flex-row gap-2">
-        <div className="flex items-center flex-1 bg-background border border-surface-border rounded-xl overflow-hidden focus-within:border-brand-cyan transition">
-          <span className="px-3.5 py-2 text-xs font-bold font-mono bg-surface-muted text-brand-cyan border-r border-surface-border">
+      <div className="flex flex-col md:flex-row gap-3">
+        <div className="flex items-center flex-1 bg-background border border-surface-border rounded-2xl overflow-hidden focus-within:border-brand-cyan/60 transition shadow-inner">
+          <span className="px-4 py-2.5 text-xs font-bold font-mono bg-surface-muted text-brand-cyan border-r border-surface-border">
             {method}
           </span>
           <input
             type="text"
             value={urlPath}
             onChange={(e) => setUrlPath(e.target.value)}
-            className="flex-1 bg-transparent px-3 py-2 text-xs font-mono text-zinc-200 focus:outline-none"
+            className="flex-1 bg-transparent px-4 py-2.5 text-xs font-mono text-white focus:outline-none"
             placeholder="/api/demo/..."
           />
         </div>
@@ -308,136 +308,140 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
         <button
           onClick={handleFireRequest}
           disabled={loading}
-          className="flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-brand-cyan hover:bg-cyan-400 text-black font-bold text-xs transition disabled:opacity-50 shadow-lg shadow-cyan-500/20 shrink-0"
+          className="qt-btn-primary py-2.5 px-6 shrink-0"
         >
-          <Play className="w-3.5 h-3.5 fill-black" />
+          <Play className="w-4 h-4 fill-white" />
           <span>{loading ? 'Executing...' : 'Fire Request'}</span>
         </button>
       </div>
 
-      {/* Side-by-Side Raw Request vs Raw Response Inspector */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Left: Request Wire Payload */}
-        <div className="bg-background border border-surface-border rounded-xl p-4 flex flex-col h-[280px]">
-          <div className="flex items-center justify-between pb-2 border-b border-surface-border mb-3">
-            <span className="text-xs font-mono text-zinc-400 flex items-center gap-1.5">
-              <Terminal className="w-3.5 h-3.5 text-brand-cyan" />
-              <span>OUTBOUND HTTP REQUEST</span>
-            </span>
-            <span className="text-[10px] text-zinc-500 font-mono">Wire Format</span>
+      {/* Headers Editor Tab */}
+      {Object.keys(headers).length > 0 && (
+        <div className="space-y-2">
+          <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            Active Request Headers:
           </div>
-
-          <div className="flex-1 overflow-auto font-mono text-[11px] text-zinc-300 space-y-2">
-            <div className="text-brand-cyan">
-              {method} {urlPath} HTTP/1.1
-            </div>
-            <div className="text-zinc-400">
-              Host: localhost:4000
-            </div>
+          <div className="flex flex-wrap gap-2">
             {Object.entries(headers).map(([k, v]) => (
-              <div key={k} className="text-zinc-400">
-                {k}: <span className="text-zinc-300">{v}</span>
-              </div>
+              <span
+                key={k}
+                className="px-3 py-1 rounded-xl bg-background border border-surface-border font-mono text-xs text-zinc-300"
+              >
+                <span className="text-zinc-500">{k}:</span> <span className="text-brand-cyan font-bold">{v}</span>
+              </span>
             ))}
-            {bodyText && (
-              <div className="pt-2 border-t border-surface-border">
-                <div className="text-[10px] text-zinc-500 mb-1">Payload Body:</div>
-                <pre className="text-zinc-200 whitespace-pre-wrap">{bodyText}</pre>
-              </div>
-            )}
           </div>
         </div>
+      )}
 
-        {/* Right: Inbound Response Inspector */}
-        <div className="bg-background border border-surface-border rounded-xl p-4 flex flex-col h-[280px]">
-          <div className="flex items-center justify-between pb-2 border-b border-surface-border mb-3">
-            <span className="text-xs font-mono text-zinc-400 flex items-center gap-1.5">
-              <FileCode className="w-3.5 h-3.5 text-brand-emerald" />
-              <span>INBOUND RESPONSE</span>
-            </span>
-            {responseStatus !== null && (
-              <div className="flex items-center gap-2">
-                {latencyMs !== null && (
-                  <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {latencyMs}ms
-                  </span>
-                )}
-                <span className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold ${
-                  responseStatus >= 200 && responseStatus < 300 ? 'bg-brand-emerald/20 text-brand-emerald border border-emerald-500/30' :
-                  responseStatus >= 300 && responseStatus < 400 ? 'bg-brand-cyan/20 text-brand-cyan border border-cyan-500/30' :
-                  responseStatus >= 400 && responseStatus < 500 ? 'bg-brand-amber/20 text-brand-amber border border-amber-500/30' :
-                  'bg-brand-rose/20 text-brand-rose border border-rose-500/30'
-                }`}>
-                  {responseStatus === 0 ? 'ERR' : `${responseStatus} ${responseStatusText}`}
-                </span>
+      {/* Body Input Editor if method allows */}
+      {['POST', 'PUT', 'PATCH'].includes(method) && (
+        <div className="space-y-2">
+          <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            Request Body (JSON / text):
+          </div>
+          <textarea
+            value={bodyText}
+            onChange={(e) => setBodyText(e.target.value)}
+            rows={3}
+            className="w-full p-3.5 bg-background border border-surface-border rounded-2xl font-mono text-xs text-zinc-200 focus:outline-none focus:border-brand-cyan/60 transition"
+          />
+        </div>
+      )}
+
+      {/* Response Panel */}
+      {(responseStatus !== null || streamEvents.length > 0) && (
+        <div className="space-y-4 pt-4 border-t border-surface-border animate-fade-in">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              {/* Status Badge */}
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold border ${
+                  responseStatus && responseStatus >= 200 && responseStatus < 300
+                    ? 'bg-brand-emerald/15 text-brand-emerald border-emerald-500/30'
+                    : responseStatus === 304
+                    ? 'bg-brand-cyan/15 text-brand-cyan border-cyan-500/30'
+                    : responseStatus && responseStatus >= 400 && responseStatus < 500
+                    ? 'bg-brand-amber/15 text-brand-amber border-amber-500/30'
+                    : 'bg-brand-rose/15 text-brand-rose border-rose-500/30'
+                }`}
+              >
+                <span>HTTP {responseStatus}</span>
+                {responseStatusText && <span className="opacity-80 font-sans">• {responseStatusText}</span>}
+              </div>
+
+              {latencyMs !== null && (
+                <div className="flex items-center gap-1 text-xs font-mono text-zinc-400">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>{latencyMs} ms</span>
+                </div>
+              )}
+            </div>
+
+            {/* Protocol Principle Callout */}
+            {responseData && responseData._note && (
+              <div className="text-xs text-brand-cyan font-mono font-medium flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Principle Note: {responseData._note}</span>
               </div>
             )}
           </div>
 
-          <div className="flex-1 overflow-auto font-mono text-[11px] text-zinc-300">
-            {loading && !isStreamingActive && (
-              <div className="h-full flex items-center justify-center text-zinc-500 animate-pulse">
-                Transmitting bytes across TCP socket...
+          {/* SSE Stream Logs */}
+          {streamEvents.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${isStreamingActive ? 'bg-brand-cyan animate-ping' : 'bg-brand-emerald'}`} />
+                <span>Chunked Event Stream (text/event-stream)</span>
               </div>
-            )}
-
-            {!loading && responseStatus === null && (
-              <div className="h-full flex flex-col items-center justify-center text-zinc-500 text-center px-4">
-                <Play className="w-6 h-6 mb-2 opacity-30" />
-                <span>Click &apos;Fire Request&apos; to trigger this live endpoint and inspect response bytes.</span>
-              </div>
-            )}
-
-            {/* SSE Stream Viewer */}
-            {demo.id === 'stream' && streamEvents.length > 0 && (
-              <div className="space-y-1.5">
-                <div className="text-[10px] text-brand-cyan font-bold mb-1">
-                  Server-Sent Events Stream (Transfer-Encoding: chunked)
-                </div>
-                {streamEvents.map((ev, i) => (
-                  <div key={i} className="p-2 bg-surface-muted rounded border border-surface-border text-xs">
-                    <div className="flex justify-between text-[10px] text-zinc-400 mb-0.5">
-                      <span>Chunk #{i + 1} {ev.step ? `(Step ${ev.step})` : ''}</span>
-                      <span>{ev.time}</span>
+              <div className="p-4 rounded-2xl bg-background border border-surface-border space-y-2 max-h-60 overflow-y-auto font-mono text-xs">
+                {streamEvents.map((evt, i) => (
+                  <div key={i} className="flex items-start justify-between gap-2 border-b border-surface-border/40 pb-1.5">
+                    <div className="text-brand-cyan">
+                      <span className="text-zinc-500">[{evt.time}] Step {evt.step || i + 1}: </span>
+                      <span>{evt.message || evt.raw}</span>
                     </div>
-                    <div className="text-zinc-200">{ev.message || ev.raw}</div>
                   </div>
                 ))}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Standard Response Viewer */}
-            {demo.id !== 'stream' && responseStatus !== null && (
-              <div className="space-y-3">
-                {/* Educational Note Callout */}
-                {responseData?._note && (
-                  <div className="p-2.5 bg-brand-cyan/10 border border-brand-cyan/20 rounded-lg text-brand-cyan text-xs">
-                    <span className="font-bold">Principle Note: </span>
-                    {responseData._note}
-                  </div>
-                )}
-
-                {/* Response Headers */}
-                {Object.keys(responseHeaders).length > 0 && (
-                  <div className="p-2 bg-surface-muted rounded border border-surface-border text-[10px] text-zinc-400 space-y-0.5">
-                    <div className="font-bold text-zinc-300 mb-1">Response Headers:</div>
-                    {Object.entries(responseHeaders).slice(0, 6).map(([k, v]) => (
-                      <div key={k}>{k}: <span className="text-zinc-200">{v}</span></div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Response Body */}
-                <pre className="text-zinc-200 whitespace-pre-wrap break-all">
+          {/* Response Payload Inspector */}
+          {responseRawText && streamEvents.length === 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+                <span>Response Body:</span>
+                <span className="text-zinc-500 font-normal lowercase">{responseHeaders['content-type'] || 'raw bytes'}</span>
+              </div>
+              <pre className="p-4 rounded-2xl bg-background border border-surface-border font-mono text-xs text-zinc-200 overflow-x-auto max-h-72 shadow-inner">
+                <code>
                   {typeof responseData === 'object'
                     ? JSON.stringify(responseData, null, 2)
                     : responseRawText}
-                </pre>
+                </code>
+              </pre>
+            </div>
+          )}
+
+          {/* Response Headers Table */}
+          {Object.keys(responseHeaders).length > 0 && (
+            <details className="text-xs group">
+              <summary className="cursor-pointer font-mono font-bold text-zinc-400 hover:text-white py-1 transition flex items-center gap-2 select-none">
+                <span>View Raw Response Headers ({Object.keys(responseHeaders).length})</span>
+              </summary>
+              <div className="mt-2 p-3 rounded-2xl bg-background border border-surface-border font-mono text-[11px] space-y-1 overflow-x-auto">
+                {Object.entries(responseHeaders).map(([k, v]) => (
+                  <div key={k} className="flex gap-2">
+                    <span className="text-brand-cyan">{k}:</span>
+                    <span className="text-zinc-300">{v}</span>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            </details>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -1,89 +1,73 @@
-export interface LectureBlockParagraph {
-  type: 'paragraph';
-  text: string;
-}
-
-export interface LectureBlockCode {
-  type: 'code';
-  language: string;
-  code: string;
-  caption?: string;
-}
-
-export interface LectureBlockCallout {
-  type: 'callout';
-  variant: 'info' | 'warning' | 'success' | 'danger';
-  title: string;
-  text: string;
-}
-
-export interface LectureBlockCardItem {
-  badge: string;
-  title: string;
-  desc: string;
-}
-
-export interface LectureBlockCards {
-  type: 'cards';
-  items: LectureBlockCardItem[];
-}
-
-export interface LectureBlockTable {
-  type: 'table';
-  headers: string[];
-  rows: string[][];
-}
+export type BlockType = 
+  | 'paragraph'
+  | 'code'
+  | 'callout'
+  | 'cards'
+  | 'table'
+  | 'checklist';
 
 export type LectureBlock = 
-  | LectureBlockParagraph 
-  | LectureBlockCode 
-  | LectureBlockCallout 
-  | LectureBlockCards 
-  | LectureBlockTable;
+  | { type: 'paragraph'; text: string }
+  | { type: 'code'; code: string; language?: string; caption?: string }
+  | { type: 'callout'; variant: 'info' | 'warning' | 'success'; title: string; text: string }
+  | { type: 'cards'; items: Array<{ title: string; desc: string; badge: string }> }
+  | { type: 'table'; headers: string[]; rows: string[][] }
+  | { type: 'checklist'; items: string[] };
 
 export interface LectureSection {
-  id: string;
+  id?: string;
   title: string;
-  summary?: string;
   blocks: LectureBlock[];
-}
-
-export type VisualizerType = 'none' | 'request-journey' | 'cors-preflight' | 'caching-flow';
-
-export interface Lecture {
-  slug: string;
-  order: number;
-  phase: number;
-  phaseTitle: string;
-  lectureNumber: string;
-  title: string;
-  subtitle: string;
-  duration: string;
-  visualizerType: VisualizerType;
-  playgroundDemoIds: string[];
-  tldr: string;
-  tags: string[];
-  sections: LectureSection[];
-  keyTakeaways?: string[];
-  reflectionQuestions?: string[];
 }
 
 export interface DemoEndpoint {
   id: string;
   title: string;
-  category: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS' | 'ANY';
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'ANY';
   path: string;
+  category: string;
   description: string;
-  conceptNote: string;
+  conceptNote?: string;
+  purpose?: string;
+  whyItMatters?: string;
   defaultHeaders?: Record<string, string>;
-  defaultQuery?: Record<string, string>;
   defaultBody?: any;
-  customControls?: {
-    type: 'toggle' | 'select' | 'input';
+  customControls?: Array<{
+    type: 'select' | 'input' | 'toggle';
     label: string;
     key: string;
-    options?: { label: string; value: string }[];
+    options?: Array<{ label: string; value: string }>;
     defaultValue: string;
-  }[];
+  }>;
+  expectedBehavior?: string;
+}
+
+export type VisualizerType = '3d-mesh' | 'request-journey' | 'cors-preflight' | 'cache-validation' | 'none';
+
+export interface VisualizerConfig {
+  type: VisualizerType;
+  title: string;
+  description: string;
+  badge?: string;
+}
+
+export interface Lecture {
+  slug: string;
+  lectureNumber: number | string;
+  phase: number;
+  phaseTitle: string;
+  title: string;
+  subtitle: string;
+  duration: string;
+  tags: string[];
+  order: number;
+  tldr: string;
+  sections: LectureSection[];
+  selfCheckQuestions?: string[];
+  keyTakeaways?: string[];
+  reflectionQuestions?: string[];
+  visualizer?: VisualizerConfig;
+  visualizerType?: VisualizerType;
+  playgroundDemoId?: string;
+  playgroundDemoIds?: string[];
 }

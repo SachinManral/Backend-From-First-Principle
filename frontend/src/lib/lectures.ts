@@ -5,7 +5,7 @@ import manifestData from '../../content/lectures/manifest.json';
  * Get all lectures sorted by order
  */
 export function getAllLectures(): Lecture[] {
-  return (manifestData.lectures as Lecture[]).sort((a, b) => a.order - b.order);
+  return ((manifestData.lectures as unknown) as Lecture[]).sort((a, b) => a.order - b.order);
 }
 
 /**
