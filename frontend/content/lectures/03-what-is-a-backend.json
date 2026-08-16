@@ -1,0 +1,101 @@
+{
+  "slug": "03-what-is-a-backend",
+  "order": 2,
+  "phase": 2,
+  "phaseTitle": "Phase 2 — HTTP Deep Dive",
+  "lectureNumber": "3",
+  "title": "What is a Backend, and Why Do We Need It?",
+  "subtitle": "Demystifying servers, ports, the 6-hop request journey, and why client-only apps fail.",
+  "duration": "24 min",
+  "visualizerType": "request-journey",
+  "playgroundDemoIds": ["echo", "status"],
+  "tldr": "A backend is simply a computer listening on a network port for incoming socket connections to securely manage, compute, and persist shared data that browsers cannot safely handle.",
+  "tags": ["Architecture", "Request Journey", "DNS", "Firewall", "Nginx"],
+  "sections": [
+    {
+      "id": "core-definition",
+      "title": "What Actually Is a Server?",
+      "summary": "Stripping away the buzzwords.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "A backend server is not magic. It is just a standard operating system process running on a machine with a network interface, binding to a specific TCP port (like 80 for HTTP, 443 for HTTPS, or 4000 for local dev), continuously waiting in an event loop for incoming network packets."
+        },
+        {
+          "type": "callout",
+          "variant": "info",
+          "title": "The Instagram Like Example",
+          "text": "When you tap 'Like' on a photo, the browser cannot talk to other users' phones directly. Your request reaches a server which verifies your identity (auth token), writes the like record to a PostgreSQL database, updates Redis caches, and sends a push notification to the creator. The backend is the single source of truth."
+        }
+      ]
+    },
+    {
+      "id": "request-journey",
+      "title": "The Real Journey of an HTTP Request (6 Hops)",
+      "summary": "What happens in the 50 milliseconds between hitting Enter in your browser and getting a response.",
+      "blocks": [
+        {
+          "type": "cards",
+          "items": [
+            {
+              "badge": "Hop 1",
+              "title": "Browser ➔ DNS Resolution",
+              "desc": "The browser looks up the domain name (e.g. `api.example.com`) to find the server's public IP address (`198.51.100.42`) using recursive DNS resolvers."
+            },
+            {
+              "badge": "Hop 2",
+              "title": "DNS ➔ Cloud Firewall",
+              "desc": "Network packets hit the cloud security group / firewall (e.g. AWS Security Group, Cloudflare). Only allowed ports (80/443) are permitted through; everything else is dropped."
+            },
+            {
+              "badge": "Hop 3",
+              "title": "Firewall ➔ Cloud Virtual Machine",
+              "desc": "Packets reach the physical or virtual host (EC2 instance, Docker container, or bare-metal node) via its virtual network interface card (vNIC)."
+            },
+            {
+              "badge": "Hop 4",
+              "title": "VM ➔ Reverse Proxy (Nginx / Caddy)",
+              "desc": "Nginx listens on port 443, handles TLS decryption (HTTPS termination), applies rate limits, and routes the request based on hostname/path to internal ports."
+            },
+            {
+              "badge": "Hop 5",
+              "title": "Reverse Proxy ➔ App Server",
+              "desc": "Nginx proxies the raw HTTP stream over a local socket to your actual application process (e.g., Node.js Express listening on `localhost:4000`)."
+            },
+            {
+              "badge": "Hop 6",
+              "title": "App Server ➔ Database & Storage",
+              "desc": "Your code executes business logic, queries database connection pools (PostgreSQL/Redis), formats the response payload, and streams it back down the reverse path."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "why-not-frontend-only",
+      "title": "Why Can't Logic Just Live in the Frontend?",
+      "summary": "The 4 fatal reasons browsers cannot run backend operations.",
+      "blocks": [
+        {
+          "type": "table",
+          "headers": ["Constraint", "Why the Browser Fails", "How the Backend Solves It"],
+          "rows": [
+            ["1. Security & Secrets", "Browser code is completely public. API keys, database passwords, and private business rules are exposed in DevTools.", "Backend environment variables and file systems are private and protected behind network firewalls."],
+            ["2. Direct Database Access", "DBs require long-lived TCP sockets and connection pooling. If 100,000 browsers opened direct DB sockets, the database would immediately crash.", "Backend maintains a steady connection pool (e.g. 20 connections) and handles transactions safely."],
+            ["3. CORS & Sandbox", "Browsers enforce strict sandbox isolation to protect users. You cannot make cross-origin calls to APIs that do not explicitly enable CORS.", "Servers make server-to-server HTTP calls with zero CORS restrictions."],
+            ["4. Compute & Heavy Work", "Phones and laptops have limited battery, RAM, and unpredictable network drops.", "Centralized server fleets scale vertically and horizontally to process heavy jobs, image conversions, and AI pipelines."]
+          ]
+        }
+      ]
+    }
+  ],
+  "keyTakeaways": [
+    "A backend is a listener on a port managing data persistence, security, and coordination.",
+    "Every request passes through DNS, Firewalls, Reverse Proxies (Nginx), and App Servers.",
+    "Browsers are client execution environments—they cannot hold private credentials or maintain database connection pools."
+  ],
+  "reflectionQuestions": [
+    "Why is it dangerous to embed a Postgres connection string inside a React or Next.js client component?",
+    "What role does Nginx play in front of an Express or Go application in production?"
+  ]
+}
