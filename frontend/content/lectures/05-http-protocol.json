@@ -1,0 +1,162 @@
+{
+  "slug": "05-http-protocol",
+  "order": 4,
+  "phase": 2,
+  "phaseTitle": "Phase 2 — HTTP Deep Dive",
+  "lectureNumber": "5",
+  "title": "The HTTP Protocol Deep Dive",
+  "subtitle": "Statelessness, request anatomy, CORS preflight, HTTP caching, compression, streaming, and TLS.",
+  "duration": "35 min",
+  "visualizerType": "cors-preflight",
+  "playgroundDemoIds": ["echo", "status", "cors", "cache", "negotiate", "compress", "upload", "stream", "idempotency"],
+  "tldr": "HTTP is a stateless, text/binary application protocol riding on top of reliable TCP. Understanding its headers, caching ETags, CORS preflight mechanics, and streaming transforms backend debugging from guesswork into precision engineering.",
+  "tags": ["HTTP/1.1", "CORS", "ETag", "Caching", "SSE", "Idempotency", "Compression", "TLS"],
+  "sections": [
+    {
+      "id": "statelessness-model",
+      "title": "1. Statelessness & The Client-Server Model",
+      "summary": "Why HTTP servers remember nothing, and how we build session illusions on top.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Every HTTP request is completely independent. Once the server sends the final byte of a response, it stores zero memory of who made the request. This stateless design is the single reason the web scales: any server behind a load balancer can serve request #2 without knowing who served request #1."
+        },
+        {
+          "type": "callout",
+          "variant": "warning",
+          "title": "How We Fake Memory",
+          "text": "Because the protocol is stateless, state must be passed along on every single transaction: Cookies, Authorization Bearer tokens (JWTs), or custom session headers."
+        }
+      ]
+    },
+    {
+      "id": "request-anatomy",
+      "title": "2. Anatomy of an HTTP Request & Response",
+      "summary": "The exact byte structure transmitted over the TCP socket.",
+      "blocks": [
+        {
+          "type": "code",
+          "language": "http",
+          "code": "POST /api/demo/echo?lang=en HTTP/1.1\r\nHost: api.example.com\r\nUser-Agent: Mozilla/5.0\r\nContent-Type: application/json\r\nAccept: application/json\r\nContent-Length: 26\r\n\r\n{\"action\":\"first_principle\"}"
+        },
+        {
+          "type": "paragraph",
+          "text": "Notice the double CRLF (`\\r\\n\\r\\n`) blank line between the headers and the body. That blank line tells the TCP parser: 'All headers have arrived; everything following is the raw payload body.'"
+        }
+      ]
+    },
+    {
+      "id": "cors-deep-dive",
+      "title": "3. CORS Demystified: Simple vs. Preflight Requests",
+      "summary": "Why CORS is a browser security guard, not a server firewall.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "CORS (Cross-Origin Resource Sharing) protects users from malicious scripts stealing data from another site (e.g. evil.com making a request to yourbank.com using your saved cookie). The server still executes the request; the browser is what blocks your JavaScript from reading the response unless allowed by headers."
+        },
+        {
+          "type": "cards",
+          "items": [
+            {
+              "badge": "Flow 1",
+              "title": "Simple Request",
+              "desc": "Applies to GET/HEAD/POST with standard headers (`Content-Type: text/plain, multipart/form-data, application/x-www-form-urlencoded`). Browser sends the request directly with an `Origin` header. If the response lacks `Access-Control-Allow-Origin`, the browser suppresses the response data."
+            },
+            {
+              "badge": "Flow 2",
+              "title": "Preflight Request (OPTIONS)",
+              "desc": "Triggered when using PUT, DELETE, PATCH, or custom headers like `Authorization` or `Content-Type: application/json`. Browser automatically sends an `OPTIONS` request first. If the server approves with `Access-Control-Allow-Methods` and `Access-Control-Allow-Headers`, the actual request is dispatched."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "caching-and-etags",
+      "title": "4. HTTP Caching & 304 Not Modified",
+      "summary": "Saving gigabytes of bandwidth using ETags and conditional headers.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "The server sends an `ETag` (a hash of the resource data, e.g. `\"hash-abc123\"`) and `Cache-Control: max-age=60`. When the client re-requests the resource, it passes `If-None-Match: \"hash-abc123\"`."
+        },
+        {
+          "type": "callout",
+          "variant": "success",
+          "title": "304 Not Modified in Action",
+          "text": "If the resource has not changed on the server, the backend sends back HTTP 304 with an empty body! The browser instantly serves the locally cached version, saving CPU, database queries, and bandwidth."
+        }
+      ]
+    },
+    {
+      "id": "status-codes-and-methods",
+      "title": "5. Status Codes & Idempotency",
+      "summary": "Mastering status code families and safe vs idempotent methods.",
+      "blocks": [
+        {
+          "type": "table",
+          "headers": ["Method", "Idempotent?", "Safe?", "Meaning & Usage"],
+          "rows": [
+            ["GET", "Yes", "Yes", "Retrieves resource. Calling 100 times has identical side-effects (read-only)."],
+            ["POST", "No", "No", "Creates a new resource or triggers side-effects. Calling 5 times creates 5 records."],
+            ["PUT", "Yes", "No", "Completely replaces a resource at the specified URI. Calling 5 times leaves the exact same state."],
+            ["PATCH", "No (usually)", "No", "Partially modifies specific fields of a resource."],
+            ["DELETE", "Yes", "No", "Removes the resource. Calling it once deletes; subsequent calls still result in the resource being absent."]
+          ]
+        },
+        {
+          "type": "table",
+          "headers": ["Status Code Family", "Semantics", "Common Examples"],
+          "rows": [
+            ["1xx (Informational)", "Protocol handshake in progress", "101 Switching Protocols (WebSockets)"],
+            ["2xx (Success)", "Action understood and accepted", "200 OK, 201 Created, 204 No Content"],
+            ["3xx (Redirection)", "Client must take additional action", "301 Moved Permanently, 302 Found, 304 Not Modified"],
+            ["4xx (Client Error)", "Client sent invalid or unauthorized data", "400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict"],
+            ["5xx (Server Error)", "Server failed while processing valid request", "500 Internal Error, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout"]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "advanced-transfers",
+      "title": "6. Content Negotiation, Compression & Streaming",
+      "summary": "Handling large payloads, gzip compression, and real-time chunked transfers.",
+      "blocks": [
+        {
+          "type": "cards",
+          "items": [
+            {
+              "badge": "Feature",
+              "title": "Content Negotiation",
+              "desc": "Client asks for format via `Accept: application/json` or `Accept-Language: es`. Server inspects headers and renders the matching format."
+            },
+            {
+              "badge": "Feature",
+              "title": "Gzip Compression",
+              "desc": "Server compresses JSON/HTML with gzip (`Content-Encoding: gzip`). Payloads can shrink by 70-85% before traveling across the internet wire."
+            },
+            {
+              "badge": "Feature",
+              "title": "Server-Sent Events (SSE)",
+              "desc": "Using `Content-Type: text/event-stream` and `Transfer-Encoding: chunked`, the server pushes incremental updates down an open HTTP connection."
+            },
+            {
+              "badge": "Feature",
+              "title": "Multipart Form-Data",
+              "desc": "Transmits binary files and metadata split by boundary strings (e.g. `------WebKitFormBoundary7MA4YWxkTrZu0gW`)."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "keyTakeaways": [
+    "HTTP headers control caching, content negotiation, authentication, and CORS permissions.",
+    "Idempotency guarantees that retrying network requests will not cause unintended duplicate state changes.",
+    "Server-Sent Events and Chunked transfers allow progressive data delivery over standard HTTP without WebSockets."
+  ],
+  "reflectionQuestions": [
+    "Why is `PUT` considered idempotent while `POST` is not?",
+    "If a backend API receives an `If-None-Match` header matching its current resource hash, what HTTP status code and body must it return?"
+  ]
+}
