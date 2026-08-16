@@ -1,0 +1,77 @@
+{
+  "slug": "01-roadmap",
+  "order": 1,
+  "phase": 1,
+  "phaseTitle": "Phase 1 — Story & Philosophy",
+  "lectureNumber": "1–2",
+  "title": "Backend Engineering Roadmap & The 3 Phases",
+  "subtitle": "Understanding backend engineering as transferable principles, not framework syntax.",
+  "duration": "18 min",
+  "visualizerType": "none",
+  "playgroundDemoIds": ["echo"],
+  "tldr": "Backend engineering is not about learning 5 different frameworks—it is mastering language-agnostic concepts (protocols, networking, storage, concurrency) that apply identically across Node.js, Go, Rust, or Python.",
+  "tags": ["Philosophy", "Roadmap", "Mental Models"],
+  "sections": [
+    {
+      "id": "three-phases",
+      "title": "The 3 Phases of Backend Mastery",
+      "summary": "How this entire curriculum is structured from first principles to production systems.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Most developers learn backend development backward: they jump straight into building CRUD apps with Express or Django without understanding why HTTP works the way it does, what a reverse proxy does, or how sockets function."
+        },
+        {
+          "type": "cards",
+          "items": [
+            {
+              "badge": "Phase 1",
+              "title": "Story & Philosophy",
+              "desc": "Language-agnostic concepts and the engineering problems that forced them to exist. Why do we need ports? Why is HTTP stateless? Why does DNS exist?"
+            },
+            {
+              "badge": "Phase 2",
+              "title": "First-Principles Implementation",
+              "desc": "Building the foundational mechanics using Node.js and Go. Writing raw HTTP servers, handling TCP streams, implementing custom parsers, and connection pools."
+            },
+            {
+              "badge": "Phase 3",
+              "title": "Production-Grade Projects",
+              "desc": "Architecting resilient distributed systems, caching tiers, rate limiters, message queues, and high-throughput real-world services."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transferable-skills",
+      "title": "Principles vs. Framework Tricks",
+      "summary": "Why syntax fades but core protocols remain permanent.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Frameworks come and go every 3 years. But the HTTP protocol, TCP handshakes, caching semantics, database indexing, and network boundaries have remained consistent for decades."
+        },
+        {
+          "type": "table",
+          "headers": ["Framework-Centric Thinking", "First-Principles Thinking"],
+          "rows": [
+            ["I know how to call `res.status(200).json()` in Express", "I understand HTTP status code families and content-type headers"],
+            ["I install `cors` npm package when a red browser error appears", "I know why browsers enforce the Same-Origin Policy and when preflight OPTIONS requests fire"],
+            ["I use ORMs without knowing the queries generated", "I understand indexing, connection pooling, and latency bottlenecks"],
+            ["Stuck when switching from Node to Go", "Effortlessly adapt because both rely on the exact same OS sockets and HTTP standards"]
+          ]
+        }
+      ]
+    }
+  ],
+  "keyTakeaways": [
+    "Focus on fundamental networking, protocols, and data flow instead of library APIs.",
+    "A backend engineer's true value lies in system architecture and predictability under load.",
+    "Every concept learned here applies equally to Node.js, Go, Rust, Java, or Python."
+  ],
+  "reflectionQuestions": [
+    "When you encounter a backend bug, do you diagnose it at the network/protocol layer or just test random library options?",
+    "Why is it easier to switch programming languages once you understand raw TCP sockets and HTTP headers?"
+  ]
+}
