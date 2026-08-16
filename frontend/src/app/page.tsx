@@ -2,50 +2,50 @@ import React from 'react';
 import Link from 'next/link';
 import { getAllLectures } from '@/lib/lectures';
 import HeroMeshScene from '@/components/visualizers/HeroMeshScene';
-import { ArrowRight, Terminal, BookOpen, Layers, ShieldCheck, Zap, Download, Play, Cpu, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Terminal, BookOpen, Layers, ShieldCheck, Zap, Download, Play, Cpu, Sparkles, CheckCircle2 } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/demos';
 
 export default function HomePage() {
   const lectures = getAllLectures();
 
   return (
-    <div className="space-y-12">
-      {/* 3D Hero Visualizer Scene */}
-      <section className="space-y-6">
+    <div className="space-y-16">
+      {/* 3D Interactive Hero Scene */}
+      <section className="space-y-8">
         <HeroMeshScene />
 
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
-            <Zap className="w-3.5 h-3.5 fill-brand-cyan" />
-            <span>Sriniously Course Companion & Interactive Lab</span>
+        <div className="space-y-5">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-surface/90 text-brand-cyan border border-brand-cyan/30 backdrop-blur-md shadow-lg shadow-cyan-500/10">
+            <Sparkles className="w-3.5 h-3.5 text-brand-cyan animate-pulse" />
+            <span>The Next Big Thing in Backend Engineering</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-zinc-100 tracking-tight leading-tight">
-            Backend Engineering,<br />
-            <span className="bg-gradient-to-r from-brand-cyan via-brand-indigo to-brand-emerald bg-clip-text text-transparent">
-              Mastered From First Principles.
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-[1.15]">
+            Rebuilding Backend Systems<br />
+            <span className="bg-purple-crush bg-clip-text text-transparent">
+              Into A Revolutionary Form.
             </span>
           </h1>
 
-          <p className="text-sm md:text-base text-zinc-400 max-w-3xl leading-relaxed">
-            Stop memorizing framework APIs. Understand the underlying mechanics—how operating systems handle sockets, how TCP streams bytes, why CORS preflights exist, and how caching ETags prevent redundant bandwidth.
+          <p className="text-sm md:text-lg text-zinc-400 max-w-3xl leading-relaxed">
+            Developing foundational engineering mechanics from first principles. Master language-agnostic protocols, kernel sockets, DNS hops, CORS preflights, and streaming pipelines with real live endpoints.
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center gap-3.5 pt-3">
             <Link
               href="/lectures/01-roadmap"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-cyan hover:bg-cyan-400 text-black font-bold text-xs transition shadow-lg shadow-cyan-500/20"
+              className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-cyan via-brand-indigo to-brand-violet text-white font-bold text-xs md:text-sm transition hover:opacity-90 shadow-xl shadow-indigo-500/25"
             >
-              <Play className="w-3.5 h-3.5 fill-black" />
-              <span>Start Learning (Lecture 1–2)</span>
+              <Play className="w-4 h-4 fill-white" />
+              <span>Start Curriculum (Lecture 1–2)</span>
             </Link>
 
             <Link
               href="/playground"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-muted hover:bg-surface-highlight text-zinc-200 border border-surface-border font-semibold text-xs transition"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-surface hover:bg-surface-highlight text-zinc-200 border border-surface-border font-semibold text-xs md:text-sm transition shadow-lg"
             >
-              <Terminal className="w-3.5 h-3.5 text-brand-cyan" />
-              <span>Open Global Playground</span>
+              <Terminal className="w-4 h-4 text-brand-cyan" />
+              <span>Explore Live Playground</span>
             </Link>
 
             <a
@@ -53,91 +53,94 @@ export default function HomePage() {
               download="backend-first-principles.postman_collection.json"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-muted hover:bg-surface-highlight text-brand-amber border border-surface-border font-semibold text-xs transition"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-surface hover:bg-surface-highlight text-brand-amber border border-surface-border font-semibold text-xs md:text-sm transition shadow-lg"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download Postman Collection</span>
+              <Download className="w-4 h-4" />
+              <span>Postman Collection</span>
             </a>
           </div>
         </div>
       </section>
 
-      {/* Feature Pillar Highlights */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-5 rounded-2xl bg-surface border border-surface-border shadow-xl space-y-2">
-          <div className="w-9 h-9 rounded-xl bg-brand-cyan/10 border border-brand-cyan/20 flex items-center justify-center text-brand-cyan">
-            <BookOpen className="w-4 h-4" />
+      {/* Quantango-Style Pillar Cards */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="p-6 rounded-3xl bg-surface border border-surface-border hover:border-brand-cyan/40 transition-all shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-cyan/5 rounded-full blur-2xl group-hover:bg-brand-cyan/15 transition" />
+          <div className="w-11 h-11 rounded-2xl bg-brand-cyan/10 border border-brand-cyan/25 flex items-center justify-center text-brand-cyan mb-4">
+            <BookOpen className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-bold text-zinc-100">1. Structured First-Principles Notes</h3>
+          <h3 className="text-base font-bold text-white mb-2">First-Principles Notes</h3>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Short, clean explanations, tables, and concept breakdowns—no raw transcript dumps or jargon overload.
+            Concise, structured breakdowns explaining *why* mechanisms exist at the OS and protocol level without library jargon.
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface border border-surface-border shadow-xl space-y-2">
-          <div className="w-9 h-9 rounded-xl bg-brand-violet/10 border border-brand-violet/20 flex items-center justify-center text-brand-violet">
-            <Cpu className="w-4 h-4" />
+        <div className="p-6 rounded-3xl bg-surface border border-surface-border hover:border-brand-indigo/40 transition-all shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-indigo/5 rounded-full blur-2xl group-hover:bg-brand-indigo/15 transition" />
+          <div className="w-11 h-11 rounded-2xl bg-brand-indigo/10 border border-brand-indigo/25 flex items-center justify-center text-brand-indigo mb-4">
+            <Cpu className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-bold text-zinc-100">2. Interactive 3D Visualizers</h3>
+          <h3 className="text-base font-bold text-white mb-2">3D Concept Visualizers</h3>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Purposeful animations modeling the 6-hop request journey, CORS preflight handshakes, and ETag revalidation.
+            Interactive visualizers modeling the 6-hop packet journey, CORS preflight OPTIONS handshakes, and ETag cache hit validation.
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface border border-surface-border shadow-xl space-y-2">
-          <div className="w-9 h-9 rounded-xl bg-brand-emerald/10 border border-brand-emerald/20 flex items-center justify-center text-brand-emerald">
-            <Terminal className="w-4 h-4" />
+        <div className="p-6 rounded-3xl bg-surface border border-surface-border hover:border-brand-emerald/40 transition-all shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-emerald/5 rounded-full blur-2xl group-hover:bg-brand-emerald/15 transition" />
+          <div className="w-11 h-11 rounded-2xl bg-brand-emerald/10 border border-brand-emerald/25 flex items-center justify-center text-brand-emerald mb-4">
+            <Terminal className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-bold text-zinc-100">3. Live Working Endpoints</h3>
+          <h3 className="text-base font-bold text-white mb-2">Live Practical Lab</h3>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            9 live Express endpoints you can actually hit from your browser, curl, or Postman with raw header and byte inspection.
+            9 real Express endpoints you can trigger in-browser, inspect raw byte headers, test with cURL, or download in Postman.
           </p>
         </div>
       </section>
 
-      {/* Lecture Catalog Grid */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-surface-border">
+      {/* Curriculum Lecture Grid */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-surface-border">
           <div>
-            <h2 className="text-xl font-bold text-zinc-100">Curriculum & Seed Lectures</h2>
-            <p className="text-xs text-zinc-400">Add future lecture JSON files to auto-expand this hub</p>
+            <h2 className="text-xl md:text-2xl font-extrabold text-white">Curriculum & Seed Modules</h2>
+            <p className="text-xs text-zinc-400 mt-1">Structured 3-Phase roadmap for backend engineering mastery</p>
           </div>
-          <span className="text-xs font-mono text-brand-cyan">
-            {lectures.length} Lectures Available
+          <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-surface border border-surface-border text-brand-cyan">
+            {lectures.length} Active Modules
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {lectures.map(lecture => (
             <Link
               key={lecture.slug}
               href={`/lectures/${lecture.slug}`}
-              className="group p-5 rounded-2xl bg-surface border border-surface-border hover:border-brand-cyan/50 transition-all flex flex-col justify-between shadow-xl space-y-3"
+              className="group p-6 rounded-3xl bg-surface border border-surface-border hover:border-brand-cyan/40 transition-all flex flex-col justify-between shadow-2xl space-y-4 relative overflow-hidden"
             >
               <div>
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
                     Lecture {lecture.lectureNumber}
                   </span>
                   <span className="text-xs font-mono text-zinc-500">
                     {lecture.duration}
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-zinc-100 group-hover:text-brand-cyan transition">
+                <h3 className="text-base md:text-lg font-bold text-white group-hover:text-brand-cyan transition">
                   {lecture.title}
                 </h3>
-                <p className="text-xs text-zinc-400 mt-1.5 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-zinc-400 mt-2 line-clamp-2 leading-relaxed">
                   {lecture.subtitle}
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-surface-border flex items-center justify-between text-xs">
+              <div className="pt-3 border-t border-surface-border flex items-center justify-between text-xs">
                 <span className="text-[11px] text-zinc-500 font-mono">
                   {lecture.phaseTitle}
                 </span>
-                <span className="text-brand-cyan flex items-center gap-1 font-semibold group-hover:translate-x-1 transition">
-                  <span>Open Notes & Lab</span>
-                  <ArrowRight className="w-3 h-3" />
+                <span className="text-brand-cyan flex items-center gap-1.5 font-bold group-hover:translate-x-1 transition">
+                  <span>Open Module</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
             </Link>

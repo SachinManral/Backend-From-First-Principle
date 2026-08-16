@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Globe, Shield, Server, Cpu, Database, Network, Play, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { Globe, Shield, Server, Cpu, Database, Network, Play, RotateCcw, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface HopInfo {
   id: number;
@@ -22,7 +22,7 @@ const HOPS: HopInfo[] = [
     shortLabel: "Browser",
     protocol: "HTTP/1.1 or HTTP/2",
     icon: Globe,
-    color: "#06b6d4",
+    color: "#34e2e4",
     summary: "User triggers an action (e.g. liking a post or fetching a feed). The browser builds the HTTP request stream in memory.",
     mechanics: [
       "Allocates an ephemeral local TCP source port (e.g. 52418).",
@@ -37,7 +37,7 @@ const HOPS: HopInfo[] = [
     shortLabel: "DNS",
     protocol: "UDP Port 53",
     icon: Network,
-    color: "#8b5cf6",
+    color: "#ab1dfe",
     summary: "The browser resolves the human hostname (api.example.com) into a routable 32-bit IPv4 or 128-bit IPv6 address.",
     mechanics: [
       "Checks Browser DNS cache ➔ OS hosts file ➔ Router DNS.",
@@ -52,7 +52,7 @@ const HOPS: HopInfo[] = [
     shortLabel: "Firewall",
     protocol: "IP Packet Filter",
     icon: Shield,
-    color: "#f43f5e",
+    color: "#cf2e2e",
     summary: "Cloud Security Groups & WAF filter packets at the network boundary. Dropping all unauthorized ports.",
     mechanics: [
       "Inspects incoming TCP SYN packet destination port (443 / 80).",
@@ -67,7 +67,7 @@ const HOPS: HopInfo[] = [
     shortLabel: "Cloud Host",
     protocol: "Linux Kernel TCP/IP",
     icon: Cpu,
-    color: "#3b82f6",
+    color: "#4721fb",
     summary: "Packets hit the virtual network interface (vNIC) of the AWS EC2, DigitalOcean droplet, or Docker node.",
     mechanics: [
       "OS Kernel handles the TCP 3-way handshake (SYN ➔ SYN-ACK ➔ ACK).",
@@ -82,7 +82,7 @@ const HOPS: HopInfo[] = [
     shortLabel: "Nginx Proxy",
     protocol: "Reverse Proxy / Ingress",
     icon: Server,
-    color: "#10b981",
+    color: "#00d084",
     summary: "Nginx terminates SSL/TLS, manages rate limiting, compresses responses, and routes traffic to internal ports.",
     mechanics: [
       "Decodes hostname (`api.example.com`) and matches location `/api` block.",
@@ -94,145 +94,133 @@ const HOPS: HopInfo[] = [
   {
     id: 6,
     name: "6. App Server & Database",
-    shortLabel: "Node.js / DB",
+    shortLabel: "Express / DB",
     protocol: "Express & Postgres Pool",
     icon: Database,
-    color: "#f59e0b",
-    summary: "Your actual Express or Go code runs business logic, accesses Postgres/Redis connection pools, and formats JSON.",
+    color: "#fcb900",
+    summary: "Express.js accepts the socket, routes to the controller, executes business logic, queries Postgres, and writes HTTP response bytes.",
     mechanics: [
-      "Parses JSON request body and validates authentication JWT tokens.",
-      "Borrows an idle database client from the connection pool to execute SQL.",
-      "Streams serialized response payload back down the reverse proxy tunnel."
+      "Event loop dispatches request to `router.get('/api/feed')`.",
+      "Acquires connection from DB pool: `SELECT * FROM posts LIMIT 20`.",
+      "Serializes JSON payload, sets `Content-Type: application/json; charset=utf-8`."
     ],
-    wireDetail: "HTTP/1.1 200 OK | Content-Type: application/json | ETag: W/\"f9a8b\" | 48ms"
+    wireDetail: "HTTP/1.1 200 OK \\r\\n Content-Type: application/json \\r\\n Content-Length: 1420 \\r\\n\\r\\n {\"posts\": [...]}"
   }
 ];
 
 export default function RequestJourneyVisualizer() {
   const [activeHop, setActiveHop] = useState<number>(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [packetProgress, setPacketProgress] = useState<number>(0);
 
   useEffect(() => {
-    let timer: any;
+    let timer: NodeJS.Timeout;
     if (isPlaying) {
       timer = setInterval(() => {
-        setPacketProgress(prev => {
-          if (prev >= 5) {
+        setActiveHop((prev) => {
+          if (prev >= 6) {
             setIsPlaying(false);
-            return 5;
+            return 6;
           }
-          const next = prev + 1;
-          setActiveHop(next + 1);
-          return next;
+          return prev + 1;
         });
-      }, 1200);
+      }, 1600);
     }
     return () => clearInterval(timer);
   }, [isPlaying]);
 
-  const handleStart = () => {
-    setPacketProgress(0);
+  const handlePlay = () => {
     setActiveHop(1);
     setIsPlaying(true);
   };
 
   const handleReset = () => {
     setIsPlaying(false);
-    setPacketProgress(0);
     setActiveHop(1);
   };
 
-  const selectedHop = HOPS[activeHop - 1];
+  const current = HOPS.find((h) => h.id === activeHop) || HOPS[0];
 
   return (
-    <div className="w-full bg-surface border border-surface-border rounded-2xl p-5 md:p-6 shadow-2xl">
-      {/* Header & Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-surface-border">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
-              Interactive 3D Pipeline
+    <div className="space-y-6">
+      {/* Visual Pipeline Canvas */}
+      <div className="relative p-6 rounded-3xl bg-surface border border-surface-border shadow-2xl overflow-hidden ambient-glow">
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan animate-pulse"></span>
+            <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider">
+              Interactive 6-Hop Packet Pipeline
             </span>
-            <span className="text-xs text-zinc-400">Click any hop to inspect</span>
-          </div>
-          <h3 className="text-lg font-bold text-zinc-100 mt-1">
-            The 6-Hop Journey of an HTTP Request
-          </h3>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleStart}
-            disabled={isPlaying}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-cyan hover:bg-cyan-400 text-black font-semibold text-xs transition disabled:opacity-50 shadow-lg shadow-cyan-500/20"
-          >
-            <Play className="w-3.5 h-3.5 fill-black" />
-            <span>{isPlaying ? 'Traveling Hops...' : 'Dispatch Request'}</span>
-          </button>
-          <button
-            onClick={handleReset}
-            className="p-2 rounded-xl bg-surface-muted hover:bg-surface-highlight text-zinc-400 hover:text-zinc-200 border border-surface-border transition text-xs"
-            title="Reset"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Interactive Hop Architecture Diagram */}
-      <div className="py-6 overflow-x-auto">
-        <div className="min-w-[650px] flex items-center justify-between relative px-4">
-          <div className="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-1 bg-surface-border z-0">
-            <div
-              className="h-full bg-gradient-to-r from-brand-cyan via-brand-indigo to-brand-emerald transition-all duration-700 ease-out"
-              style={{ width: `${(packetProgress / 5) * 100}%` }}
-            />
           </div>
 
-          {HOPS.map((hop, idx) => {
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePlay}
+              disabled={isPlaying}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-indigo text-white text-xs font-bold transition hover:opacity-90 disabled:opacity-50 shadow-md shadow-indigo-500/20"
+            >
+              <Play className="w-3.5 h-3.5 fill-white" />
+              <span>{isPlaying ? 'Traveling...' : 'Trace Journey'}</span>
+            </button>
+            <button
+              onClick={handleReset}
+              className="p-1.5 rounded-xl bg-surface hover:bg-surface-highlight text-zinc-400 border border-surface-border transition"
+              title="Reset"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* 6-Hop Nodes Sequence */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 relative z-10">
+          {HOPS.map((hop) => {
             const Icon = hop.icon;
-            const isCurrent = activeHop === hop.id;
-            const isPassed = packetProgress >= idx;
+            const isCurrent = hop.id === activeHop;
+            const isPassed = hop.id < activeHop;
 
             return (
               <button
                 key={hop.id}
                 onClick={() => {
+                  setIsPlaying(false);
                   setActiveHop(hop.id);
-                  setPacketProgress(idx);
                 }}
-                className={`relative z-10 flex flex-col items-center group focus:outline-none transition-all duration-300 ${
-                  isCurrent ? 'scale-110' : 'hover:scale-105 opacity-80 hover:opacity-100'
+                className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between min-h-[110px] ${
+                  isCurrent
+                    ? 'bg-surface-highlight border-brand-cyan shadow-xl shadow-cyan-500/10 scale-[1.02]'
+                    : isPassed
+                    ? 'bg-surface/80 border-surface-border hover:border-zinc-500'
+                    : 'bg-surface/40 border-surface-border/60 opacity-60 hover:opacity-100'
                 }`}
               >
-                <div
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 ${
-                    isCurrent
-                      ? 'border-brand-cyan bg-surface-highlight shadow-lg shadow-cyan-500/30'
-                      : isPassed
-                      ? 'border-brand-emerald/60 bg-surface-muted text-zinc-300'
-                      : 'border-surface-border bg-surface text-zinc-500'
-                  }`}
-                  style={{
-                    borderColor: isCurrent ? hop.color : undefined,
-                    boxShadow: isCurrent ? `0 0 20px ${hop.color}40` : undefined
-                  }}
-                >
-                  <Icon
-                    className="w-6 h-6"
-                    style={{ color: isCurrent ? hop.color : isPassed ? '#10b981' : '#71717a' }}
-                  />
+                <div className="flex items-center justify-between w-full mb-2">
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center transition"
+                    style={{
+                      backgroundColor: `${hop.color}20`,
+                      color: hop.color,
+                      border: `1px solid ${hop.color}40`,
+                    }}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-mono text-zinc-500 font-bold">
+                    0{hop.id}
+                  </span>
                 </div>
 
-                <div className="mt-2 text-center">
-                  <div className="text-xs font-bold text-zinc-200">{hop.shortLabel}</div>
-                  <div className="text-[10px] text-zinc-500 font-mono">Hop {hop.id}</div>
+                <div>
+                  <div className="text-xs font-bold text-white truncate">
+                    {hop.shortLabel}
+                  </div>
+                  <div className="text-[10px] font-mono text-zinc-400 truncate">
+                    {hop.protocol}
+                  </div>
                 </div>
 
                 {isCurrent && (
                   <div
-                    className="absolute -bottom-2 w-1.5 h-1.5 rounded-full"
+                    className="absolute bottom-0 left-0 right-0 h-1"
                     style={{ backgroundColor: hop.color }}
                   />
                 )}
@@ -242,51 +230,64 @@ export default function RequestJourneyVisualizer() {
         </div>
       </div>
 
-      {/* Hop Deep-Dive Inspector Panel */}
-      <div className="mt-2 bg-background border border-surface-border rounded-xl p-4 md:p-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-surface-border">
-          <div className="flex items-center gap-2.5">
-            <span
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: selectedHop.color }}
-            />
-            <h4 className="text-base font-bold text-zinc-100">{selectedHop.name}</h4>
-            <span className="text-xs px-2 py-0.5 rounded bg-surface-muted border border-surface-border font-mono text-zinc-400">
-              {selectedHop.protocol}
-            </span>
+      {/* Deep-Dive Inspection Card */}
+      <div className="p-6 rounded-3xl bg-surface border border-surface-border shadow-2xl space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-surface-border">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-2xl flex items-center justify-center text-white"
+              style={{
+                backgroundColor: `${current.color}20`,
+                color: current.color,
+                border: `1px solid ${current.color}40`,
+              }}
+            >
+              {React.createElement(current.icon, { className: 'w-5 h-5' })}
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-white">{current.name}</h3>
+              <p className="text-xs text-zinc-400 font-mono">{current.protocol}</p>
+            </div>
           </div>
-          <div className="text-xs text-zinc-400">
-            {activeHop < 6 ? `Next: Hop ${activeHop + 1}` : 'Final Hop: Response Generated'}
+
+          <span
+            className="px-3 py-1 rounded-full text-xs font-mono font-bold"
+            style={{
+              backgroundColor: `${current.color}15`,
+              color: current.color,
+              border: `1px solid ${current.color}30`,
+            }}
+          >
+            Hop #{current.id} of 6
+          </span>
+        </div>
+
+        <p className="text-sm text-zinc-200 leading-relaxed font-medium">
+          {current.summary}
+        </p>
+
+        {/* Mechanics Checklist */}
+        <div className="space-y-2 pt-2">
+          <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+            First Principles Mechanics:
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+            {current.mechanics.map((m, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-xl bg-surface-muted border border-surface-border text-xs text-zinc-300 flex items-start gap-2"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-brand-emerald shrink-0 mt-0.5" />
+                <span className="leading-snug">{m}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        <p className="text-sm text-zinc-300 mt-3 leading-relaxed">
-          {selectedHop.summary}
-        </p>
-
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              Under-the-Hood Mechanics
-            </div>
-            <ul className="space-y-1.5 text-xs text-zinc-300">
-              {selectedHop.mechanics.map((mech, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-brand-emerald shrink-0 mt-0.5" />
-                  <span>{mech}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              Network Wire Simulation
-            </div>
-            <div className="bg-surface-muted border border-surface-border rounded-lg p-3 font-mono text-[11px] text-brand-cyan/90 break-all leading-relaxed">
-              {selectedHop.wireDetail}
-            </div>
-          </div>
+        {/* Raw Wire Frame / Log */}
+        <div className="p-3 rounded-2xl bg-background border border-surface-border font-mono text-xs text-brand-cyan overflow-x-auto">
+          <span className="text-zinc-500 select-none">{"[PACKET_INSPECTOR] > "}</span>
+          <span>{current.wireDetail}</span>
         </div>
       </div>
     </div>
