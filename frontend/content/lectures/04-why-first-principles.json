@@ -1,0 +1,82 @@
+{
+  "slug": "04-why-first-principles",
+  "order": 3,
+  "phase": 1,
+  "phaseTitle": "Phase 1 — Story & Philosophy",
+  "lectureNumber": "4",
+  "title": "Why Learn from First Principles?",
+  "subtitle": "Defeating syntax fatigue, unlocking architectural confidence, and becoming stack-agnostic.",
+  "duration": "16 min",
+  "visualizerType": "none",
+  "playgroundDemoIds": ["echo", "idempotency"],
+  "tldr": "When you master underlying mechanics—how operating systems handle sockets, how protocols structure bytes, and how distributed caches invalidate—you stop memorizing framework syntax and can learn any new language in days.",
+  "tags": ["Philosophy", "First Principles", "Career Growth"],
+  "sections": [
+    {
+      "id": "syntax-fatigue",
+      "title": "Curing 'Syntax Fatigue'",
+      "summary": "Why engineers burn out chasing new libraries instead of deep concepts.",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Every year brings a new web framework: Express ➔ Fastify ➔ NestJS ➔ Gin ➔ Fiber ➔ Actix ➔ FastAPI. Developers who only learn framework syntax feel perpetual burnout because their knowledge expires quickly."
+        },
+        {
+          "type": "paragraph",
+          "text": "However, under the hood, every single one of these frameworks does the exact same thing: it parses an HTTP request stream, checks headers, matches a URL route pattern, invokes a handler function, and writes bytes back to a socket."
+        }
+      ]
+    },
+    {
+      "id": "six-superpowers",
+      "title": "The 6 Superpowers of First-Principles Engineers",
+      "summary": "What changes when you understand the foundational layer.",
+      "blocks": [
+        {
+          "type": "cards",
+          "items": [
+            {
+              "badge": "Superpower 1",
+              "title": "Big-Picture Architecture",
+              "desc": "You isolate core business logic from framework noise, producing maintainable and clean systems."
+            },
+            {
+              "badge": "Superpower 2",
+              "title": "10x Faster Onboarding",
+              "desc": "Opening a 50,000-line codebase in Go or Rust is no longer intimidating because you identify architectural patterns rather than syntax."
+            },
+            {
+              "badge": "Superpower 3",
+              "title": "Zero Boilerplate Fear",
+              "desc": "Configuration files, Dockerfiles, middleware stacks, and reverse proxy rules stop feeling like superstitious incantations."
+            },
+            {
+              "badge": "Superpower 4",
+              "title": "Stack Agility",
+              "desc": "Switching between Node, Go, Rust, or Python becomes straightforward because protocols and OS primitives are universal."
+            },
+            {
+              "badge": "Superpower 5",
+              "title": "Hype-Proof Decision Making",
+              "desc": "You select databases and tools based on write characteristics, disk I/O, and consistency trade-offs, rather than Twitter/X hype."
+            },
+            {
+              "badge": "Superpower 6",
+              "title": "High-Value Debugging",
+              "desc": "When production breaks under load, you trace connection timeouts, socket leaks, and cache thundering herds while others guess."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "keyTakeaways": [
+    "Syntax is transient; protocols, networking, and data structures are permanent.",
+    "First-principles engineers diagnose root causes rather than pasting StackOverflow patches.",
+    "You can evaluate any new backend technology by asking: 'How does it handle I/O, state, concurrency, and network boundaries?'"
+  ],
+  "reflectionQuestions": [
+    "Can you explain the difference between synchronous blocking I/O and asynchronous non-blocking event loops?",
+    "When choosing between PostgreSQL and Redis for a feature, what technical criteria do you look at first?"
+  ]
+}
