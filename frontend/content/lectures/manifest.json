@@ -1,0 +1,426 @@
+{
+  "lectures": [
+    {
+      "slug": "01-roadmap",
+      "order": 1,
+      "phase": 1,
+      "phaseTitle": "Phase 1 — Story & Philosophy",
+      "lectureNumber": "1–2",
+      "title": "Backend Engineering Roadmap & The 3 Phases",
+      "subtitle": "Understanding backend engineering as transferable principles, not framework syntax.",
+      "duration": "18 min",
+      "visualizerType": "none",
+      "playgroundDemoIds": ["echo"],
+      "tldr": "Backend engineering is not about learning 5 different frameworks—it is mastering language-agnostic concepts (protocols, networking, storage, concurrency) that apply identically across Node.js, Go, Rust, or Python.",
+      "tags": ["Philosophy", "Roadmap", "Mental Models"],
+      "sections": [
+        {
+          "id": "three-phases",
+          "title": "The 3 Phases of Backend Mastery",
+          "summary": "How this entire curriculum is structured from first principles to production systems.",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Most developers learn backend development backward: they jump straight into building CRUD apps with Express or Django without understanding why HTTP works the way it does, what a reverse proxy does, or how sockets function."
+            },
+            {
+              "type": "cards",
+              "items": [
+                {
+                  "badge": "Phase 1",
+                  "title": "Story & Philosophy",
+                  "desc": "Language-agnostic concepts and the engineering problems that forced them to exist. Why do we need ports? Why is HTTP stateless? Why does DNS exist?"
+                },
+                {
+                  "badge": "Phase 2",
+                  "title": "First-Principles Implementation",
+                  "desc": "Building the foundational mechanics using Node.js and Go. Writing raw HTTP servers, handling TCP streams, implementing custom parsers, and connection pools."
+                },
+                {
+                  "badge": "Phase 3",
+                  "title": "Production-Grade Projects",
+                  "desc": "Architecting resilient distributed systems, caching tiers, rate limiters, message queues, and high-throughput real-world services."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "transferable-skills",
+          "title": "Principles vs. Framework Tricks",
+          "summary": "Why syntax fades but core protocols remain permanent.",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Frameworks come and go every 3 years. But the HTTP protocol, TCP handshakes, caching semantics, database indexing, and network boundaries have remained consistent for decades."
+            },
+            {
+              "type": "table",
+              "headers": ["Framework-Centric Thinking", "First-Principles Thinking"],
+              "rows": [
+                ["I know how to call `res.status(200).json()` in Express", "I understand HTTP status code families and content-type headers"],
+                ["I install `cors` npm package when a red browser error appears", "I know why browsers enforce the Same-Origin Policy and when preflight OPTIONS requests fire"],
+                ["I use ORMs without knowing the queries generated", "I understand indexing, connection pooling, and latency bottlenecks"],
+                ["Stuck when switching from Node to Go", "Effortlessly adapt because both rely on the exact same OS sockets and HTTP standards"]
+              ]
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "Focus on fundamental networking, protocols, and data flow instead of library APIs.",
+        "A backend engineer's true value lies in system architecture and predictability under load.",
+        "Every concept learned here applies equally to Node.js, Go, Rust, Java, or Python."
+      ],
+      "reflectionQuestions": [
+        "When you encounter a backend bug, do you diagnose it at the network/protocol layer or just test random library options?",
+        "Why is it easier to switch programming languages once you understand raw TCP sockets and HTTP headers?"
+      ]
+    },
+    {
+      "slug": "03-what-is-a-backend",
+      "order": 2,
+      "phase": 2,
+      "phaseTitle": "Phase 2 — HTTP Deep Dive",
+      "lectureNumber": "3",
+      "title": "What is a Backend, and Why Do We Need It?",
+      "subtitle": "Demystifying servers, ports, the 6-hop request journey, and why client-only apps fail.",
+      "duration": "24 min",
+      "visualizerType": "request-journey",
+      "playgroundDemoIds": ["echo", "status"],
+      "tldr": "A backend is simply a computer listening on a network port for incoming socket connections to securely manage, compute, and persist shared data that browsers cannot safely handle.",
+      "tags": ["Architecture", "Request Journey", "DNS", "Firewall", "Nginx"],
+      "sections": [
+        {
+          "id": "core-definition",
+          "title": "What Actually Is a Server?",
+          "summary": "Stripping away the buzzwords.",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A backend server is not magic. It is just a standard operating system process running on a machine with a network interface, binding to a specific TCP port (like 80 for HTTP, 443 for HTTPS, or 4000 for local dev), continuously waiting in an event loop for incoming network packets."
+            },
+            {
+              "type": "callout",
+              "variant": "info",
+              "title": "The Instagram Like Example",
+              "text": "When you tap 'Like' on a photo, the browser cannot talk to other users' phones directly. Your request reaches a server which verifies your identity (auth token), writes the like record to a PostgreSQL database, updates Redis caches, and sends a push notification to the creator. The backend is the single source of truth."
+            }
+          ]
+        },
+        {
+          "id": "request-journey",
+          "title": "The Real Journey of an HTTP Request (6 Hops)",
+          "summary": "What happens in the 50 milliseconds between hitting Enter in your browser and getting a response.",
+          "blocks": [
+            {
+              "type": "cards",
+              "items": [
+                {
+                  "badge": "Hop 1",
+                  "title": "Browser ➔ DNS Resolution",
+                  "desc": "The browser looks up the domain name (e.g. `api.example.com`) to find the server's public IP address (`198.51.100.42`) using recursive DNS resolvers."
+                },
+                {
+                  "badge": "Hop 2",
+                  "title": "DNS ➔ Cloud Firewall",
+                  "desc": "Network packets hit the cloud security group / firewall (e.g. AWS Security Group, Cloudflare). Only allowed ports (80/443) are permitted through; everything else is dropped."
+                },
+                {
+                  "badge": "Hop 3",
+                  "title": "Firewall ➔ Cloud Virtual Machine",
+                  "desc": "Packets reach the physical or virtual host (EC2 instance, Docker container, or bare-metal node) via its virtual network interface card (vNIC)."
+                },
+                {
+                  "badge": "Hop 4",
+                  "title": "VM ➔ Reverse Proxy (Nginx / Caddy)",
+                  "desc": "Nginx listens on port 443, handles TLS decryption (HTTPS termination), applies rate limits, and routes the request based on hostname/path to internal ports."
+                },
+                {
+                  "badge": "Hop 5",
+                  "title": "Reverse Proxy ➔ App Server",
+                  "desc": "Nginx proxies the raw HTTP stream over a local socket to your actual application process (e.g., Node.js Express listening on `localhost:4000`)."
+                },
+                {
+                  "badge": "Hop 6",
+                  "title": "App Server ➔ Database & Storage",
+                  "desc": "Your code executes business logic, queries database connection pools (PostgreSQL/Redis), formats the response payload, and streams it back down the reverse path."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "why-not-frontend-only",
+          "title": "Why Can't Logic Just Live in the Frontend?",
+          "summary": "The 4 fatal reasons browsers cannot run backend operations.",
+          "blocks": [
+            {
+              "type": "table",
+              "headers": ["Constraint", "Why the Browser Fails", "How the Backend Solves It"],
+              "rows": [
+                ["1. Security & Secrets", "Browser code is completely public. API keys, database passwords, and private business rules are exposed in DevTools.", "Backend environment variables and file systems are private and protected behind network firewalls."],
+                ["2. Direct Database Access", "DBs require long-lived TCP sockets and connection pooling. If 100,000 browsers opened direct DB sockets, the database would immediately crash.", "Backend maintains a steady connection pool (e.g. 20 connections) and handles transactions safely."],
+                ["3. CORS & Sandbox", "Browsers enforce strict sandbox isolation to protect users. You cannot make cross-origin calls to APIs that do not explicitly enable CORS.", "Servers make server-to-server HTTP calls with zero CORS restrictions."],
+                ["4. Compute & Heavy Work", "Phones and laptops have limited battery, RAM, and unpredictable network drops.", "Centralized server fleets scale vertically and horizontally to process heavy jobs, image conversions, and AI pipelines."]
+              ]
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "A backend is a listener on a port managing data persistence, security, and coordination.",
+        "Every request passes through DNS, Firewalls, Reverse Proxies (Nginx), and App Servers.",
+        "Browsers are client execution environments—they cannot hold private credentials or maintain database connection pools."
+      ],
+      "reflectionQuestions": [
+        "Why is it dangerous to embed a Postgres connection string inside a React or Next.js client component?",
+        "What role does Nginx play in front of an Express or Go application in production?"
+      ]
+    },
+    {
+      "slug": "04-why-first-principles",
+      "order": 3,
+      "phase": 1,
+      "phaseTitle": "Phase 1 — Story & Philosophy",
+      "lectureNumber": "4",
+      "title": "Why Learn from First Principles?",
+      "subtitle": "Defeating syntax fatigue, unlocking architectural confidence, and becoming stack-agnostic.",
+      "duration": "16 min",
+      "visualizerType": "none",
+      "playgroundDemoIds": ["echo", "idempotency"],
+      "tldr": "When you master underlying mechanics—how operating systems handle sockets, how protocols structure bytes, and how distributed caches invalidate—you stop memorizing framework syntax and can learn any new language in days.",
+      "tags": ["Philosophy", "First Principles", "Career Growth"],
+      "sections": [
+        {
+          "id": "syntax-fatigue",
+          "title": "Curing 'Syntax Fatigue'",
+          "summary": "Why engineers burn out chasing new libraries instead of deep concepts.",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Every year brings a new web framework: Express ➔ Fastify ➔ NestJS ➔ Gin ➔ Fiber ➔ Actix ➔ FastAPI. Developers who only learn framework syntax feel perpetual burnout because their knowledge expires quickly."
+            },
+            {
+              "type": "paragraph",
+              "text": "However, under the hood, every single one of these frameworks does the exact same thing: it parses an HTTP request stream, checks headers, matches a URL route pattern, invokes a handler function, and writes bytes back to a socket."
+            }
+          ]
+        },
+        {
+          "id": "six-superpowers",
+          "title": "The 6 Superpowers of First-Principles Engineers",
+          "summary": "What changes when you understand the foundational layer.",
+          "blocks": [
+            {
+              "type": "cards",
+              "items": [
+                {
+                  "badge": "Superpower 1",
+                  "title": "Big-Picture Architecture",
+                  "desc": "You isolate core business logic from framework noise, producing maintainable and clean systems."
+                },
+                {
+                  "badge": "Superpower 2",
+                  "title": "10x Faster Onboarding",
+                  "desc": "Opening a 50,000-line codebase in Go or Rust is no longer intimidating because you identify architectural patterns rather than syntax."
+                },
+                {
+                  "badge": "Superpower 3",
+                  "title": "Zero Boilerplate Fear",
+                  "desc": "Configuration files, Dockerfiles, middleware stacks, and reverse proxy rules stop feeling like superstitious incantations."
+                },
+                {
+                  "badge": "Superpower 4",
+                  "title": "Stack Agility",
+                  "desc": "Switching between Node, Go, Rust, or Python becomes straightforward because protocols and OS primitives are universal."
+                },
+                {
+                  "badge": "Superpower 5",
+                  "title": "Hype-Proof Decision Making",
+                  "desc": "You select databases and tools based on write characteristics, disk I/O, and consistency trade-offs, rather than Twitter/X hype."
+                },
+                {
+                  "badge": "Superpower 6",
+                  "title": "High-Value Debugging",
+                  "desc": "When production breaks under load, you trace connection timeouts, socket leaks, and cache thundering herds while others guess."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "Syntax is transient; protocols, networking, and data structures are permanent.",
+        "First-principles engineers diagnose root causes rather than pasting StackOverflow patches.",
+        "You can evaluate any new backend technology by asking: 'How does it handle I/O, state, concurrency, and network boundaries?'"
+      ],
+      "reflectionQuestions": [
+        "Can you explain the difference between synchronous blocking I/O and asynchronous non-blocking event loops?",
+        "When choosing between PostgreSQL and Redis for a feature, what technical criteria do you look at first?"
+      ]
+    },
+    {
+      "slug": "05-http-protocol",
+      "order": 4,
+      "phase": 2,
+      "phaseTitle": "Phase 2 — HTTP Deep Dive",
+      "lectureNumber": "5",
+      "title": "The HTTP Protocol Deep Dive",
+      "subtitle": "Statelessness, request anatomy, CORS preflight, HTTP caching, compression, streaming, and TLS.",
+      "duration": "35 min",
+      "visualizerType": "cors-preflight",
+      "playgroundDemoIds": ["echo", "status", "cors", "cache", "negotiate", "compress", "upload", "stream", "idempotency"],
+      "tldr": "HTTP is a stateless, text/binary application protocol riding on top of reliable TCP. Understanding its headers, caching ETags, CORS preflight mechanics, and streaming transforms backend debugging from guesswork into precision engineering.",
+      "tags": ["HTTP/1.1", "CORS", "ETag", "Caching", "SSE", "Idempotency", "Compression", "TLS"],
+      "sections": [
+        {
+          "id": "statelessness-model",
+          "title": "1. Statelessness & The Client-Server Model",
+          "summary": "Why HTTP servers remember nothing, and how we build session illusions on top.",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Every HTTP request is completely independent. Once the server sends the final byte of a response, it stores zero memory of who made the request. This stateless design is the single reason the web scales: any server behind a load balancer can serve request #2 without knowing who served request #1."
+            },
+            {
+              "type": "callout",
+              "variant": "warning",
+              "title": "How We Fake Memory",
+              "text": "Because the protocol is stateless, state must be passed along on every single transaction: Cookies, Authorization Bearer tokens (JWTs), or custom session headers."
+            }
+          ]
+        },
+        {
+          "id": "request-anatomy",
+          "title": "2. Anatomy of an HTTP Request & Response",
+          "summary": "The exact byte structure transmitted over the TCP socket.",
+          "blocks": [
+            {
+              "type": "code",
+              "language": "http",
+              "code": "POST /api/demo/echo?lang=en HTTP/1.1\r\nHost: api.example.com\r\nUser-Agent: Mozilla/5.0\r\nContent-Type: application/json\r\nAccept: application/json\r\nContent-Length: 26\r\n\r\n{\"action\":\"first_principle\"}"
+            },
+            {
+              "type": "paragraph",
+              "text": "Notice the double CRLF (`\\r\\n\\r\\n`) blank line between the headers and the body. That blank line tells the TCP parser: 'All headers have arrived; everything following is the raw payload body.'"
+            }
+          ]
+        },
+        {
+          "id": "cors-deep-dive",
+          "title": "3. CORS Demystified: Simple vs. Preflight Requests",
+          "summary": "Why CORS is a browser security guard, not a server firewall.",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "CORS (Cross-Origin Resource Sharing) protects users from malicious scripts stealing data from another site (e.g. evil.com making a request to yourbank.com using your saved cookie). The server still executes the request; the browser is what blocks your JavaScript from reading the response unless allowed by headers."
+            },
+            {
+              "type": "cards",
+              "items": [
+                {
+                  "badge": "Flow 1",
+                  "title": "Simple Request",
+                  "desc": "Applies to GET/HEAD/POST with standard headers (`Content-Type: text/plain, multipart/form-data, application/x-www-form-urlencoded`). Browser sends the request directly with an `Origin` header. If the response lacks `Access-Control-Allow-Origin`, the browser suppresses the response data."
+                },
+                {
+                  "badge": "Flow 2",
+                  "title": "Preflight Request (OPTIONS)",
+                  "desc": "Triggered when using PUT, DELETE, PATCH, or custom headers like `Authorization` or `Content-Type: application/json`. Browser automatically sends an `OPTIONS` request first. If the server approves with `Access-Control-Allow-Methods` and `Access-Control-Allow-Headers`, the actual request is dispatched."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "caching-and-etags",
+          "title": "4. HTTP Caching & 304 Not Modified",
+          "summary": "Saving gigabytes of bandwidth using ETags and conditional headers.",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The server sends an `ETag` (a hash of the resource data, e.g. `\"hash-abc123\"`) and `Cache-Control: max-age=60`. When the client re-requests the resource, it passes `If-None-Match: \"hash-abc123\"`."
+            },
+            {
+              "type": "callout",
+              "variant": "success",
+              "title": "304 Not Modified in Action",
+              "text": "If the resource has not changed on the server, the backend sends back HTTP 304 with an empty body! The browser instantly serves the locally cached version, saving CPU, database queries, and bandwidth."
+            }
+          ]
+        },
+        {
+          "id": "status-codes-and-methods",
+          "title": "5. Status Codes & Idempotency",
+          "summary": "Mastering status code families and safe vs idempotent methods.",
+          "blocks": [
+            {
+              "type": "table",
+              "headers": ["Method", "Idempotent?", "Safe?", "Meaning & Usage"],
+              "rows": [
+                ["GET", "Yes", "Yes", "Retrieves resource. Calling 100 times has identical side-effects (read-only)."],
+                ["POST", "No", "No", "Creates a new resource or triggers side-effects. Calling 5 times creates 5 records."],
+                ["PUT", "Yes", "No", "Completely replaces a resource at the specified URI. Calling 5 times leaves the exact same state."],
+                ["PATCH", "No (usually)", "No", "Partially modifies specific fields of a resource."],
+                ["DELETE", "Yes", "No", "Removes the resource. Calling it once deletes; subsequent calls still result in the resource being absent."]
+              ]
+            },
+            {
+              "type": "table",
+              "headers": ["Status Code Family", "Semantics", "Common Examples"],
+              "rows": [
+                ["1xx (Informational)", "Protocol handshake in progress", "101 Switching Protocols (WebSockets)"],
+                ["2xx (Success)", "Action understood and accepted", "200 OK, 201 Created, 204 No Content"],
+                ["3xx (Redirection)", "Client must take additional action", "301 Moved Permanently, 302 Found, 304 Not Modified"],
+                ["4xx (Client Error)", "Client sent invalid or unauthorized data", "400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict"],
+                ["5xx (Server Error)", "Server failed while processing valid request", "500 Internal Error, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout"]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "advanced-transfers",
+          "title": "6. Content Negotiation, Compression & Streaming",
+          "summary": "Handling large payloads, gzip compression, and real-time chunked transfers.",
+          "blocks": [
+            {
+              "type": "cards",
+              "items": [
+                {
+                  "badge": "Feature",
+                  "title": "Content Negotiation",
+                  "desc": "Client asks for format via `Accept: application/json` or `Accept-Language: es`. Server inspects headers and renders the matching format."
+                },
+                {
+                  "badge": "Feature",
+                  "title": "Gzip Compression",
+                  "desc": "Server compresses JSON/HTML with gzip (`Content-Encoding: gzip`). Payloads can shrink by 70-85% before traveling across the internet wire."
+                },
+                {
+                  "badge": "Feature",
+                  "title": "Server-Sent Events (SSE)",
+                  "desc": "Using `Content-Type: text/event-stream` and `Transfer-Encoding: chunked`, the server pushes incremental updates down an open HTTP connection."
+                },
+                {
+                  "badge": "Feature",
+                  "title": "Multipart Form-Data",
+                  "desc": "Transmits binary files and metadata split by boundary strings (e.g. `------WebKitFormBoundary7MA4YWxkTrZu0gW`)."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "HTTP headers control caching, content negotiation, authentication, and CORS permissions.",
+        "Idempotency guarantees that retrying network requests will not cause unintended duplicate state changes.",
+        "Server-Sent Events and Chunked transfers allow progressive data delivery over standard HTTP without WebSockets."
+      ],
+      "reflectionQuestions": [
+        "Why is `PUT` considered idempotent while `POST` is not?",
+        "If a backend API receives an `If-None-Match` header matching its current resource hash, what HTTP status code and body must it return?"
+      ]
+    }
+  ]
+}
