@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Zap, Clock, Bookmark, Play, ExternalLink, ThumbsUp, ThumbsDown, Share2, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Zap, Clock, Bookmark, Share2 } from 'lucide-react';
 import { Lecture } from '@/lib/types';
 import { useProgress } from '@/context/ProgressContext';
 
@@ -63,44 +62,45 @@ export default function ZoneTldr({ lecture }: ZoneTldrProps) {
 
   return (
     <div className="space-y-4 pt-1">
-      {/* Top Breadcrumb & Action Toolbar (CodeHelp Article Style) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground pb-2 border-b border-border/60">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 hover:text-brand-blue transition font-mono"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          <span>Articles / {lecture.phaseTitle}</span>
-        </Link>
+      {/* Top Breadcrumb & Action Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs pb-3 border-b border-[#1b2438]">
+        <div className="flex items-center gap-1.5 text-xs font-medium select-none">
+          <span className="text-zinc-400">Articles</span>
+          <span className="text-zinc-600">/</span>
+          <span className="text-zinc-300 font-semibold truncate max-w-[220px] sm:max-w-none">
+            {lecture.phaseTitle}
+          </span>
+        </div>
 
         {/* Action Toolbar */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           {lecture.youtubeUrl && (
             <a
               href={lecture.youtubeUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition shadow-sm"
-              title="Watch on YouTube"
+              className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 text-[#FF0000] hover:text-[#ff3333] border border-red-500/25 hover:border-red-500/50 transition cursor-pointer flex items-center justify-center shadow-sm"
+              title="Watch lecture on YouTube"
+              aria-label="Watch lecture on YouTube"
             >
-              <Play className="w-3 h-3 fill-red-400 text-red-400" />
-              <span className="hidden sm:inline">Watch on YouTube</span>
-              <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
             </a>
           )}
 
           {/* Real 1-Like Per Device Button */}
-          <LikeButton targetId={lecture.slug} label="Like" size="sm" />
+          <LikeButton targetId={lecture.slug} size="sm" />
 
           {/* Share Article */}
           <button
             onClick={handleShare}
-            className="p-1.5 rounded-full hover:bg-secondary text-zinc-400 hover:text-white transition cursor-pointer relative"
+            className="w-8 h-8 rounded-full bg-[#0e1424] hover:bg-[#151d32] border border-[#222e4c] hover:border-zinc-500 text-zinc-400 hover:text-white transition cursor-pointer flex items-center justify-center relative shadow-sm"
             title="Share article link"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-3.5 h-3.5" />
             {copiedShare && (
-              <span className="absolute -top-7 -left-6 px-2 py-0.5 rounded bg-brand-emerald text-black text-[10px] font-bold">
+              <span className="absolute -top-7 -left-6 px-2 py-0.5 rounded bg-brand-emerald text-black text-[10px] font-bold shadow-md">
                 Copied!
               </span>
             )}
@@ -109,14 +109,14 @@ export default function ZoneTldr({ lecture }: ZoneTldrProps) {
           {/* Per-Device Progress Toggle */}
           <button
             onClick={() => toggleComplete(lecture.slug)}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
+            className={`h-8 flex items-center gap-1.5 px-3 rounded-full text-xs font-semibold border transition cursor-pointer select-none shadow-sm ${
               completed
-                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                : 'bg-[#0e1424] border-[#222e4c] text-zinc-400 hover:text-white hover:border-zinc-500'
+                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/20'
+                : 'bg-[#0e1424] hover:bg-[#151d32] border-[#222e4c] hover:border-zinc-500 text-zinc-300 hover:text-white'
             }`}
-            title={completed ? "Marked as completed on this device" : "Mark as completed"}
+            title={completed ? "Completed (Click to unmark)" : "Mark lecture as completed"}
           >
-            <Check className={`w-3.5 h-3.5 ${completed ? 'text-emerald-400' : 'text-zinc-500'}`} />
+            <Check className={`w-3.5 h-3.5 ${completed ? 'text-emerald-400' : 'text-zinc-400'}`} />
             <span>{completed ? 'Completed' : 'Mark Done'}</span>
           </button>
         </div>

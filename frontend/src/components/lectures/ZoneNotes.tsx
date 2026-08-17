@@ -369,12 +369,9 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
             ))}
           </div>
 
-          {/* Bottom Feedback / Like Lesson */}
-          <div className="pt-3 mt-3 border-t border-[#1e2640] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="text-xs text-zinc-400">
-              Did this breakdown clarify the first principles?
-            </div>
-            <LikeButton targetId={lecture.slug} label="Helpful Lesson" size="md" />
+          {/* Clean Like / Helpful Button */}
+          <div className="pt-3.5 mt-3.5 border-t border-[#1e2640] flex items-center justify-end">
+            <LikeButton targetId={lecture.slug} size="sm" />
           </div>
         </div>
       )}
