@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Lecture, LectureBlock } from '@/lib/types';
 import { Info, AlertTriangle, CheckCircle2, HelpCircle, Copy, Check, Sparkles } from 'lucide-react';
+import LikeButton from '@/components/common/LikeButton';
 
 interface ZoneNotesProps {
   lecture: Lecture;
@@ -350,7 +351,7 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
 
       {/* Key Takeaways & Cheat-Sheet */}
       {lecture.keyTakeaways && lecture.keyTakeaways.length > 0 && (
-        <div className="p-6 rounded-2xl bg-[#090f1d] border border-brand-blue/30 space-y-3.5 shadow-xl">
+        <div className="p-6 rounded-2xl bg-[#090f1d] border border-brand-blue/30 space-y-4 shadow-xl">
           <div className="flex items-center gap-2 text-brand-blue font-bold text-sm">
             <Sparkles className="w-4 h-4 text-brand-blue" />
             <span className="text-white text-base font-bold">First-Principles Key Takeaways</span>
@@ -366,6 +367,14 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
                 <span className="leading-relaxed font-medium">{renderFormattedText(takeaway)}</span>
               </div>
             ))}
+          </div>
+
+          {/* Bottom Feedback / Like Lesson */}
+          <div className="pt-3 mt-3 border-t border-[#1e2640] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="text-xs text-zinc-400">
+              Did this breakdown clarify the first principles?
+            </div>
+            <LikeButton targetId={lecture.slug} label="Helpful Lesson" size="md" />
           </div>
         </div>
       )}

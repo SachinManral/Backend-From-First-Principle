@@ -45,22 +45,13 @@ function renderFormattedText(text: string): React.ReactNode {
   });
 }
 
+import LikeButton from '@/components/common/LikeButton';
+import { Check } from 'lucide-react';
+
 export default function ZoneTldr({ lecture }: ZoneTldrProps) {
   const { isCompleted, toggleComplete } = useProgress();
   const completed = isCompleted(lecture.slug);
-  const [likes, setLikes] = useState(0);
-  const [hasLiked, setHasLiked] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
-
-  const handleLike = () => {
-    if (hasLiked) {
-      setLikes(prev => prev - 1);
-      setHasLiked(false);
-    } else {
-      setLikes(prev => prev + 1);
-      setHasLiked(true);
-    }
-  };
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -83,33 +74,28 @@ export default function ZoneTldr({ lecture }: ZoneTldrProps) {
         </Link>
 
         {/* Action Toolbar */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {lecture.youtubeUrl && (
             <a
               href={lecture.youtubeUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition shadow-sm"
               title="Watch on YouTube"
             >
               <Play className="w-3 h-3 fill-red-400 text-red-400" />
-              <span>Watch on YouTube</span>
+              <span className="hidden sm:inline">Watch on YouTube</span>
               <ExternalLink className="w-2.5 h-2.5 opacity-70" />
             </a>
           )}
 
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-1 hover:text-foreground transition cursor-pointer ${hasLiked ? 'text-brand-blue' : ''}`}
-            title="Like this article"
-          >
-            <ThumbsUp className="w-4 h-4" />
-            <span className="font-mono text-xs">{likes}</span>
-          </button>
+          {/* Real 1-Like Per Device Button */}
+          <LikeButton targetId={lecture.slug} label="Like" size="sm" />
 
+          {/* Share Article */}
           <button
             onClick={handleShare}
-            className="hover:text-foreground transition cursor-pointer relative"
+            className="p-1.5 rounded-full hover:bg-secondary text-zinc-400 hover:text-white transition cursor-pointer relative"
             title="Share article link"
           >
             <Share2 className="w-4 h-4" />
@@ -120,12 +106,18 @@ export default function ZoneTldr({ lecture }: ZoneTldrProps) {
             )}
           </button>
 
+          {/* Per-Device Progress Toggle */}
           <button
             onClick={() => toggleComplete(lecture.slug)}
-            className={`p-1 hover:text-foreground transition cursor-pointer ${completed ? 'text-brand-emerald' : ''}`}
-            title={completed ? "Completed" : "Bookmark module"}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition cursor-pointer ${
+              completed
+                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                : 'bg-[#0e1424] border-[#222e4c] text-zinc-400 hover:text-white hover:border-zinc-500'
+            }`}
+            title={completed ? "Marked as completed on this device" : "Mark as completed"}
           >
-            <Bookmark className={`w-4 h-4 ${completed ? 'fill-brand-emerald' : ''}`} />
+            <Check className={`w-3.5 h-3.5 ${completed ? 'text-emerald-400' : 'text-zinc-500'}`} />
+            <span>{completed ? 'Completed' : 'Mark Done'}</span>
           </button>
         </div>
       </div>
