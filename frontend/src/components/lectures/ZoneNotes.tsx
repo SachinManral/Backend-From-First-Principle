@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Lecture, LectureBlock } from '@/lib/types';
 import { Info, AlertTriangle, CheckCircle2, HelpCircle, Copy, Check, Sparkles } from 'lucide-react';
 import LikeButton from '@/components/common/LikeButton';
+import CodeHighlighter from '@/components/common/CodeHighlighter';
 
 interface ZoneNotesProps {
   lecture: Lecture;
@@ -233,16 +234,9 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
               </button>
             </div>
 
-            {/* Code Body with Line Numbers */}
-            <div className="p-4 overflow-x-auto font-mono text-xs leading-relaxed text-zinc-200 flex gap-4">
-              <div className="select-none text-zinc-600 text-right pr-2 font-mono shrink-0">
-                {codeLines.map((_, lIdx) => (
-                  <div key={lIdx}>{lIdx + 1}</div>
-                ))}
-              </div>
-              <pre className="text-brand-purple overflow-x-auto flex-1 font-mono">
-                <code>{currentCode}</code>
-              </pre>
+            {/* Code Body with Rich Syntax Highlighting & Line Numbers */}
+            <div className="p-4 overflow-x-auto bg-[#070b14]">
+              <CodeHighlighter code={currentCode} language={tabs[currentTabIdx]?.language} />
             </div>
           </div>
         );
