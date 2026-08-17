@@ -38,6 +38,7 @@ Inspired by Sriniously's *"Backend Engineering — First Principles"* series, ev
 - **Server**: [Express](https://expressjs.com) on Node.js
 - **Language**: [TypeScript](https://www.typescriptlang.org)
 - **Database**: [SQLite](https://sqlite.org) (`better-sqlite3` with Write-Ahead Logging)
+- **AI & Retrieval**: [Groq](https://groq.com) LLM inference with automated failover & [Tavily](https://tavily.com) real-time search
 - **Security & Crypto**: Native Node.js `crypto` (HMAC-SHA256, timing attack mitigations)
 
 ---
@@ -67,6 +68,17 @@ npm run dev
 
 * **Frontend Web App**: [http://localhost:3000](http://localhost:3000)
 * **Backend API Server**: [http://localhost:4000](http://localhost:4000)
+
+### 4. Environment Variables
+For production deployment (e.g., on Render or Vercel), configure the following environment variables:
+
+| Variable | Scope | Description |
+|---|---|---|
+| `PORT` | Backend | Port number for Express server (defaults to `4000`) |
+| `FRONTEND_ORIGIN` | Backend | Allowed CORS origin (e.g. `https://your-frontend.onrender.com`) |
+| `GROQ_API_KEY` | Backend | API Key for Groq AI inference |
+| `TAVILY_API_KEY` | Backend | Optional API Key for live web search integration |
+| `NEXT_PUBLIC_API_URL` | Frontend | Base URL of deployed backend Express API |
 
 ---
 
