@@ -144,7 +144,7 @@ export default function Sidebar({ lectures, isOpen, onClose }: SidebarProps) {
           className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:text-brand-blue hover:bg-secondary transition"
         >
           <Terminal className="w-4 h-4 text-brand-blue" />
-          <span>Interactive Lab</span>
+          <span>API Playground</span>
         </Link>
         <Link
           href="/progress"

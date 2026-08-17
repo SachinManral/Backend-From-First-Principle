@@ -25,16 +25,16 @@ export default function GlobalPlaygroundPage() {
               <span>Full Interactive API Sandbox</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              Interactive Lab Console
+              API Playground & Sandbox
             </h1>
             <p className="text-xs md:text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-              Every live Express endpoint and SQLite query gathered in one place. Fire real HTTP requests, inspect wire byte formats, and observe on-disk database execution.
+              Execute live REST endpoints, inspect HTTP wire bytes, and observe database execution in real time.
             </p>
           </div>
 
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0d1428] border border-[#202e52] text-xs font-mono text-emerald-400 shrink-0 w-fit">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Port 4000 Express Socket</span>
+            <span>Live Server Connected</span>
           </div>
         </div>
 

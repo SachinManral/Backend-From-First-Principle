@@ -25,7 +25,7 @@ export default function ZonePlayground({ demoIds }: ZonePlaygroundProps) {
           <Terminal className="w-3.5 h-3.5" />
         </div>
         <span className="text-xs font-bold uppercase tracking-wider font-mono text-foreground">
-          Interactive API Lab ({validDemos.length} Live Endpoints)
+          API Sandbox ({validDemos.length} Live Endpoints)
         </span>
       </div>
 

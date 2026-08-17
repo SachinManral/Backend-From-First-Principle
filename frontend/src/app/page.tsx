@@ -149,7 +149,7 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-zinc-200 bg-[#0d1222]/80 hover:bg-[#141b30] border border-white/10 hover:border-brand-blue/50 shadow-lg backdrop-blur-xl transition duration-200 cursor-pointer"
               >
                 <Terminal className="w-4 h-4 text-brand-blue" />
-                <span>Interactive Lab</span>
+                <span>API Playground</span>
               </Link>
             </div>
 

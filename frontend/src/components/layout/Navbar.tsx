@@ -107,7 +107,7 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
                 : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
             }`}
           >
-            Interactive Lab
+            Playground
           </Link>
           <Link
             href="/progress"
