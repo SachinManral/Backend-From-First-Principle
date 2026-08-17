@@ -3,114 +3,243 @@
 @tailwind utilities;
 
 :root {
-  --background: #0C0C0C;
-  --foreground: #ffffff;
+  --font-primary: var(--font-plus-jakarta-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono-code: var(--font-fira-mono), "Ubuntu Mono", "JetBrains Mono", monospace;
+
+  /* Surfaces (Light) */
+  --background: #ffffff;
+  --background-80: #f4f4f5;
+  --secondary-background: #ebebeb;
+  --foreground: #09090b;
+  --foreground-overlay: rgba(10, 10, 10, 0.1);
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --popover: var(--background);
+  --popover-foreground: #09090b;
+  --border: #e4e4e7;
+  --border-secondary: #5172ec;
+  --input: #e4e4e7;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+
+  /* Accents */
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --secondary: #ebebeb;
+  --secondary-foreground: #18181b;
+  --tertiary: #fafafa;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+
+  /* Brand Colors */
+  --brand-color-blue: #3b5fe3;
+  --brand-color-purple: #7a3ddb;
+  --destructive: #ef4343;
+  --destructive-foreground: #f8fafc;
+  --medium: #efd543;
+  --success: #1d8124;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  /* Signature CodeHelp Dark Mode */
+  --background: #0f0f0f;
+  --background-80: #0f0f10;
+  --secondary-background: #141414;
+  --dialog-background: #1c1c1c;
+  --foreground: #fcfcfc;
+  --foreground-overlay: rgba(10, 10, 10, 0.5);
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #121316;
+  --accent-foreground: #fcfcfc;
+  --popover: #0f0f0f;
+  --popover-foreground: #fcfcfc;
+  --border: #27272a;
+  --border-secondary: #5172ec;
+  --input: #27272a;
+  --card: #09090b;
+  --card-foreground: #fcfcfc;
+
+  /* Brand Accents */
+  --primary: #fcfcfc;
+  --primary-foreground: #18181b;
+  --secondary: #1f1f1f;
+  --secondary-foreground: #fcfcfc;
+  --tertiary: #0d0d0d;
+
+  --brand-color-blue: #5c77db;
+  --brand-color-purple: #ac84eb;
+  --destructive: #fc4f4f;
+  --destructive-foreground: #f8fafc;
+  --medium: #bfab3b;
+  --success: #1d8124;
+  --ring: #d4d4d8;
+
+  --sidebar: #131213;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-border: #27272a;
 }
 
 body {
   color: var(--foreground);
   background-color: var(--background);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  font-family: var(--font-primary);
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 15% 15%, rgba(71, 33, 251, 0.09) 0%, transparent 45%),
-    radial-gradient(circle at 85% 65%, rgba(52, 226, 228, 0.07) 0%, transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(171, 29, 254, 0.05) 0%, transparent 40%);
+    radial-gradient(circle at 50% 0%, rgba(92, 119, 219, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 85% 30%, rgba(172, 132, 235, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 15% 70%, rgba(92, 119, 219, 0.04) 0%, transparent 45%);
   background-attachment: fixed;
 }
 
-/* Custom Sleek Scrollbar */
+/* CodeHelp Custom Slim Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0C0C0C;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #232328;
-  border-radius: 9999px;
+  background-color: #27272a;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #34e2e4;
+  background-color: #5c77db;
 }
 
-/* Quantango Glow Cards */
-.qt-card {
-  background: #141416;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 24px;
+* {
+  scroll-behavior: smooth;
+}
+
+/* CodeHelp Inset Top Shadow */
+.shadow-top {
+  box-shadow: inset 0 1px 0 0 rgba(161, 161, 170, 0.3);
+}
+
+/* CodeHelp Button Gradient Primary */
+.codehelp-gradient-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #ffffff;
+  background: linear-gradient(90deg, var(--brand-color-blue) 0%, var(--brand-color-purple) 100%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2), 0 4px 20px rgba(92, 119, 219, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.codehelp-gradient-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.3), 0 6px 25px rgba(172, 132, 235, 0.4);
+}
+
+/* CodeHelp Secondary Button */
+.codehelp-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--foreground);
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 0 rgba(161, 161, 170, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.codehelp-secondary-btn:hover {
+  background-color: var(--accent);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+/* CodeHelp Interactive Glow Card */
+.codehelp-glow-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 0 rgba(161, 161, 170, 0.15);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
-.qt-card:hover {
-  border-color: rgba(52, 226, 228, 0.35);
-  box-shadow: 0 10px 40px -10px rgba(71, 33, 251, 0.25);
+.codehelp-glow-card:hover {
+  border-color: rgba(92, 119, 219, 0.45);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 0 25px rgba(92, 119, 219, 0.15);
   transform: translateY(-2px);
 }
 
-/* Quantango Pill Label */
-.qt-pill {
+/* CodeHelp Pill Badge */
+.codehelp-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 16px;
+  padding: 5px 14px;
   border-radius: 9999px;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  background: rgba(20, 20, 22, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #34e2e4;
-}
-
-/* Quantango Button Primary */
-.qt-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 26px;
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 13px;
-  color: #ffffff;
-  background: linear-gradient(135deg, #34e2e4 0%, #4721fb 50%, #ab1dfe 100%);
-  box-shadow: 0 8px 30px rgba(71, 33, 251, 0.3);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.qt-btn-primary:hover {
-  opacity: 0.92;
-  box-shadow: 0 12px 40px rgba(52, 226, 228, 0.45);
-  transform: translateY(-1px);
-}
-
-/* Quantango Button Secondary */
-.qt-btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 22px;
-  border-radius: 9999px;
   font-weight: 600;
-  font-size: 13px;
-  color: #e4e4e7;
-  background: #141416;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.25s ease;
+  letter-spacing: 0.02em;
+  background-color: rgba(39, 39, 42, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  color: var(--foreground);
 }
 
-.qt-btn-secondary:hover {
-  background: #1c1c20;
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  transform: translateY(-1px);
+/* CodeHelp Gradient Heading */
+.codehelp-heading-gradient {
+  background-image: linear-gradient(to top, var(--primary), var(--muted-foreground));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+}
+
+/* CodeHelp Code Snippet Tag */
+code:not(pre code) {
+  font-family: var(--font-mono-code);
+  background-color: var(--secondary);
+  color: var(--brand-color-purple);
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+  font-size: 0.875em;
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
+/* Swiper / Marquee helpers */
+.marquee-container {
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  gap: 1.5rem;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* Backward compatibility aliases */
+.qt-card {
+  @apply codehelp-glow-card;
+}
+.qt-pill {
+  @apply codehelp-pill;
+}
+.qt-btn-primary {
+  @apply codehelp-gradient-btn;
+}
+.qt-btn-secondary {
+  @apply codehelp-secondary-btn;
 }
