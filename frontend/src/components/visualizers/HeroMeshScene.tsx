@@ -79,7 +79,7 @@ export default function HeroMeshScene() {
       const z = Math.sin(theta) * ringRadius;
       const y = Math.sin(theta * 3) * 60;
 
-      const colors = ['#34e2e4', '#4721fb', '#ab1dfe', '#00d084'];
+      const colors = ['#5c77db', '#ac84eb', '#5c77db', '#ac84eb'];
       const color = colors[i % colors.length];
 
       points.push({
@@ -98,10 +98,10 @@ export default function HeroMeshScene() {
 
     // Add central core nodes
     const coreNodes = [
-      { x: 0, y: 0, z: 0, color: '#34e2e4', radius: 9, label: 'TCP Kernel 0.0.0.0:4000', layer: 'gateway' as const },
-      { x: -90, y: -40, z: 80, color: '#4721fb', radius: 6, label: 'Worker Thread #1', layer: 'server' as const },
-      { x: 90, y: 40, z: -80, color: '#ab1dfe', radius: 6, label: 'Worker Thread #2', layer: 'server' as const },
-      { x: 0, y: 110, z: 40, color: '#00d084', radius: 7, label: 'Storage Cluster', layer: 'database' as const },
+      { x: 0, y: 0, z: 0, color: '#5c77db', radius: 9, label: 'TCP Kernel 0.0.0.0:4000', layer: 'gateway' as const },
+      { x: -90, y: -40, z: 80, color: '#ac84eb', radius: 6, label: 'Worker Thread #1', layer: 'server' as const },
+      { x: 90, y: 40, z: -80, color: '#5c77db', radius: 6, label: 'Worker Thread #2', layer: 'server' as const },
+      { x: 0, y: 110, z: 40, color: '#ac84eb', radius: 7, label: 'Storage Cluster', layer: 'database' as const },
     ];
 
     coreNodes.forEach(c => {
@@ -145,14 +145,15 @@ export default function HeroMeshScene() {
       angle += 0.008;
 
       // Dark background trail
-      ctx.fillStyle = '#0C0C0C';
+      ctx.fillStyle = '#0f0f0f';
       ctx.fillRect(0, 0, width, height);
+
 
       // Ambient radial background glow
       const grad = ctx.createRadialGradient(width / 2, height / 2, 20, width / 2, height / 2, 380);
-      grad.addColorStop(0, 'rgba(71, 33, 251, 0.16)');
-      grad.addColorStop(0.5, 'rgba(52, 226, 228, 0.06)');
-      grad.addColorStop(1, 'rgba(12, 12, 12, 0)');
+      grad.addColorStop(0, 'rgba(92, 119, 219, 0.16)');
+      grad.addColorStop(0.5, 'rgba(172, 132, 235, 0.06)');
+      grad.addColorStop(1, 'rgba(15, 15, 15, 0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, height);
 
@@ -202,7 +203,7 @@ export default function HeroMeshScene() {
 
           if (dist < 130) {
             const alpha = (1 - dist / 130) * 0.4 * p1.scale;
-            ctx.strokeStyle = `rgba(171, 29, 254, ${alpha})`;
+            ctx.strokeStyle = `rgba(172, 132, 235, ${alpha})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
@@ -290,22 +291,22 @@ export default function HeroMeshScene() {
 
       {/* Top Floating Badge */}
       <div className="absolute top-5 left-5 flex items-center gap-3 bg-surface/90 backdrop-blur-xl px-4 py-2 rounded-full border border-surface-border text-xs text-zinc-200 shadow-xl">
-        <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan animate-pulse"></span>
+        <span className="w-2.5 h-2.5 rounded-full bg-brand-blue animate-pulse"></span>
         <span className="font-semibold tracking-wide">3D Distributed System Architecture • Real-Time Packet Flow</span>
       </div>
 
       {/* Bottom Color Scheme Badges */}
       <div className="absolute bottom-5 right-5 flex items-center gap-3 bg-surface/90 backdrop-blur-xl px-4 py-2 rounded-2xl border border-surface-border text-xs shadow-xl">
-        <div className="flex items-center gap-1.5 text-brand-cyan font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan inline-block"></span>
+        <div className="flex items-center gap-1.5 text-brand-blue font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-brand-blue inline-block"></span>
           <span>Ingress</span>
         </div>
-        <div className="flex items-center gap-1.5 text-brand-indigo font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-brand-indigo inline-block"></span>
+        <div className="flex items-center gap-1.5 text-brand-purple font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-brand-purple inline-block"></span>
           <span>Workers</span>
         </div>
-        <div className="flex items-center gap-1.5 text-brand-violet font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-brand-violet inline-block"></span>
+        <div className="flex items-center gap-1.5 text-brand-purple font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-brand-purple inline-block"></span>
           <span>Compute</span>
         </div>
         <div className="flex items-center gap-1.5 text-brand-emerald font-medium">
