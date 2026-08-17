@@ -113,6 +113,26 @@ body {
   background-color: #5c77db;
 }
 
+/* Soft Faded Yellow Highlighter Selection */
+::selection {
+  background-color: rgba(234, 179, 8, 0.28);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: rgba(234, 179, 8, 0.28);
+  color: #ffffff;
+}
+
+/* Code block & terminal selection */
+pre ::selection,
+code ::selection,
+pre::selection,
+code::selection {
+  background-color: rgba(234, 179, 8, 0.32);
+  color: #ffffff;
+}
+
 * {
   scroll-behavior: smooth;
 }
