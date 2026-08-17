@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import HeroBackground from '@/components/visualizers/HeroBackground';
-import { ArrowRight, Terminal, BookOpen, Layers, ShieldCheck, Zap, Sparkles, Network, Database, Cpu, Flame, Check, HelpCircle, TerminalSquare, Globe } from 'lucide-react';
+import { ArrowRight, Terminal, BookOpen, Layers, Zap, FlaskConical, Box, Shield, Code, Globe, Cloud, Database } from 'lucide-react';
 
 export default function HomePage() {
   const stats = [
@@ -30,7 +30,7 @@ export default function HomePage() {
       number: 'Zero',
       title: 'Syntax Fatigue',
       subtitle: 'Concepts transfer to any language',
-      icon: Cpu,
+      icon: Terminal,
       color: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
     },
   ];
@@ -38,54 +38,78 @@ export default function HomePage() {
   return (
     <div className="space-y-16 sm:space-y-24 pb-20">
       
-      {/* 1. Hero Showcase with Freely Floating Tech Cards */}
-      <section className="relative min-h-[580px] sm:min-h-[640px] flex flex-col items-center justify-center text-center pt-6 sm:pt-12 pb-10">
+      {/* 1. Hero Showcase with Natural Freely Floating Spatial Elements */}
+      <section className="relative min-h-[580px] sm:min-h-[640px] flex flex-col items-center justify-center text-center pt-6 sm:pt-14 pb-8">
         <HeroBackground />
 
-        {/* Hero Central Wrapper with Floating Badges Attached */}
+        {/* Central Hero Container with Natural Floating Stickers */}
         <div className="relative w-full max-w-5xl mx-auto px-4 z-10 flex flex-col items-center">
           
-          {/* FLOATING CARD 1: Top-Left (Visible on LG screens) */}
-          <div className="hidden lg:block absolute -top-4 -left-12 animate-float-slow z-20 pointer-events-auto">
-            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-brand-blue/60 transition duration-300">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-indigo-600 p-0.5 shadow-md shadow-brand-blue/30 shrink-0 flex items-center justify-center">
+          {/* FLOATING CARD 1: Top-Left (Kernel Sockets) */}
+          <div className="hidden xl:block absolute -top-3 -left-10 animate-float-slow z-20 pointer-events-auto">
+            <div className="group flex items-start gap-3 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/80 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_20px_rgba(92,119,219,0.15)] hover:border-brand-blue/60 transition duration-300 -rotate-2 hover:rotate-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple p-0.5 shadow-md shadow-brand-blue/30 shrink-0 flex items-center justify-center">
                 <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
-                  <Network className="w-5 h-5 text-brand-blue" />
+                  <Zap className="w-5 h-5 text-brand-blue fill-brand-blue/20" />
                 </div>
               </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-white tracking-tight">
-                  TCP Wire Protocol
+                  Kernel Sockets
                 </div>
-                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
-                  Master raw \r\n byte streams behind HTTP.
+                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[145px] leading-tight font-normal">
+                  Understand the backbone of real-time systems.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* FLOATING CARD 2: Top-Right (Visible on LG screens) */}
-          <div className="hidden lg:block absolute -top-2 -right-12 animate-float-reverse z-20 pointer-events-auto">
-            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-brand-purple/60 transition duration-300">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-purple to-pink-500 p-0.5 shadow-md shadow-brand-purple/30 shrink-0 flex items-center justify-center">
+          {/* FLOATING CARD 2: Top-Right (HTTP Lifecycle + 3D Cloud) */}
+          <div className="hidden xl:block absolute -top-1 -right-10 animate-float-reverse z-20 pointer-events-auto">
+            {/* Small Floating 3D Cloud */}
+            <div className="absolute -top-5 -right-3 text-brand-purple animate-float-gentle">
+              <div className="p-1.5 rounded-xl bg-[#141a33]/90 border border-brand-purple/30 backdrop-blur-md shadow-lg shadow-brand-purple/20">
+                <Cloud className="w-3.5 h-3.5 text-brand-purple fill-brand-purple/30" />
+              </div>
+            </div>
+
+            <div className="group flex items-start gap-3 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/80 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_20px_rgba(172,132,235,0.15)] hover:border-brand-purple/60 transition duration-300 rotate-2 hover:rotate-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-purple to-indigo-500 p-0.5 shadow-md shadow-brand-purple/30 shrink-0 flex items-center justify-center">
                 <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
-                  <Layers className="w-5 h-5 text-brand-purple" />
+                  <Globe className="w-5 h-5 text-brand-purple" />
                 </div>
               </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-white tracking-tight">
-                  Zero Syntax Fatigue
+                  HTTP Lifecycle
                 </div>
-                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
-                  Concepts transfer 1:1 across Node, Go & Rust.
+                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[145px] leading-tight font-normal">
+                  See how a request travels end-to-end.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* FLOATING CARD 3: Bottom-Left (Visible on LG screens) */}
-          <div className="hidden lg:block absolute bottom-4 -left-16 animate-float-gentle z-20 pointer-events-auto">
-            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-emerald-500/60 transition duration-300">
+          {/* FLOATING ELEMENT 3: Bottom-Left (3D Isometric Database Cylinder + Terminal Badge) */}
+          <div className="hidden xl:block absolute bottom-6 -left-12 animate-float-gentle z-20 pointer-events-auto">
+            {/* Terminal Prompt Badge */}
+            <div className="absolute -top-5 left-8 px-2 py-0.5 rounded-md bg-[#090e1c] border border-cyan-400/40 shadow-lg text-[10px] font-mono text-cyan-300 font-bold -rotate-6">
+              &gt;_
+            </div>
+
+            {/* Glowing 3D Isometric Cylinder Database */}
+            <div className="w-14 h-16 relative flex flex-col items-center justify-center opacity-90 hover:opacity-100 transition duration-300 drop-shadow-[0_0_15px_rgba(92,119,219,0.4)]">
+              <div className="w-12 h-5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 border border-cyan-400/60 shadow-[0_0_15px_#5c77db] relative z-20" />
+              <div className="w-12 h-6 bg-gradient-to-b from-blue-700 via-indigo-900 to-[#0a1020] border-x border-cyan-400/40 -mt-2.5 relative z-10" />
+              <div className="w-12 h-5 rounded-full bg-indigo-950 border border-cyan-400/40 -mt-2.5 shadow-md relative z-10" />
+              <div className="w-12 h-6 bg-gradient-to-b from-blue-700 via-indigo-900 to-[#0a1020] border-x border-cyan-400/40 -mt-2.5 relative z-0" />
+              <div className="w-12 h-5 rounded-full bg-[#080d1a] border border-cyan-400/40 -mt-2.5 shadow-xl relative z-0" />
+            </div>
+          </div>
+
+          {/* FLOATING CARD 4: Bottom-Right (SQL Persistence) */}
+          <div className="hidden xl:block absolute bottom-4 -right-12 animate-float-slow z-20 pointer-events-auto">
+            <div className="group flex items-start gap-3 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/80 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_20px_rgba(16,185,129,0.15)] hover:border-emerald-500/60 transition duration-300 -rotate-1 hover:rotate-0">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 shadow-md shadow-emerald-500/30 shrink-0 flex items-center justify-center">
                 <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
                   <Database className="w-5 h-5 text-emerald-400" />
@@ -93,53 +117,35 @@ export default function HomePage() {
               </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-white tracking-tight">
-                  On-Disk SQL & WAL
+                  SQL Persistence
                 </div>
-                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
-                  ACID persistence, B-Trees & relations.
+                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[145px] leading-tight font-normal">
+                  Store data that scales. Query like a pro.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* FLOATING CARD 4: Bottom-Right (Visible on LG screens) */}
-          <div className="hidden lg:block absolute bottom-2 -right-16 animate-float-slow z-20 pointer-events-auto">
-            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-cyan-400/60 transition duration-300">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-500 p-0.5 shadow-md shadow-cyan-400/30 shrink-0 flex items-center justify-center">
-                <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
-                  <Terminal className="w-5 h-5 text-cyan-300" />
-                </div>
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-bold text-white tracking-tight">
-                  Live Interactive Lab
-                </div>
-                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
-                  Real HTTP requests & wire byte validation.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Hero Headline */}
-          <div className="space-y-6 max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
+          {/* Main Hero Typography & Call-to-Actions */}
+          <div className="space-y-5 max-w-2xl mx-auto">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] text-white">
               Master Backend <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
-                Engineering.
+                Architecture
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
-              Understand how distributed systems work beneath the frameworks. From raw TCP sockets and HTTP byte streams to persistent SQL databases and scalable architecture.
+            <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-lg mx-auto leading-relaxed font-normal">
+              Learn by building. Understand by doing.<br className="hidden sm:inline" />
+              From first principles to production systems.
             </p>
 
-            {/* Call-to-Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
               <Link
                 href="/lectures/01-roadmap"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold text-white bg-gradient-to-r from-brand-blue to-brand-purple hover:opacity-95 shadow-xl shadow-brand-blue/25 transition duration-200 cursor-pointer"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold text-white bg-gradient-to-r from-brand-blue to-brand-purple hover:opacity-95 shadow-xl shadow-brand-blue/30 hover:shadow-brand-purple/40 transition duration-200 cursor-pointer"
               >
                 <span>Explore</span>
                 <ArrowRight className="w-4 h-4" />
@@ -147,7 +153,7 @@ export default function HomePage() {
 
               <Link
                 href="/playground"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-zinc-200 bg-[#0d1222]/90 hover:bg-[#151c33] border border-[#243050] hover:border-brand-blue/50 shadow-lg backdrop-blur-md transition duration-200 cursor-pointer"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-zinc-200 bg-[#0d1222]/80 hover:bg-[#141b30] border border-white/10 hover:border-brand-blue/50 shadow-lg backdrop-blur-xl transition duration-200 cursor-pointer"
               >
                 <Terminal className="w-4 h-4 text-brand-blue" />
                 <span>Launch Interactive Lab</span>
@@ -157,27 +163,27 @@ export default function HomePage() {
 
         </div>
 
-        {/* 2. Feature Badges Pill Bar (Just above the Horizon Grid / Stats) */}
-        <div className="w-full max-w-3xl mx-auto mt-16 sm:mt-20 z-10 px-4">
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 py-3 px-6 rounded-full bg-[#0b1020]/90 border border-[#1e2a4a]/80 shadow-2xl backdrop-blur-xl text-xs text-zinc-300 font-medium">
-            <div className="flex items-center gap-1.5 text-zinc-300">
-              <Layers className="w-3.5 h-3.5 text-brand-purple" />
-              <span>3-Phase Mental Models</span>
+        {/* 2. Feature Badges Pill Bar (Clean single-line glass bar) */}
+        <div className="w-full max-w-3xl mx-auto mt-14 sm:mt-18 z-10 px-4">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-4 sm:gap-6 py-2.5 px-6 rounded-full bg-[#0b1020]/80 border border-white/10 shadow-2xl backdrop-blur-2xl text-xs text-zinc-300 font-medium">
+            <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
+              <FlaskConical className="w-3.5 h-3.5 text-brand-blue" />
+              <span>Hands-on Labs</span>
             </div>
             <span className="text-zinc-600 hidden sm:inline">•</span>
-            <div className="flex items-center gap-1.5 text-zinc-300">
-              <Network className="w-3.5 h-3.5 text-brand-blue" />
-              <span>Raw Sockets & Wire Protocol</span>
+            <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
+              <Box className="w-3.5 h-3.5 text-brand-purple" />
+              <span>Real World Concepts</span>
             </div>
             <span className="text-zinc-600 hidden sm:inline">•</span>
-            <div className="flex items-center gap-1.5 text-zinc-300">
-              <Database className="w-3.5 h-3.5 text-emerald-400" />
-              <span>SQLite WAL Disk Persistence</span>
+            <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
+              <Shield className="w-3.5 h-3.5 text-amber-400" />
+              <span>Production Ready</span>
             </div>
             <span className="text-zinc-600 hidden sm:inline">•</span>
-            <div className="flex items-center gap-1.5 text-zinc-300">
-              <TerminalSquare className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Live API Sandbox</span>
+            <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
+              <Code className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Open Source</span>
             </div>
           </div>
         </div>
@@ -191,7 +197,7 @@ export default function HomePage() {
             return (
               <div
                 key={idx}
-                className="p-6 rounded-2xl bg-[#090e1c]/90 border border-[#1b2644] shadow-xl backdrop-blur-md flex flex-col justify-between space-y-4 hover:border-brand-blue/50 transition duration-300 group"
+                className="p-6 rounded-2xl bg-[#090e1c]/80 border border-white/10 shadow-xl backdrop-blur-xl flex flex-col justify-between space-y-4 hover:border-brand-blue/50 transition duration-300 group"
               >
                 <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${st.color} group-hover:scale-110 transition`}>
                   <Icon className="w-5 h-5" />
@@ -225,7 +231,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 rounded-2xl bg-[#090e1c]/90 border border-[#1b2644] shadow-xl space-y-4 hover:border-brand-purple/50 transition duration-300">
+          <div className="p-8 rounded-2xl bg-[#090e1c]/80 border border-white/10 shadow-xl space-y-4 hover:border-brand-purple/50 transition duration-300">
             <div className="w-12 h-12 rounded-2xl bg-brand-purple/10 border border-brand-purple/30 flex items-center justify-center text-brand-purple">
               <BookOpen className="w-5 h-5" />
             </div>
@@ -235,9 +241,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="p-8 rounded-2xl bg-[#090e1c]/90 border border-[#1b2644] shadow-xl space-y-4 hover:border-brand-blue/50 transition duration-300">
+          <div className="p-8 rounded-2xl bg-[#090e1c]/80 border border-white/10 shadow-xl space-y-4 hover:border-brand-blue/50 transition duration-300">
             <div className="w-12 h-12 rounded-2xl bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-brand-blue">
-              <Cpu className="w-5 h-5" />
+              <Layers className="w-5 h-5" />
             </div>
             <h3 className="text-lg font-bold text-white">Phase 2: Build Real Mechanisms</h3>
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
@@ -245,7 +251,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="p-8 rounded-2xl bg-[#090e1c]/90 border border-[#1b2644] shadow-xl space-y-4 hover:border-emerald-500/50 transition duration-300">
+          <div className="p-8 rounded-2xl bg-[#090e1c]/80 border border-white/10 shadow-xl space-y-4 hover:border-emerald-500/50 transition duration-300">
             <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <Database className="w-5 h-5" />
             </div>
@@ -258,10 +264,9 @@ export default function HomePage() {
       </section>
 
       {/* 5. Why First Principles Matter Comparison Matrix */}
-      <section className="p-8 md:p-10 rounded-3xl bg-[#090e1c]/90 border border-[#1b2644] shadow-2xl space-y-8 max-w-6xl mx-auto">
+      <section className="p-8 md:p-10 rounded-3xl bg-[#090e1c]/80 border border-white/10 shadow-2xl space-y-8 max-w-6xl mx-auto">
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold mb-3">
-            <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
             <span>Methodology Comparison</span>
           </div>
           <h2 className="text-2xl font-extrabold text-white tracking-tight">
@@ -273,7 +278,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-2xl bg-[#0c1326]/80 border border-[#202c4c] space-y-3">
+          <div className="p-6 rounded-2xl bg-[#0c1326]/80 border border-white/10 space-y-3">
             <div className="text-xs font-mono font-bold text-rose-400 uppercase tracking-wider">
               Traditional Tutorial Roadmaps
             </div>
@@ -299,15 +304,15 @@ export default function HomePage() {
             </div>
             <ul className="space-y-2.5 text-xs text-zinc-200">
               <li className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span className="text-emerald-400 font-bold">✓</span>
                 <span>Understand OS sockets, file descriptors, and Libuv event loop threadpools.</span>
               </li>
               <li className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span className="text-emerald-400 font-bold">✓</span>
                 <span>Simulate and observe exact browser security preflights and header validations live.</span>
               </li>
               <li className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span className="text-emerald-400 font-bold">✓</span>
                 <span>Inspect exact Content-Length, chunked transfer encoding, and Brotli byte streams in real-time.</span>
               </li>
             </ul>
@@ -322,7 +327,7 @@ export default function HomePage() {
             Ready to dive into the architecture?
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 max-w-xl">
-            Start with Lecture 01: Complete 31-Milestone Roadmap or test live API endpoints in the interactive sandbox.
+            Start with the foundational roadmap or test live API endpoints in the interactive sandbox.
           </p>
         </div>
 
@@ -336,7 +341,7 @@ export default function HomePage() {
           </Link>
           <Link
             href="/playground"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-zinc-200 bg-[#0d1222]/90 hover:bg-[#151c33] border border-[#243050] hover:border-brand-blue/50 shadow-md backdrop-blur-md transition cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-zinc-200 bg-[#0d1222]/90 hover:bg-[#151c33] border border-white/10 hover:border-brand-blue/50 shadow-md backdrop-blur-md transition cursor-pointer"
           >
             <span>Live Lab Console</span>
           </Link>
