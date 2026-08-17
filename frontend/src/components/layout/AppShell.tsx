@@ -16,7 +16,10 @@ interface AppShellProps {
 export default function AppShell({ lectures, children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  
   const isLandingPage = pathname === '/';
+  const isLecturePage = pathname?.startsWith('/lectures');
+  const isChatPage = pathname === '/chat';
 
   return (
     <ProgressProvider>
@@ -25,30 +28,41 @@ export default function AppShell({ lectures, children }: AppShellProps) {
         <Navbar
           onToggleSidebar={() => setSidebarOpen(prev => !prev)}
           isSidebarOpen={sidebarOpen}
-          showSidebarToggle={!isLandingPage}
+          showSidebarToggle={isLecturePage}
         />
 
         {/* Content Container */}
-        <div className={`flex-1 flex ${!isLandingPage ? 'gap-6 lg:gap-8' : ''} max-w-7xl w-full mx-auto pt-20 sm:pt-24 px-3 sm:px-6`}>
-          {/* Sidebar (Desktop Sticky + Mobile Drawer) */}
-          {!isLandingPage && (
-            <Sidebar
-              lectures={lectures}
-              isOpen={sidebarOpen}
-              onClose={() => setSidebarOpen(false)}
-            />
-          )}
-
-          {/* Main Content Area */}
-          <main className="flex-1 min-w-0 pb-16">
-            <div className={isLandingPage ? 'w-full' : 'w-full max-w-4xl mx-auto'}>
-              {children}
-            </div>
+        {isChatPage ? (
+          // Dedicated Full-View for Chat Page
+          <main className="flex-1 w-full pt-16">
+            {children}
           </main>
-        </div>
+        ) : (
+          <div
+            className={`flex-1 flex ${
+              isLecturePage ? 'gap-6 lg:gap-8' : ''
+            } max-w-7xl w-full mx-auto pt-20 sm:pt-24 px-3 sm:px-6`}
+          >
+            {/* Sidebar (Desktop Sticky + Mobile Drawer) ONLY for Lecture Curriculum Pages */}
+            {isLecturePage && (
+              <Sidebar
+                lectures={lectures}
+                isOpen={sidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+              />
+            )}
 
-        {/* Platform Footer (Landing Page) */}
-        {isLandingPage && <Footer />}
+            {/* Main Content Area */}
+            <main className="flex-1 min-w-0 pb-16">
+              <div className={isLandingPage ? 'w-full' : 'w-full max-w-4xl mx-auto'}>
+                {children}
+              </div>
+            </main>
+          </div>
+        )}
+
+        {/* Platform Footer (Shown on landing page and overview pages, hidden on chat) */}
+        {!isChatPage && isLandingPage && <Footer />}
       </div>
     </ProgressProvider>
   );
