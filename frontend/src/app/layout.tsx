@@ -32,8 +32,8 @@ export default function RootLayout({
   const lectures = getAllLectures();
 
   return (
-    <html lang="en" className={`dark ${plusJakartaSans.variable} ${firaMono.variable}`}>
-      <body className="bg-background text-foreground font-sans antialiased selection:bg-brand-blue/25 selection:text-white">
+    <html lang="en" className={`dark ${plusJakartaSans.variable} ${firaMono.variable}`} style={{ colorScheme: 'dark' }}>
+      <body className="bg-background text-foreground font-sans antialiased">
         <AppShell lectures={lectures}>
           {children}
         </AppShell>

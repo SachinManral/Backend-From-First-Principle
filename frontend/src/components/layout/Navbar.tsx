@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Sun, Moon, Flame, Github } from 'lucide-react';
+import { Menu, X, Github } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/demos';
 import { useProgress } from '@/context/ProgressContext';
 
@@ -15,11 +15,15 @@ interface NavbarProps {
 
 export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarToggle = true }: NavbarProps) {
   const [apiOnline, setApiOnline] = useState<boolean | null>(null);
-  const [isDark, setIsDark] = useState<boolean>(true);
   const pathname = usePathname();
   const { completedSlugs } = useProgress();
 
   useEffect(() => {
+    // Ensure dark class is always active on html document
+    if (typeof document !== 'undefined' && !document.documentElement.classList.contains('dark')) {
+      document.documentElement.classList.add('dark');
+    }
+
     const checkApi = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/`, { cache: 'no-store' });
@@ -33,18 +37,6 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
     const interval = setInterval(checkApi, 10000);
     return () => clearInterval(interval);
   }, []);
-
-  const toggleTheme = () => {
-    setIsDark(prev => {
-      const next = !prev;
-      if (next) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      return next;
-    });
-  };
 
   return (
     <div className="fixed inset-x-0 top-3 md:top-4 z-50 w-full max-w-screen px-3 sm:px-6 pointer-events-none">
@@ -143,16 +135,6 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
               {apiOnline === true ? 'API Live' : apiOnline === false ? 'API Offline' : 'Connecting...'}
             </span>
           </div>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground border border-border transition cursor-pointer"
-            title="Toggle theme"
-            aria-label="Toggle theme"
-          >
-            {isDark ? <Sun className="w-3.5 h-3.5 text-brand-amber" /> : <Moon className="w-3.5 h-3.5 text-brand-blue" />}
-          </button>
 
           {/* GitHub Repository Link */}
           <a

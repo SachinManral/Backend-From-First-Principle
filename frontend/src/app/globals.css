@@ -6,80 +6,84 @@
   --font-primary: var(--font-plus-jakarta-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono-code: var(--font-fira-mono), "Ubuntu Mono", "JetBrains Mono", monospace;
 
-  /* Surfaces (Light) */
-  --background: #ffffff;
-  --background-80: #f4f4f5;
-  --secondary-background: #ebebeb;
-  --foreground: #09090b;
-  --foreground-overlay: rgba(10, 10, 10, 0.1);
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --popover: var(--background);
-  --popover-foreground: #09090b;
-  --border: #e4e4e7;
-  --border-secondary: #5172ec;
-  --input: #e4e4e7;
-  --card: #ffffff;
-  --card-foreground: #09090b;
+  /* Sleek Dark Theme (Default) */
+  --background: #0b0f19;
+  --background-80: #0e1424;
+  --secondary-background: #111827;
+  --dialog-background: #141c30;
+  --foreground: #fcfcfc;
+  --foreground-overlay: rgba(10, 10, 10, 0.5);
+  --muted: #1e2640;
+  --muted-foreground: #94a3b8;
+  --accent: #151d32;
+  --accent-foreground: #fcfcfc;
+  --popover: #0e1424;
+  --popover-foreground: #fcfcfc;
+  --border: #1e2640;
+  --border-secondary: #3b82f6;
+  --input: #1e2640;
+  --card: #0e1424;
+  --card-foreground: #fcfcfc;
 
-  /* Accents */
-  --primary: #18181b;
-  --primary-foreground: #fafafa;
-  --secondary: #ebebeb;
-  --secondary-foreground: #18181b;
-  --tertiary: #fafafa;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
+  /* Brand Accents */
+  --primary: #fcfcfc;
+  --primary-foreground: #0b0f19;
+  --secondary: #161f36;
+  --secondary-foreground: #fcfcfc;
+  --tertiary: #0a0d16;
 
-  /* Brand Colors */
-  --brand-color-blue: #3b5fe3;
-  --brand-color-purple: #7a3ddb;
-  --destructive: #ef4343;
+  --brand-color-blue: #3b82f6;
+  --brand-color-purple: #8b5cf6;
+  --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
-  --medium: #efd543;
-  --success: #1d8124;
+  --medium: #f59e0b;
+  --success: #10b981;
+  --ring: #3b82f6;
+
+  --sidebar: #0b0f19;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-border: #1e2640;
 
   --radius: 0.75rem;
 }
 
 .dark {
-  /* Signature CodeHelp Dark Mode */
-  --background: #0f0f0f;
-  --background-80: #0f0f10;
-  --secondary-background: #141414;
-  --dialog-background: #1c1c1c;
+  /* Enforce identical dark tokens */
+  --background: #0b0f19;
+  --background-80: #0e1424;
+  --secondary-background: #111827;
+  --dialog-background: #141c30;
   --foreground: #fcfcfc;
   --foreground-overlay: rgba(10, 10, 10, 0.5);
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #121316;
+  --muted: #1e2640;
+  --muted-foreground: #94a3b8;
+  --accent: #151d32;
   --accent-foreground: #fcfcfc;
-  --popover: #0f0f0f;
+  --popover: #0e1424;
   --popover-foreground: #fcfcfc;
-  --border: #27272a;
-  --border-secondary: #5172ec;
-  --input: #27272a;
-  --card: #09090b;
+  --border: #1e2640;
+  --border-secondary: #3b82f6;
+  --input: #1e2640;
+  --card: #0e1424;
   --card-foreground: #fcfcfc;
 
-  /* Brand Accents */
   --primary: #fcfcfc;
-  --primary-foreground: #18181b;
-  --secondary: #1f1f1f;
+  --primary-foreground: #0b0f19;
+  --secondary: #161f36;
   --secondary-foreground: #fcfcfc;
-  --tertiary: #0d0d0d;
+  --tertiary: #0a0d16;
 
-  --brand-color-blue: #5c77db;
-  --brand-color-purple: #ac84eb;
-  --destructive: #fc4f4f;
+  --brand-color-blue: #3b82f6;
+  --brand-color-purple: #8b5cf6;
+  --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
-  --medium: #bfab3b;
-  --success: #1d8124;
-  --ring: #d4d4d8;
+  --medium: #f59e0b;
+  --success: #10b981;
+  --ring: #3b82f6;
 
-  --sidebar: #131213;
+  --sidebar: #0b0f19;
   --sidebar-foreground: #f4f4f5;
-  --sidebar-border: #27272a;
+  --sidebar-border: #1e2640;
 }
 
 body {
