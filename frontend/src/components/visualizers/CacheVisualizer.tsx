@@ -74,7 +74,7 @@ export default function CacheVisualizer() {
           <button
             onClick={() => fetchResource(true)}
             disabled={isLoading}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-brand-cyan to-brand-indigo text-white text-xs font-bold transition hover:opacity-90 disabled:opacity-50 shadow-xl shadow-indigo-500/20"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-purple text-white text-xs font-bold transition hover:opacity-90 disabled:opacity-50 shadow-xl shadow-purple-500/20"
           >
             <Send className="w-3.5 h-3.5" />
             <span>{cachedEtag ? 'Revalidate with ETag' : 'Fetch First Time (200 OK)'}</span>
@@ -104,7 +104,7 @@ export default function CacheVisualizer() {
 
         {lastLatency !== null && (
           <div className="text-xs font-mono text-zinc-400">
-            Round-trip: <span className="text-brand-cyan font-bold">{lastLatency}ms</span>
+            Round-trip: <span className="text-brand-blue font-bold">{lastLatency}ms</span>
           </div>
         )}
       </div>
@@ -115,7 +115,7 @@ export default function CacheVisualizer() {
         <div className="p-6 rounded-3xl bg-surface border border-surface-border shadow-2xl space-y-4 relative overflow-hidden">
           <div className="flex items-center justify-between pb-3 border-b border-surface-border">
             <div className="text-xs font-bold text-white flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan animate-pulse"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-brand-blue animate-pulse"></span>
               <span>Browser Cache Memory</span>
             </div>
             <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-background border border-surface-border text-zinc-400">
@@ -125,7 +125,7 @@ export default function CacheVisualizer() {
 
           <div className="space-y-2 text-xs font-mono">
             <div className="text-zinc-400">Stored ETag Token:</div>
-            <div className="p-3 rounded-xl bg-background border border-surface-border text-brand-violet truncate">
+            <div className="p-3 rounded-xl bg-background border border-surface-border text-brand-purple truncate">
               {cachedEtag ? cachedEtag : '<No ETag stored yet>'}
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function CacheVisualizer() {
               className={`p-4 rounded-2xl border text-xs font-mono ${
                 transferType === '304_CACHE_HIT'
                   ? 'bg-brand-emerald/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-brand-indigo/10 border-indigo-500/30 text-indigo-300'
+                  : 'bg-brand-purple/10 border-purple-500/30 text-indigo-300'
               }`}
             >
               <div className="font-bold flex items-center gap-2 mb-1">
@@ -167,7 +167,7 @@ export default function CacheVisualizer() {
                 className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full border ${
                   lastStatusCode === 304
                     ? 'bg-brand-emerald/10 text-brand-emerald border-emerald-500/30'
-                    : 'bg-brand-cyan/10 text-brand-cyan border-cyan-500/30'
+                    : 'bg-brand-blue/10 text-brand-blue border-blue-500/30'
                 }`}
               >
                 HTTP {lastStatusCode}
