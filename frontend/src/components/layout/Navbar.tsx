@@ -62,18 +62,17 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
           )}
 
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple p-0.5 shadow-md shadow-brand-blue/20 group-hover:scale-105 transition">
-              <div className="w-full h-full bg-card rounded-[10px] flex items-center justify-center">
-                <Flame className="w-4 h-4 text-brand-purple fill-brand-purple animate-sparkle-pulse" />
-              </div>
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-blue/20 to-brand-purple/20 border border-brand-blue/40 shadow-md shadow-brand-blue/15 group-hover:scale-105 group-hover:border-brand-blue transition">
+              <svg className="w-4 h-4 text-brand-blue group-hover:text-cyan-300 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                <path d="M2 17L12 22L22 17" />
+                <path d="M2 12L12 17L22 12" />
+              </svg>
             </div>
-            <div className="flex flex-col">
-              <div className="text-sm font-bold tracking-tight text-foreground flex items-center gap-1.5">
-                <span>Backend</span>
-                <span className="text-[10px] font-mono font-semibold px-2 py-0.2 rounded-full bg-secondary border border-border text-brand-blue">
-                  FIRST PRINCIPLES
-                </span>
-              </div>
+            <div className="flex items-center gap-1.5 font-sans">
+              <span className="text-sm sm:text-base font-bold text-foreground tracking-tight">
+                Backend <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-purple font-extrabold">First Principles</span>
+              </span>
             </div>
           </Link>
         </div>
