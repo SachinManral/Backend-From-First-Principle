@@ -67,7 +67,7 @@ function renderFormattedText(text: string): React.ReactNode {
 
 export default function ZoneNotes({ lecture }: ZoneNotesProps) {
   const [copiedIdx, setCopiedIdx] = useState<string | null>(null);
-  const [activeTabs, setActiveTabs] = useState<Record<number, number>>({});
+  const [activeTabs, setActiveTabs] = useState<Record<string, number>>({});
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -93,9 +93,9 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
               <div key={pIdx} className="space-y-2">
                 <h3 className="text-base md:text-lg font-bold text-white flex items-center gap-2">
                   <span className="text-brand-blue font-mono">{pt.number || pIdx + 1}.</span>
-                  <span>{renderFormattedText(pt.title)}</span>
+                  <span>{pt.title}</span>
                 </h3>
-                <p className="text-sm md:text-base text-zinc-300 leading-relaxed pl-6">
+                <p className="text-xs md:text-sm text-zinc-300 leading-relaxed font-normal pl-6">
                   {renderFormattedText(pt.text)}
                 </p>
                 {pt.code && (
@@ -178,9 +178,8 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
 
       case 'code':
         const tabs = block.tabs || [{ label: block.language || 'code', code: block.code }];
-        const currentTabIdx = activeTabs[idx] || 0;
+        const currentTabIdx = activeTabs[blockKey] || 0;
         const currentCode = tabs[currentTabIdx]?.code || block.code;
-        const codeLines = currentCode.split('\n');
 
         return (
           <div key={idx} className="my-5 rounded-2xl bg-[#090d16] border border-[#1e2640] overflow-hidden shadow-xl">
@@ -198,7 +197,7 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
                     {tabs.map((tab, tIdx) => (
                       <button
                         key={tIdx}
-                        onClick={() => setActiveTabs(prev => ({ ...prev, [idx]: tIdx }))}
+                        onClick={() => setActiveTabs(prev => ({ ...prev, [blockKey]: tIdx }))}
                         className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition cursor-pointer ${
                           currentTabIdx === tIdx
                             ? 'bg-[#1e2640] text-white font-bold'

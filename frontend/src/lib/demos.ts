@@ -497,8 +497,36 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     defaultBody: {
       userId: "usr_attacker_spoof_target_victim"
     }
+  },
+  {
+    id: 'apiDesignCrud',
+    title: '26. REST CRUD with Sane Defaults, Pagination & Sorting',
+    category: 'API Design',
+    method: 'GET',
+    path: '/api/demo/api-design/projects?page=1&limit=2&status=active&sort=name-asc',
+    description: 'Demonstrates professional REST resource collections (/projects) with automatic fallback sane defaults (page=1, limit=10), status filtering, and sorting.',
+    conceptNote: 'Proves how plural nouns, query parameter pagination, and sane defaults make public APIs predictable and stable.',
+    defaultHeaders: {
+      'Accept': 'application/json'
+    }
+  },
+  {
+    id: 'apiDesignCustomAction',
+    title: '27. Non-CRUD Custom Action & PUT vs PATCH Semantics',
+    category: 'API Design',
+    method: 'POST',
+    path: '/api/demo/api-design/projects/proj_alpha_01/clone',
+    description: 'Executes a custom business action (POST /projects/:id/clone) that falls outside standard CRUD, creating a duplicated resource draft.',
+    conceptNote: 'Demonstrates how to cleanly design custom non-CRUD operations using explicit action verbs on resource sub-paths.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      newName: "Cloned Distributed Sockets Gateway (v2)"
+    }
   }
 ];
+
 
 export function getDemoById(id: string): DemoEndpoint | undefined {
   return DEMO_CATALOG.find(d => d.id === id);

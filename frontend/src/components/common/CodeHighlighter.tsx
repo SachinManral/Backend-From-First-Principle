@@ -6,11 +6,15 @@ interface CodeHighlighterProps {
 }
 
 export default function CodeHighlighter({ code, language = 'typescript' }: CodeHighlighterProps) {
-  const lines = code.split('\n');
+  const lines = code ? code.split('\n') : [];
 
   const highlightLine = (line: string): React.ReactNode[] => {
+    if (!line) {
+      return [<span key="empty" className="text-zinc-500 font-mono"> </span>];
+    }
+
     // Regular expression matching comments, strings, keywords, types, numbers, functions
-    const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\b(?:import|export|from|const|let|var|function|return|if|else|switch|case|default|break|async|await|try|catch|finally|throw|class|extends|new|this|typeof|instanceof|interface|type|enum|as|pub|fn|struct|impl|use|mut|let|match|package|func|go|defer|select|range)\b|\b(?:string|number|boolean|any|void|null|undefined|never|unknown|Promise|Array|Record|int|int64|float64|bool|byte|error|u8|u16|u32|u64|i8|i16|i32|i64|usize|isize|String|Option|Result|Vec|StatusCode|Json|Extension)\b|\b\d+(?:\.\d+)?\b|\b[A-Za-z0-9_$]+(?=\())/g;
+    const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\b(?:import|export|from|const|let|var|function|return|if|else|switch|case|default|break|async|await|try|catch|finally|throw|class|extends|new|this|typeof|instanceof|interface|type|enum|as|pub|fn|struct|impl|use|mut|let|match|package|func|go|defer|select|range)\b|\b(?:string|number|boolean|any|void|null|undefined|never|unknown|Promise|Array|Record|int|int64|float64|bool|byte|error|u8|u16|u32|u64|i8|i16|i32|i64|usize|isize|String|Option|Result|Vec|StatusCode|Json|Extension|Response|Request|NextFunction)\b|\b\d+(?:\.\d+)?\b|\b[A-Za-z0-9_$]+(?=\())/g;
 
     const nodes: React.ReactNode[] = [];
     let lastIndex = 0;
@@ -60,7 +64,7 @@ export default function CodeHighlighter({ code, language = 'typescript' }: CodeH
           </span>
         );
       } else if (
-        /^(string|number|boolean|any|void|null|undefined|never|unknown|Promise|Array|Record|int|int64|float64|bool|byte|error|u8|u16|u32|u64|i8|i16|i32|i64|usize|isize|String|Option|Result|Vec|StatusCode|Json|Extension)$/.test(
+        /^(string|number|boolean|any|void|null|undefined|never|unknown|Promise|Array|Record|int|int64|float64|bool|byte|error|u8|u16|u32|u64|i8|i16|i32|i64|usize|isize|String|Option|Result|Vec|StatusCode|Json|Extension|Response|Request|NextFunction)$/.test(
           matchText
         )
       ) {
@@ -102,19 +106,20 @@ export default function CodeHighlighter({ code, language = 'typescript' }: CodeH
   };
 
   return (
-    <pre className="overflow-x-auto flex-1 font-mono text-[12px] sm:text-[13px] leading-relaxed select-text">
-      <code>
-        {lines.map((line, lIdx) => (
-          <div key={lIdx} className="table-row">
-            <span className="table-cell select-none text-zinc-600 text-right pr-4 font-mono w-8 shrink-0">
-              {lIdx + 1}
-            </span>
-            <span className="table-cell font-mono whitespace-pre">
-              {highlightLine(line)}
-            </span>
-          </div>
-        ))}
-      </code>
-    </pre>
+    <div className="w-full font-mono text-[12px] sm:text-[13px] leading-6 select-text overflow-x-auto py-1">
+      {lines.map((line, lIdx) => (
+        <div
+          key={lIdx}
+          className="flex items-baseline hover:bg-[#131b2e]/60 px-2 py-0.5 rounded transition group min-w-fit"
+        >
+          <span className="select-none text-zinc-600 group-hover:text-zinc-400 text-right pr-4 font-mono text-xs w-9 shrink-0 font-medium">
+            {lIdx + 1}
+          </span>
+          <span className="font-mono whitespace-pre text-zinc-200">
+            {highlightLine(line)}
+          </span>
+        </div>
+      ))}
+    </div>
   );
 }
