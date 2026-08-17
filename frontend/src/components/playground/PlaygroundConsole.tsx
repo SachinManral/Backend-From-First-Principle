@@ -41,6 +41,23 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
   const [streamEvents, setStreamEvents] = useState<Array<{ step?: number; message?: string; raw: string; time: string }>>([]);
   const [isStreamingActive, setIsStreamingActive] = useState<boolean>(false);
 
+  // Sync console state whenever selected demo changes
+  useEffect(() => {
+    setMethod(demo.method);
+    setUrlPath(demo.path);
+    setHeaders(demo.defaultHeaders || {});
+    setBodyText(demo.defaultBody ? JSON.stringify(demo.defaultBody, null, 2) : '');
+    setResponseStatus(null);
+    setResponseData(null);
+    setResponseRawText('');
+    setStreamEvents([]);
+    const initial: Record<string, string> = {};
+    demo.customControls?.forEach(c => {
+      initial[c.key] = c.defaultValue;
+    });
+    setControlValues(initial);
+  }, [demo]);
+
   // Update path/headers when custom controls change
   useEffect(() => {
     if (demo.id === 'status' && controlValues.code) {
@@ -345,15 +362,63 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
 
       {/* Body Input Editor if method allows */}
       {['POST', 'PUT', 'PATCH'].includes(method) && (
-        <div className="space-y-1.5">
-          <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
-            Request Body (JSON Payload):
+        <div className="space-y-2 rounded-xl bg-[#090d16] border border-[#1e2640] p-3 shadow-inner">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold text-zinc-300 font-mono tracking-wide">
+                Request Body (JSON Payload)
+              </span>
+              {(() => {
+                try {
+                  if (bodyText.trim()) JSON.parse(bodyText);
+                  return (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      Valid JSON
+                    </span>
+                  );
+                } catch {
+                  return (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                      Syntax Error
+                    </span>
+                  );
+                }
+              })()}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    const parsed = JSON.parse(bodyText);
+                    setBodyText(JSON.stringify(parsed, null, 2));
+                  } catch {}
+                }}
+                className="px-2.5 py-1 rounded-md bg-[#131b2e] hover:bg-[#1c2742] text-[11px] font-mono text-zinc-300 hover:text-white border border-[#223050] transition cursor-pointer"
+              >
+                Format JSON
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setBodyText(demo.defaultBody ? JSON.stringify(demo.defaultBody, null, 2) : '');
+                }}
+                className="px-2.5 py-1 rounded-md bg-[#131b2e] hover:bg-[#1c2742] text-[11px] font-mono text-zinc-400 hover:text-white border border-[#223050] transition cursor-pointer"
+              >
+                Reset Default
+              </button>
+            </div>
           </div>
+
           <textarea
             value={bodyText}
             onChange={(e) => setBodyText(e.target.value)}
-            rows={3}
-            className="w-full p-3 bg-[#060a14] border border-[#1b2644] rounded-xl font-mono text-xs text-emerald-400 focus:outline-none focus:border-brand-blue/60 transition"
+            rows={6}
+            spellCheck={false}
+            className="w-full p-3 bg-[#050811] border border-[#1b2644] rounded-lg font-mono text-xs text-emerald-400 focus:outline-none focus:border-brand-blue/60 transition resize-y min-h-[120px] leading-relaxed shadow-inner"
+            placeholder="{ ... }"
           />
         </div>
       )}
