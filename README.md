@@ -1,163 +1,125 @@
-# 🚀 Backend, From First Principles
+<div align="center">
 
-> An open-source, interactive learning platform and real-time backend lab for mastering backend engineering from the ground up, based on **Sriniously's** *"Backend Engineering — First Principles"* series.
+# Backend, From First Principles
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org)
-[![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg)](https://nextjs.org)
-[![Express](https://img.shields.io/badge/Express-4.19-lightgrey.svg)](https://expressjs.com)
-[![SQLite](https://img.shields.io/badge/SQLite-WAL_Mode-003B57.svg)](https://sqlite.org)
+An open-source interactive learning platform and real-time backend lab designed to teach core backend engineering concepts from first principles.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg?logo=next.js)](https://nextjs.org)
+[![Express](https://img.shields.io/badge/Express-4.19-lightgrey.svg?logo=express)](https://expressjs.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg?logo=typescript)](https://www.typescriptlang.org)
+[![SQLite](https://img.shields.io/badge/SQLite-WAL_Mode-003B57.svg?logo=sqlite)](https://sqlite.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
----
-
-## 🎯 Purpose & Philosophy
-
-Most backend tutorials jump straight to frameworks, ORMs, and cloud tools without explaining **why** protocols and databases were designed the way they are. 
-
-This repository is built on **First Principles**:
-* **Language-Agnostic Understanding**: Understanding raw HTTP wire bytes, TCP sockets, and serialization before choosing Node.js, Go, or Rust.
-* **Hands-on Verification**: Every theoretical concept comes with a **live, executable Express endpoint** and on-disk SQLite query.
-* **Open Source & Community-Driven**: Built for students, self-taught engineers, and developers preparing for system design interviews to learn, fork, experiment, and contribute back.
+</div>
 
 ---
 
-## ⚡ Quick Start (Run Locally)
+## 📌 Overview
+
+**Backend, From First Principles** bridges the gap between high-level web frameworks and underlying systems engineering. Rather than treating backend infrastructure as a black box, this platform breaks down how requests travel across networks, how protocols structure data over the wire, and how databases persist state.
+
+Inspired by Sriniously's *"Backend Engineering — First Principles"* series, every lecture includes:
+- **Foundational Theory**: Protocol mechanics, RFC standards, and architectural trade-offs.
+- **Language-Agnostic Implementations**: Code examples in TypeScript, Go, and Rust.
+- **Live Interactive Sandbox**: Real-time Express endpoints and SQLite operations executable directly from the browser.
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: [Next.js 14](https://nextjs.org) (App Router, Server & Client Components)
+- **Language**: [TypeScript](https://www.typescriptlang.org)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com) (Custom dark design system)
+- **Icons**: [Lucide React](https://lucide.dev)
+
+### Backend
+- **Server**: [Express](https://expressjs.com) on Node.js
+- **Language**: [TypeScript](https://www.typescriptlang.org)
+- **Database**: [SQLite](https://sqlite.org) (`better-sqlite3` with Write-Ahead Logging)
+- **Security & Crypto**: Native Node.js `crypto` (HMAC-SHA256, timing attack mitigations)
+
+---
+
+## ⚡ Quick Start
 
 ### Prerequisites
-* **Node.js** v18.0.0 or higher
-* **npm** or **pnpm** / **yarn**
+- [Node.js](https://nodejs.org) (v18.0.0 or higher)
+- [npm](https://www.npmjs.com) (or `pnpm` / `yarn`)
 
-### Option A: Run Full Stack (Frontend + Backend Together)
+### 1. Clone the Repository
 ```bash
-# 1. Clone the repository
 git clone https://github.com/SachinManral/Backend-From-First-Principle.git
 cd Backend-From-First-Principle
+```
 
-# 2. Install root dependencies
+### 2. Install Dependencies
+```bash
 npm install
+```
 
-# 3. Start both dev servers concurrently
+### 3. Run Development Servers
+Start both the Next.js frontend and Express backend concurrently:
+```bash
 npm run dev
 ```
 
 * **Frontend Web App**: [http://localhost:3000](http://localhost:3000)
-* **Backend Express API**: [http://localhost:4000](http://localhost:4000)
+* **Backend API Server**: [http://localhost:4000](http://localhost:4000)
 
 ---
 
-### Option B: Run Standalone Services
-
-#### 1. Start the Backend API (Port 4000)
-```bash
-cd backend
-npm install
-npm run dev
-```
-* The SQLite database will automatically initialize in `backend/data/dev.db` with WAL (Write-Ahead Logging) enabled.
-
-#### 2. Start the Frontend Next.js App (Port 3000)
-```bash
-cd frontend
-npm install
-npm run dev
-```
-* Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 🏗️ Architecture & Technical Stack
+## 📂 Project Structure
 
 ```
 Backend-From-First-Principle/
-├── backend/                  # Standalone Express + TypeScript API (Port 4000)
-│   ├── data/                 # SQLite Database (dev.db in WAL mode)
+├── backend/
+│   ├── data/                 # SQLite database storage (dev.db in WAL mode)
 │   ├── src/
-│   │   ├── db/               # SQLite schema & database connection
+│   │   ├── db/               # SQLite database client and schema definitions
 │   │   ├── routes/
-│   │   │   ├── demos/        # Live interactive demo endpoints (Auth, Routing, CORS, etc.)
-│   │   │   ├── deviceState.ts# 1-Like-per-device & anonymous progress synchronization
-│   │   │   └── postman.ts    # Dynamic Postman collection export endpoint
-│   │   └── index.ts          # Server entry point
+│   │   │   ├── demos/        # Interactive demo routers (Auth, Routing, CORS, etc.)
+│   │   │   ├── deviceState.ts# Anonymous device progress & likes sync
+│   │   │   └── postman.ts    # Dynamic Postman collection exporter
+│   │   └── index.ts          # Express application entry point
 │   └── package.json
 │
-├── frontend/                 # Standalone Next.js 14 App (Port 3000)
+├── frontend/
 │   ├── content/
-│   │   └── lectures/         # manifest.json (Single source of truth for lectures)
+│   │   └── lectures/         # manifest.json (Lecture notes, code blocks, takeaways)
 │   ├── src/
-│   │   ├── app/              # Next.js App Router pages (/, /lectures/[slug], /playground, /progress)
-│   │   ├── components/       # Reusable UI, Visualizers, and Consoles
-│   │   ├── context/          # ProgressContext (Local + SQLite device sync)
-│   │   └── lib/              # Demos catalog, types, and helper utilities
+│   │   ├── app/              # Next.js App Router routes & layouts
+│   │   ├── components/       # Reusable UI components, visualizers & sandboxes
+│   │   ├── context/          # Global application state (ProgressContext)
+│   │   └── lib/              # Demos catalog, helper utilities, and TypeScript types
 │   └── package.json
 │
-└── README.md
+├── CONTRIBUTING.md           # Contribution guide for students & developers
+├── LICENSE                   # MIT License
+└── package.json              # Root workspace management
 ```
-
-### Key Engineering Features:
-1. **Per-Device Likes & Anonymous Progress**:
-   * Uses persistent UUIDs stored in `localStorage` without requiring user accounts or PII.
-   * Guaranteed **1-like-per-device** enforced by SQLite composite primary keys (`PRIMARY KEY (device_id, target_id)`).
-   * Background polling synchronizes live community counts in real time.
-2. **Interactive API Sandbox (`/playground`)**:
-   * 21+ executable endpoints simulating CORS preflight, idempotency checks, JWT signing, and RBAC guards.
-   * Generates copyable, production-ready `cURL` commands for every endpoint.
-3. **Auto-Complete Navigation**:
-   * Moving to the next lesson automatically ticks the previous lecture as completed.
 
 ---
 
-## 🤝 How to Contribute (Student & Developer Guide)
+## 💻 Available Scripts
 
-This is an **open-source educational project**, and contributions from students and engineers around the world are warmly welcomed!
+| Command | Description |
+|---|---|
+| `npm run dev` | Starts both backend (`:4000`) and frontend (`:3000`) concurrently |
+| `npm run dev:backend` | Starts only the Express backend development server |
+| `npm run dev:frontend` | Starts only the Next.js frontend development server |
+| `npm run build` | Builds both backend and frontend for production |
+| `npm run install:all` | Installs dependencies across both packages |
 
-### Ways You Can Contribute:
-* 📝 **Expand Lecture Notes**: Improve explanations, add diagrams, or clarify complex concepts in `frontend/content/lectures/manifest.json`.
-* 💻 **Add Code Snippets**: Add equivalent snippets in other backend languages (Python, Java, Rust, Go, C#).
-* 🧪 **Build New Playground Demos**: Create new interactive demo routes in `backend/src/routes/demos/` and register them in `frontend/src/lib/demos.ts`.
-* 🐛 **Report or Fix Bugs**: Open an issue or fix UI/API bugs across the platform.
+---
 
-### Step-by-Step Contribution Workflow:
-1. **Fork** the repository to your GitHub account.
-2. **Clone** your fork locally:
-   ```bash
-   git clone https://github.com/<your-username>/Backend-From-First-Principle.git
-   cd Backend-From-First-Principle
-   ```
-3. **Create a Feature Branch**:
-   ```bash
-   git checkout -b feature/lecture-notes-refinement
-   ```
-4. **Make Your Changes & Test Locally**:
-   * Ensure both frontend (`http://localhost:3000`) and backend (`http://localhost:4000`) build with zero errors:
-   ```bash
-   # In frontend directory
-   npm run build
-   
-   # In backend directory
-   npm run build
-   ```
-5. **Commit Your Changes**:
-   ```bash
-   git commit -m "docs: expand database indexing notes in lecture 8"
-   ```
-6. **Push to Your Fork & Open a Pull Request (PR)**:
-   ```bash
-   git push origin feature/lecture-notes-refinement
-   ```
-   * Open a PR against the `main` branch with a clear summary of what you improved!
+## 🤝 Contributing
+
+Contributions are welcome from students and developers of all skill levels. Whether you want to improve lecture notes, add multi-language code snippets (Go, Rust, Python), or build new backend sandbox endpoints, check out the [Contributing Guide](CONTRIBUTING.md) to get started.
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
----
-
-## ⭐ Support & Community
-
-If you found this learning platform helpful:
-* Star ⭐ the repository on GitHub!
-* Share it with fellow developers and computer science students.
-* Check out [Sriniously's YouTube Channel](https://www.youtube.com/@sriniously) for the complete video series.
+This project is licensed under the [MIT License](LICENSE).

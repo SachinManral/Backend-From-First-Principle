@@ -1,96 +1,111 @@
 # 🤝 Contributing to Backend, From First Principles
 
-Thank you for your interest in contributing to **Backend, From First Principles**! This project is an open-source educational platform designed to make backend engineering intuitive and accessible to everyone.
+Thank you for your interest in contributing! **Backend, From First Principles** is an open-source educational platform designed to make backend engineering intuitive, deep, and accessible to everyone.
 
-Whether you're fixing a typo, adding multi-language code snippets (Go, Rust, Python, Java), expanding lecture notes, or building interactive demo endpoints — your help is greatly appreciated.
+We welcome contributions of all kinds — from correcting typos and refining notes to adding new multi-language code snippets and building interactive demo endpoints.
 
 ---
 
-## 📋 Code of Conduct
+## 🧭 Code of Conduct
 
-* Be respectful, welcoming, and inclusive to everyone.
-* Focus on constructive and clear feedback during PR reviews.
-* Keep educational clarity as the top priority.
+We are committed to providing a welcoming, inclusive, and harassment-free environment. Please treat all contributors with respect and maintain a constructive, educational focus in all discussions and pull request reviews.
 
 ---
 
 ## 🛠️ Local Development Setup
 
-### 1. Fork and Clone
+### 1. Prerequisites
+Ensure you have the following installed on your machine:
+* [Node.js](https://nodejs.org) (v18.0.0 or higher)
+* [Git](https://git-scm.com)
+* [npm](https://www.npmjs.com) (or `pnpm` / `yarn`)
+
+### 2. Fork & Clone
+1. Fork the repository to your own GitHub account.
+2. Clone your fork locally:
+   ```bash
+   git clone https://github.com/<your-username>/Backend-From-First-Principle.git
+   cd Backend-From-First-Principle
+   ```
+
+### 3. Install Dependencies
+Install all root, frontend, and backend dependencies:
 ```bash
-git clone https://github.com/<your-username>/Backend-From-First-Principle.git
-cd Backend-From-First-Principle
+npm run install:all
 ```
 
-### 2. Install Dependencies
-```bash
-# In the root directory (runs npm install for both packages)
-npm install
-```
-
-### 3. Run Development Servers
+### 4. Run Development Servers
+Start both the frontend and backend servers concurrently:
 ```bash
 npm run dev
 ```
-* **Frontend Next.js App**: `http://localhost:3000`
-* **Backend Express Server**: `http://localhost:4000`
+
+* **Frontend**: [http://localhost:3000](http://localhost:3000)
+* **Backend**: [http://localhost:4000](http://localhost:4000)
 
 ---
 
-## 📂 Project Structure
+## 💡 Ways to Contribute
 
-```
-├── backend/
-│   ├── src/
-│   │   ├── routes/demos/     # Express route handlers for interactive sandbox
-│   │   ├── db/               # SQLite database client & schema
-│   │   └── index.ts          # Server entry point
-│   └── data/                 # Local dev.db (SQLite database)
-│
-├── frontend/
-│   ├── content/lectures/     # manifest.json (Lecture curriculum & notes)
-│   ├── src/
-│   │   ├── app/              # Next.js App Router pages
-│   │   ├── components/       # UI components & interactive consoles
-│   │   ├── context/          # State management (Likes, Progress)
-│   │   └── lib/demos.ts      # API playground catalog
-```
-
----
-
-## 💡 How to Contribute
-
-### 1. Adding or Refining Lecture Notes
-All lecture curriculum content is located in `frontend/content/lectures/manifest.json`.
-* You can add missing sections, refine code blocks, or add self-check reflection questions.
-* Ensure code snippets use clear syntax highlighting and concise annotations.
+### 1. Refining Lecture Notes
+All lecture curriculum content is located in [`frontend/content/lectures/manifest.json`](frontend/content/lectures/manifest.json).
+* Clarify explanations or add architectural mental models.
+* Add self-check reflection questions for students.
+* Ensure all technical explanations adhere to first principles.
 
 ### 2. Adding Multi-Language Code Snippets
-We aim to show first principles across multiple backend languages (e.g. Node.js, Go, Rust, Python):
+We aim to demonstrate concepts across multiple systems languages (e.g. Node.js/TypeScript, Go, Rust, Python, Java):
 * In `manifest.json`, you can expand the `tabs` array of any `code` block to include additional language implementations.
 
-### 3. Adding New Interactive Demo Endpoints
-1. Create a new route file in `backend/src/routes/demos/<feature>.ts`.
-2. Mount the router in `backend/src/index.ts` under `/api/demo/<feature>`.
-3. Register the endpoint configuration in `frontend/src/lib/demos.ts`.
+### 3. Building Interactive Sandbox Demos
+1. Create a new route handler in [`backend/src/routes/demos/`](backend/src/routes/demos/).
+2. Mount the router in [`backend/src/index.ts`](backend/src/index.ts) under `/api/demo/<feature>`.
+3. Register the endpoint definition in [`frontend/src/lib/demos.ts`](frontend/src/lib/demos.ts).
 
 ---
 
-## 🚀 Pull Request Guidelines
+## 🌿 Git Workflow & Pull Request Process
 
-1. **Create a branch** with a descriptive name:
-   ```bash
-   git checkout -b feature/expand-lecture-8-rbac
-   ```
-2. **Test your changes locally** to ensure clean builds:
-   ```bash
-   cd frontend && npm run build
-   cd ../backend && npm run build
-   ```
-3. **Commit with clean messages**:
-   ```bash
-   git commit -m "docs: add Go and Rust RBAC examples to lecture 8"
-   ```
-4. **Push and open a PR** against the `main` branch with a concise explanation of what was changed and why.
+### 1. Create a Branch
+Always branch off the `main` branch with a descriptive branch name:
+```bash
+git checkout -b feat/add-rust-rbac-snippet
+# or
+git checkout -b fix/typo-lecture-06
+```
 
-Thank you for helping empower the next generation of backend engineers! 🎉
+### 2. Verify Your Changes
+Make sure both packages build cleanly without TypeScript or runtime errors:
+```bash
+# Build backend
+npm run build --prefix backend
+
+# Build frontend
+npm run build --prefix frontend
+```
+
+### 3. Commit Guidelines
+Use clear, conventional commit messages:
+* `feat:` A new feature, demo endpoint, or visualizer.
+* `docs:` Documentation updates, lecture note refinements, or comment improvements.
+* `fix:` Bug fixes in API endpoints or UI components.
+* `refactor:` Code restructuring without functional changes.
+
+Example:
+```bash
+git commit -m "docs: clarify constant-time timing attack mitigation in lecture 8"
+```
+
+### 4. Open a Pull Request
+1. Push your branch to your GitHub fork:
+   ```bash
+   git push origin feat/add-rust-rbac-snippet
+   ```
+2. Open a Pull Request against the `main` branch of the upstream repository.
+3. Provide a clear summary of your changes, referencing any relevant issues or lecture numbers.
+
+---
+
+## 📄 License
+
+By contributing to this repository, you agree that your contributions will be licensed under the project's [MIT License](LICENSE).
