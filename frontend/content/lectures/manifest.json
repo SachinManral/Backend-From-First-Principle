@@ -1665,6 +1665,569 @@
         "Always use generic error messages ('Invalid email or password') and constant-time comparisons to prevent account enumeration and timing attacks.",
         "OAuth 2.0 delegates scoped permissions to third parties without sharing master passwords; OpenID Connect (OIDC) standardizes federated user identity."
       ]
+    },
+    {
+      "slug": "09-validations-and-transformations",
+      "order": 9,
+      "phase": 2,
+      "phaseTitle": "Phase 2 — HTTP & Data Wire Protocols",
+      "lectureNumber": "9",
+      "title": "Validations & Transformations for Backend Engineers",
+      "subtitle": "Architectural entry points, data integrity, syntactic vs semantic rules, type casting, and the golden law of backend security.",
+      "duration": "43 min",
+      "youtubeUrl": "https://youtu.be/qedj_JjjL-U?si=w7z-f4C6DvpZwewb",
+      "visualizerType": "none",
+      "playgroundDemoIds": [
+        "validationPipeline",
+        "validationTransform"
+      ],
+      "tldr": "Validations and transformations execute at the Controller layer entry point before service logic or database queries run. Frontend validation is strictly for user experience; backend validation is mandatory for data integrity and security.",
+      "tags": [
+        "Validation",
+        "Transformation",
+        "Data Integrity",
+        "Type Casting",
+        "400 vs 500",
+        "Security"
+      ],
+      "sections": [
+        {
+          "id": "architectural-placement",
+          "title": "1. Architectural Placement: Where Validations Live",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "In a robust backend system, responsibilities are cleanly separated into three distinct architectural layers:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Controller Layer (Top / Ingress Entry Point)",
+                  "text": "Handles HTTP transport concerns: parsing request payloads, validating input schemas, casting data types, and mapping domain responses to HTTP status codes (200, 201, 400, 404)."
+                },
+                {
+                  "number": 2,
+                  "title": "Service Layer (Middle / Business Domain)",
+                  "text": "Executes pure business logic: orchestrating operations, dispatching emails, triggering payment gateways, and calculating domain models."
+                },
+                {
+                  "number": 3,
+                  "title": "Repository Layer (Bottom / Data Persistence)",
+                  "text": "Executes raw database queries and connection pooling against PostgreSQL, SQLite, Redis, or Mongo."
+                }
+              ]
+            },
+            {
+              "type": "callout",
+              "variant": "info",
+              "title": "The Entry Point Invariant",
+              "text": "Validations and transformations MUST execute immediately in the Controller layer after route matching, before calling any Service methods or touching database connections. This ensures the domain layer always operates on clean, strictly-validated data."
+            }
+          ]
+        },
+        {
+          "id": "the-500-error-problem",
+          "title": "2. The 500 Error Problem vs. 400 Bad Request",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Why is validating at the entry point so critical? Consider what happens when an unvalidated request passes straight through to the database:"
+            },
+            {
+              "type": "example",
+              "title": "Scenario: Unvalidated Postgres Insert",
+              "input": "POST /api/books HTTP/1.1\nContent-Type: application/json\n\n{\n  \"name\": 0\n}",
+              "output": "HTTP/1.1 500 Internal Server Error\n\n{\n  \"error\": \"Postgres error: column 'name' is of type text but expression is of type integer\"\n}",
+              "explanation": "Because the Controller failed to validate the payload, the invalid number '0' traveled all the way to PostgreSQL. The database rejected the schema type constraint, triggering an unhandled exception and returning an unprofessional 500 Internal Server Error."
+            },
+            {
+              "type": "paragraph",
+              "text": "With an entry-point validation pipeline, the server intercepts the invalid data before any database resources are consumed, returning a descriptive **400 Bad Request** indicating exactly which field failed and why."
+            }
+          ]
+        },
+        {
+          "id": "step-by-step-pipeline",
+          "title": "3. Step-by-Step Validation Pipeline",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A robust validation middleware verifies each incoming field through a progressive 3-step evaluation sequence:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Step 1: Existence / Required Check",
+                  "text": "Checks if the expected key exists in the JSON body, query string, or header. If missing, immediately returns a required-field error."
+                },
+                {
+                  "number": 2,
+                  "title": "Step 2: Primitive Data Type Check",
+                  "text": "Verifies that the value matches the expected primitive type (string, number, boolean, array, or object)."
+                },
+                {
+                  "number": 3,
+                  "title": "Step 3: Constraint & Boundary Check",
+                  "text": "Enforces specific domain boundaries (e.g. string length between 5 and 100 characters, positive numbers, allowed enum values)."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "four-flavors-of-validation",
+          "title": "4. The Four Flavors of Validation",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "In production backend engineering, input validation falls into four distinct categories:"
+            },
+            {
+              "type": "table",
+              "title": "Validation Categories Comparison Matrix",
+              "headers": [
+                "Category",
+                "What It Validates",
+                "Real-World Examples",
+                "Rejection Example"
+              ],
+              "rows": [
+                [
+                  "Type Validation",
+                  "Primitive programming data types & recursive structures",
+                  "String, Number, Boolean, Array of strings",
+                  "Receiving `{\"age\": \"twenty\"}` when expecting `number`"
+                ],
+                [
+                  "Syntactic Validation",
+                  "Strict structural patterns, regular expressions, and standard formats",
+                  "Email RFC syntax, E.164 phone numbers, ISO-8601 dates (`YYYY-MM-DD`)",
+                  "Sending `\"email\": \"plainword\"` without `@` or top-level domain"
+                ],
+                [
+                  "Semantic Validation",
+                  "Logical real-world sense and domain invariants",
+                  "Date of birth in the past, Human age between 0 and 120",
+                  "Sending `\"dateOfBirth\": \"2099-01-01\"` (future DOB is impossible)"
+                ],
+                [
+                  "Complex / Dependent",
+                  "Cross-field dependencies and conditional rules",
+                  "Password confirmation matching, `partnerName` required only when `married: true`",
+                  "Sending `\"married\": true` with missing `\"partnerName\"`"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "transformations-and-type-casting",
+          "title": "5. Transformations & Type Casting (Normalizing Wire Data)",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Transformation is the process of mutating incoming wire data into clean, normalized domain formats before passing it to business services:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "The Query String Casting Invariant",
+                  "text": "HTTP query strings (e.g. `?page=2&limit=20`) are ALWAYS parsed as raw strings (`\"2\"`, `\"20\"`) over the network. The server must cast these strings to integers before validating ranges (`page >= 1`)."
+                },
+                {
+                  "number": 2,
+                  "title": "Email Normalization",
+                  "text": "Trimming surrounding whitespace and lowercasing email strings (`' USER@Domain.COM '` ➔ `'user@domain.com'`) to prevent duplicate account registration bugs."
+                },
+                {
+                  "number": 3,
+                  "title": "Phone & Date Formatting",
+                  "text": "Sanitizing phone strings into international E.164 format (`+1-555-0199`) and parsing dates into standard UTC Unix timestamps."
+                }
+              ]
+            },
+            {
+              "type": "callout",
+              "variant": "tip",
+              "title": "Single Pipeline Principle",
+              "text": "Always pair validation and transformation inside a single unified pipeline middleware (e.g. using Zod, Joi, or validator crates) so all input handling rules remain co-located and maintainable."
+            }
+          ]
+        },
+        {
+          "id": "frontend-vs-backend-law",
+          "title": "6. Frontend vs. Backend Validation: The Golden Law",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A common anti-pattern among beginner developers is relying on frontend form validation for backend security. Never confuse user experience with security:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Frontend Validation is Exclusively for User Experience (UX)",
+                  "text": "Provides instantaneous feedback to users in the browser without waiting for network roundtrips. It can be bypassed in seconds using cURL, Postman, or browser devtools."
+                },
+                {
+                  "number": 2,
+                  "title": "Backend Validation is Mandatory for Security & Data Integrity",
+                  "text": "The backend must assume zero trust from any client. Every incoming request must be strictly validated regardless of whether it originated from a web app, a mobile app, or a malicious script."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "code-implementations",
+          "title": "7. Multi-Language Validation Implementations",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Production-grade schema validation across TypeScript, Go, and Rust:"
+            },
+            {
+              "type": "code",
+              "caption": "Validation Schemas across TypeScript, Go, and Rust",
+              "code": "// ─── 1. TYPESCRIPT (ZOD) ───\nimport { z } from 'zod';\n\nconst UserSchema = z.object({\n  email: z.string().email(),\n  phone: z.string().regex(/^\\+?[0-9]{7,15}$/).optional(),\n  age: z.number().int().min(0).max(120),\n  dateOfBirth: z.string().refine(d => new Date(d) <= new Date(), {\n    message: 'Date of birth cannot be in the future'\n  }),\n  password: z.string().min(8),\n  passwordConfirmation: z.string()\n}).refine(data => data.password === data.passwordConfirmation, {\n  message: \"Passwords don't match\",\n  path: ['passwordConfirmation']\n});\n\n// ─── 2. GO (go-playground/validator) ───\ntype CreateUserRequest struct {\n    Email       string `json:\"email\" validate:\"required,email\"`\n    Phone       string `json:\"phone\" validate:\"omitempty,e164\"`\n    Age         int    `json:\"age\" validate:\"gte=0,lte=120\"`\n    Password    string `json:\"password\" validate:\"required,min=8\"`\n    ConfirmPass string `json:\"passwordConfirmation\" validate:\"eqfield=Password\"`\n}\n\n// ─── 3. RUST (validator crate) ───\n#[derive(Deserialize, Validate)]\npub struct CreateUser {\n    #[validate(email)]\n    pub email: String,\n    #[validate(range(min = 0, max = 120))]\n    pub age: u8,\n    #[validate(length(min = 8))]\n    pub password: String,\n}",
+              "tabs": [
+                {
+                  "label": "TypeScript (Zod)",
+                  "language": "typescript",
+                  "code": "import { z } from 'zod';\n\nexport const CreateUserSchema = z\n  .object({\n    // Syntactic Validation\n    email: z.string().trim().toLowerCase().email(),\n    phone: z.string().regex(/^\\+?[0-9]{7,15}$/).optional(),\n\n    // Semantic Validation\n    age: z.number().int().min(0).max(120),\n    dateOfBirth: z.string().refine(\n      (val) => new Date(val) <= new Date(),\n      { message: 'Date of birth cannot be in the future' }\n    ),\n\n    // Complex Dependent Fields\n    password: z.string().min(8),\n    passwordConfirmation: z.string(),\n    married: z.boolean(),\n    partnerName: z.string().optional()\n  })\n  .refine(\n    (data) => data.password === data.passwordConfirmation,\n    {\n      message: \"Passwords don't match\",\n      path: ['passwordConfirmation']\n    }\n  )\n  .refine(\n    (data) => !data.married || (data.partnerName && data.partnerName.trim().length > 0),\n    {\n      message: 'Partner name is required when married is true',\n      path: ['partnerName']\n    }\n  );"
+                },
+                {
+                  "label": "Go (Validator)",
+                  "language": "go",
+                  "code": "package main\n\nimport (\n    \"encoding/json\"\n    \"net/http\"\n    \"github.com/go-playground/validator/v10\"\n)\n\ntype UserPayload struct {\n    Email           string `json:\"email\" validate:\"required,email\"`\n    Phone           string `json:\"phone\" validate:\"omitempty,e164\"`\n    Age             int    `json:\"age\" validate:\"gte=0,lte=120\"`\n    Password        string `json:\"password\" validate:\"required,min=8\"`\n    ConfirmPassword string `json:\"passwordConfirmation\" validate:\"eqfield=Password\"`\n}\n\nvar validate = validator.New()\n\nfunc ValidateUserMiddleware(next http.HandlerFunc) http.HandlerFunc {\n    return func(w http.ResponseWriter, r *http.Request) {\n        var payload UserPayload\n        if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {\n            http.Error(w, \"400 Bad Request: Invalid JSON body\", http.StatusBadRequest)\n            return\n        }\n        if err := validate.Struct(payload); err != nil {\n            http.Error(w, err.Error(), http.StatusBadRequest)\n            return\n        }\n        next(w, r)\n    }\n}"
+                },
+                {
+                  "label": "Rust (Axum + Validator)",
+                  "language": "rust",
+                  "code": "use axum::{extract::Json, http::StatusCode};\nuse serde::Deserialize;\nuse validator::Validate;\n\n#[derive(Deserialize, Validate)]\npub struct UserPayload {\n    #[validate(email(message = \"Invalid email address format\"))]\n    pub email: String,\n    #[validate(range(min = 0, max = 120, message = \"Age must be between 0 and 120\"))]\n    pub age: u32,\n    #[validate(length(min = 8, message = \"Password must be at least 8 characters\"))]\n    pub password: String,\n}\n\npub async fn create_user(\n    Json(payload): Json<UserPayload>\n) -> Result<StatusCode, (StatusCode, String)> {\n    payload.validate().map_err(|err| {\n        (StatusCode::BAD_REQUEST, format!(\"Validation failed: {}\", err))\n    })?;\n    \n    // Forward to Service Layer\n    Ok(StatusCode::CREATED)\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "Validations and transformations occur at the Controller entry point immediately after route matching, before any service logic or database queries execute.",
+        "Without backend validation, invalid data types trigger database crashes and ugly 500 Internal Server Errors; validation returns structured 400 Bad Request responses.",
+        "The 4 core validation types are: Type (primitives/arrays), Syntactic (email/phone format), Semantic (business logic like DOB not in future), and Complex (cross-field dependent rules).",
+        "Query parameters are always strings over the wire; the server must cast them into numeric types and normalize strings before business execution.",
+        "Frontend validation is purely for User Experience; Backend validation is mandatory for security and data integrity."
+      ]
+    },
+    {
+      "slug": "10-controllers-services-repositories-middlewares-context",
+      "order": 10,
+      "phase": 3,
+      "phaseTitle": "Phase 3 — Backend Architecture & Layering",
+      "lectureNumber": "10",
+      "title": "Controllers, Services, Repositories, Middlewares & Context",
+      "subtitle": "Deconstructing the request lifecycle: 3-layer separation of concerns, middleware interceptor pipelines, and scoped request context state.",
+      "duration": "60 min",
+      "youtubeUrl": "https://youtu.be/hyc-7w3pee8?si=XnwqJhgdZ15XLfP0",
+      "visualizerType": "none",
+      "playgroundDemoIds": [
+        "archPipeline",
+        "archContext"
+      ],
+      "tldr": "Clean backend systems isolate HTTP transport logic (Controllers), pure business logic (Services), and database queries (Repositories). Middlewares intercept requests across boundaries, while Request Context safely propagates trusted identity and cancellation signals.",
+      "tags": [
+        "Architecture",
+        "Controllers",
+        "Services",
+        "Repositories",
+        "Middlewares",
+        "Request Context",
+        "Security"
+      ],
+      "sections": [
+        {
+          "id": "three-layer-architecture-pattern",
+          "title": "1. The 3-Layer Architecture Pattern",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Putting all database queries, business rules, and HTTP status codes inside a single route handler works for small scripts, but collapses under real-world scale. The **3-Layer Architecture Pattern** establishes clean separation of concerns:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Controller / Handler Layer (Transport Ingress)",
+                  "text": "Deals with the outside world: extracts HTTP request data, binds JSON to native language structs, validates schemas, delegates to the service layer, and formats final HTTP responses."
+                },
+                {
+                  "number": 2,
+                  "title": "Service Layer (Pure Business Logic)",
+                  "text": "Orchestrates the application domain: executes business rules, evaluates permissions, and coordinates multiple repository calls. It remains 100% agnostic of HTTP."
+                },
+                {
+                  "number": 3,
+                  "title": "Repository Layer (Data Persistence)",
+                  "text": "Interacts directly with databases (PostgreSQL, SQLite, Redis). Constructs SQL queries and returns raw entity data back up to the service layer."
+                }
+              ]
+            },
+            {
+              "type": "callout",
+              "variant": "info",
+              "title": "The Golden Test for Services",
+              "text": "If you inspect a Service function, you should not be able to tell that it is being used in an HTTP API. It takes pure parameters, calculates results, and returns data without knowing whether the caller is an Express API, a gRPC server, or a CLI command."
+            }
+          ]
+        },
+        {
+          "id": "controller-lifecycle",
+          "title": "2. The Controller (Handler) Layer: Step-by-Step Workflow",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The controller receives the `(request, response)` pair from the runtime immediately after route matching, executing a disciplined 6-step lifecycle:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "1. Data Extraction",
+                  "text": "Pulls path parameters (`/books/:id`), query strings (`?sort=date`), and request bodies from the incoming wire."
+                },
+                {
+                  "number": 2,
+                  "title": "2. Binding & Deserialization",
+                  "text": "Converts wire JSON strings into native typed structs (Go struct, TypeScript interface, Rust struct). If parsing fails, immediately halts with a 400 Bad Request."
+                },
+                {
+                  "number": 3,
+                  "title": "3. Input Validation",
+                  "text": "Enforces schema constraints, non-null requirements, and regex formats before invoking any domain methods."
+                },
+                {
+                  "number": 4,
+                  "title": "4. Transformation & Default Setting",
+                  "text": "Normalizes parameters (e.g. defaulting omitted query strings to `sort=date` so downstream layers never deal with undefined branches)."
+                },
+                {
+                  "number": 5,
+                  "title": "5. Delegation to Service Layer",
+                  "text": "Passes clean data and trusted request context down to the Service Layer for execution."
+                },
+                {
+                  "number": 6,
+                  "title": "6. HTTP Status Selection & Response Dispatch",
+                  "text": "Maps domain results to standard HTTP status codes (`200 OK`, `201 Created`, `204 No Content`, `400`, `403`, `500`) and serializes the response payload."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "service-layer-orchestration",
+          "title": "3. The Service Layer: HTTP-Agnostic Domain Logic",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The Service layer is the operational brain of your backend. Its core characteristics include:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Zero HTTP Contamination",
+                  "text": "Never accepts `req` or `res` objects. It does not set HTTP headers or know what a status code is."
+                },
+                {
+                  "number": 2,
+                  "title": "Complex Orchestration",
+                  "text": "A single service method can call 3 different repository methods, merge datasets, dispatch emails, push notifications to mobile devices, and trigger external payment webhooks."
+                },
+                {
+                  "number": 3,
+                  "title": "Unit Testability",
+                  "text": "Because it has no HTTP or database dependencies, service logic can be unit tested in milliseconds by mocking repository interfaces."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "repository-single-responsibility",
+          "title": "4. The Repository Layer: Single Responsibility Persistence",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The Repository layer translates domain requests into physical database operations:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Strict Single Responsibility Principle (SRP)",
+                  "text": "Each repository method performs exactly one database operation (e.g., `findAll()`, `findById(id)`, `create(data)`). Never create ambiguous methods that conditionally return either a single record or an array based on optional flags."
+                },
+                {
+                  "number": 2,
+                  "title": "Query Construction & Isolation",
+                  "text": "Encapsulates SQL syntax, indexes, transactions, and Redis caching. If you migrate from PostgreSQL to MongoDB, only the Repository layer changes; Controllers and Services remain untouched."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "middleware-pipeline-ordering",
+          "title": "5. Middleware Pipelines: Chaining Interceptors with `next()`",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Middlewares are interceptor functions that execute across the boundaries between ingress, routing, controllers, and responses to eliminate code duplication across hundreds of endpoints:"
+            },
+            {
+              "type": "table",
+              "title": "Critical Middleware Execution Order",
+              "headers": [
+                "Position",
+                "Middleware Type",
+                "Purpose",
+                "Early Termination Condition"
+              ],
+              "rows": [
+                [
+                  "1. First Gate",
+                  "CORS & Preflight",
+                  "Inspects origin headers and sets access control allowances",
+                  "Rejects unauthorized browser origins before server resources are spent"
+                ],
+                [
+                  "2. Ingress",
+                  "Request ID Generator",
+                  "Attaches unique UUID (`X-Request-ID`) to Request Context",
+                  "None (passes `next()` to downstream)"
+                ],
+                [
+                  "3. Telemetry",
+                  "Logging & Profiling",
+                  "Records path, HTTP method, client IP, and timestamps",
+                  "None (passes `next()` to downstream)"
+                ],
+                [
+                  "4. Defense",
+                  "Rate Limiter",
+                  "Tracks IP/Token velocity to prevent DoS attacks",
+                  "Returns `429 Too Many Requests` if threshold exceeded"
+                ],
+                [
+                  "5. Security",
+                  "Authentication",
+                  "Verifies JWT/Session token and injects claims into Context",
+                  "Returns `401 Unauthorized` if credentials are invalid"
+                ],
+                [
+                  "6. Wire Parsing",
+                  "Body Parser & JSON Deserializer",
+                  "Converts incoming wire byte streams into JSON memory structures",
+                  "Returns `400 Bad Request` if JSON is malformed"
+                ],
+                [
+                  "7. Handlers",
+                  "Route Controllers",
+                  "Executes application logic",
+                  "Returns 200/201/204 response"
+                ],
+                [
+                  "8. Last Gate",
+                  "Global Error Handler",
+                  "Catches any uncaught exceptions thrown upstream and formats client errors",
+                  "Must be placed LAST to receive uncaught errors via `next(err)`"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "request-context-deep-dive",
+          "title": "6. Request Context: Scoped Per-Request State & Anti-Spoofing",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Request Context is a per-request storage mechanism that carries trusted state across middleware and controller boundaries without tight coupling:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Trusted Identity vs. Spoofed Body Payloads",
+                  "text": "When creating records (e.g. `POST /api/books`), NEVER read `userId` from the client request body. Malicious users can send arbitrary user IDs to overwrite other accounts (IDOR). Always extract the cryptographically verified `userId` from Request Context populated by Auth middleware."
+                },
+                {
+                  "number": 2,
+                  "title": "Distributed Request Tracing",
+                  "text": "Propagates `X-Request-ID` across microservices, database queries, and log statements to trace errors end-to-end."
+                },
+                {
+                  "number": 3,
+                  "title": "Cancellation Signals & Deadlines",
+                  "text": "Context holds timeout deadlines and cancellation signals (`AbortController` / Go `context.Context`) so stalled downstream DB queries terminate safely."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "multi-language-implementations",
+          "title": "7. Multi-Language Clean Architecture Implementations",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Production-grade 3-layer architecture implementations across TypeScript, Go, and Rust:"
+            },
+            {
+              "type": "code",
+              "caption": "Clean Architecture Across TypeScript, Go, and Rust",
+              "code": "// ─── 1. TYPESCRIPT (Express 3-Layer) ───\n// Controller Layer\nexport const createBookHandler = async (req: Request, res: Response, next: NextFunction) => {\n  try {\n    const trustedUserId = req.context.userId;\n    const book = await bookService.createBook(req.body, trustedUserId);\n    res.status(201).json({ status: 201, data: book });\n  } catch (err) {\n    next(err);\n  }\n};\n\n// ─── 2. GO (net/http with context.Context) ───\nfunc (c *BookController) CreateBook(w http.ResponseWriter, r *http.Request) {\n    userId := r.Context().Value(\"userId\").(string)\n    var payload CreateBookPayload\n    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {\n        http.Error(w, \"400 Bad Request\", http.StatusBadRequest)\n        return\n    }\n    book, err := c.service.CreateBook(r.Context(), payload, userId)\n    if err != nil {\n        http.Error(w, err.Error(), http.StatusInternalServerError)\n        return\n    }\n    w.WriteHeader(http.StatusCreated)\n    json.NewEncoder(w).Encode(book)\n}\n\n// ─── 3. RUST (Axum with Extension State) ───\npub async fn create_book(\n    Extension(ctx): Extension<RequestContext>,\n    Json(payload): Json<CreateBookPayload>,\n) -> Result<Json<Book>, StatusCode> {\n    let book = book_service::create(payload, ctx.user_id).await\n        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;\n    Ok(Json(book))\n}",
+              "tabs": [
+                {
+                  "label": "TypeScript (Express)",
+                  "language": "typescript",
+                  "code": "// ─── 1. CONTROLLER LAYER ───\nexport class BookController {\n  constructor(private service: BookService) {}\n\n  create = async (req: Request, res: Response, next: NextFunction) => {\n    try {\n      // Extract trusted userId from Request Context (never client body)\n      const trustedUserId = req.context.userId;\n      const newBook = await this.service.createBook(req.body, trustedUserId);\n      return res.status(201).json({ status: 201, data: newBook });\n    } catch (err) {\n      next(err); // Forward to Global Error Middleware\n    }\n  };\n}\n\n// ─── 2. SERVICE LAYER (100% HTTP Agnostic) ───\nexport class BookService {\n  constructor(private repo: BookRepository) {}\n\n  async createBook(payload: { title: string; author: string }, userId: string) {\n    if (!payload.title) throw new Error('VALIDATION_ERROR: Title is required');\n    return await this.repo.insert({ ...payload, userId });\n  }\n}\n\n// ─── 3. REPOSITORY LAYER (Single Responsibility) ───\nexport class BookRepository {\n  async insert(record: { title: string; author: string; userId: string }) {\n    return await db.query('INSERT INTO books (title, author, user_id) VALUES ($1, $2, $3) RETURNING *', [\n      record.title,\n      record.author,\n      record.userId\n    ]);\n  }\n}"
+                },
+                {
+                  "label": "Go (net/http + context)",
+                  "language": "go",
+                  "code": "package main\n\nimport (\n    \"context\"\n    \"encoding/json\"\n    \"net/http\"\n)\n\n// 1. Controller Layer\ntype BookHandler struct {\n    service *BookService\n}\n\nfunc (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {\n    // Read trusted claims from context (populated by Auth Middleware)\n    userId, ok := r.Context().Value(\"userId\").(string)\n    if !ok {\n        http.Error(w, \"401 Unauthorized\", http.StatusUnauthorized)\n        return\n    }\n\n    var req CreateBookRequest\n    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {\n        http.Error(w, \"400 Bad Request: Invalid JSON\", http.StatusBadRequest)\n        return\n    }\n\n    book, err := h.service.CreateBook(r.Context(), req, userId)\n    if err != nil {\n        http.Error(w, err.Error(), http.StatusInternalServerError)\n        return\n    }\n\n    w.WriteHeader(http.StatusCreated)\n    json.NewEncoder(w).Encode(book)\n}\n\n// 2. Service Layer (HTTP Agnostic)\ntype BookService struct {\n    repo *BookRepository\n}\n\nfunc (s *BookService) CreateBook(ctx context.Context, req CreateBookRequest, userId string) (*Book, error) {\n    return s.repo.Insert(ctx, req.Title, req.Author, userId)\n}"
+                },
+                {
+                  "label": "Rust (Axum + State Extensions)",
+                  "language": "rust",
+                  "code": "use axum::{extract::Json, http::StatusCode, Extension};\nuse serde::{Deserialize, Serialize};\n\n#[derive(Clone)]\npub struct RequestContext {\n    pub user_id: String,\n    pub role: String,\n    pub request_id: String,\n}\n\n#[derive(Deserialize)]\npub struct CreateBookPayload {\n    pub title: String,\n    pub author: String,\n}\n\n// Controller Layer Handler\npub async fn create_book_handler(\n    Extension(ctx): Extension<RequestContext>,\n    Json(payload): Json<CreateBookPayload>,\n) -> Result<(StatusCode, Json<Book>), (StatusCode, String)> {\n    // Extract trusted user_id from Request Context extension\n    let book = book_service::create_book(payload, &ctx.user_id)\n        .await\n        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;\n\n    Ok((StatusCode::CREATED, Json(book)))\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "The 3-layer architecture separates HTTP transport concerns (Controller), pure domain calculations (Service), and database queries (Repository).",
+        "The Service Layer must remain 100% HTTP-agnostic—it should take domain arguments and return results without any request, response, or HTTP status dependencies.",
+        "Repository methods must strictly obey the Single Responsibility Principle: each method executes one specific database operation and returns one consistent type.",
+        "Middleware order is critical: CORS and Request IDs execute first, while the Global Error Handler must sit at the very end of the pipeline to catch all upstream errors.",
+        "Request Context carries per-request scoped metadata (like trusted user IDs and trace UUIDs) across function boundaries, preventing attacker impersonation."
+      ]
     }
   ]
 }
