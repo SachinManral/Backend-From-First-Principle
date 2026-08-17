@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: backend-first-principles-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: FRONTEND_ORIGIN
+        value: https://backend200.vercel.app

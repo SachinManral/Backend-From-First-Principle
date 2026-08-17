@@ -30,7 +30,12 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
  * ============================================================================
  */
 app.use(cors({
-  origin: [FRONTEND_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000', '*'],
+  origin: (origin, callback) => {
+    // Allow direct tools (curl, postman, server-to-server) with no origin header
+    if (!origin) return callback(null, true);
+    // Allow frontend origins (deployed Vercel app, localhost, or custom FRONTEND_ORIGIN)
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
   allowedHeaders: [
     'Content-Type',
