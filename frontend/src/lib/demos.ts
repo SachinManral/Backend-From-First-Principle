@@ -422,6 +422,81 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
       role: "viewer",
       action: "delete_database"
     }
+  },
+  {
+    id: 'validationPipeline',
+    title: '22. Multi-Layer Validation Pipeline (Type, Syntactic, Semantic, Complex)',
+    category: 'Validation',
+    method: 'POST',
+    path: '/api/demo/validation/pipeline',
+    description: 'Tests incoming request payloads against Type, Syntactic (email/phone), Semantic (DOB/age range), and Complex (password match, conditional partner) rules before service execution.',
+    conceptNote: 'Demonstrates how controller entry-point validation prevents database schema crashes and returns structured 400 Bad Request error arrays.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      email: "engineer@firstprinciples.dev",
+      phone: "+1-555-0199",
+      dateOfBirth: "1995-06-12",
+      age: 29,
+      password: "SecretPassword123!",
+      passwordConfirmation: "SecretPassword123!",
+      married: true,
+      partnerName: "Taylor",
+      tags: ["backend", "distributed-systems", "postgres"]
+    }
+  },
+  {
+    id: 'validationTransform',
+    title: '23. Transformation & Type Casting Pipeline',
+    category: 'Validation',
+    method: 'POST',
+    path: '/api/demo/validation/transform',
+    description: 'Casts raw query string parameters to typed integers, trims and lowercases email strings, and normalizes phone numbers into E.164 format before reaching the service layer.',
+    conceptNote: 'Proves how transformation normalizes untyped wire payloads into strongly-typed domain representations.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      page: "2",
+      limit: "50",
+      email: "  STUDENT.ENGINEER@FirstPrinciples.DEV  ",
+      phone: "55501992026"
+    }
+  },
+  {
+    id: 'archPipeline',
+    title: '24. 3-Layer Architecture & Middleware Pipeline Trace',
+    category: 'Architecture',
+    method: 'POST',
+    path: '/api/demo/architecture/layered-pipeline',
+    description: 'Traces the exact flow of an incoming HTTP request through Ingress Middleware, Request Context injection, Controller input validation, HTTP-agnostic Service orchestration, and Repository database persistence.',
+    conceptNote: 'Demonstrates clean separation of concerns and how request context securely passes trusted user identity.',
+    defaultHeaders: {
+      'Content-Type': 'application/json',
+      'X-Request-ID': 'req_firstprinciples_777'
+    },
+    defaultBody: {
+      title: "Designing Data-Intensive Applications",
+      author: "Martin Kleppmann",
+      simulatedRole: "admin",
+      userId: "spoofed_hacker_id_should_be_ignored"
+    }
+  },
+  {
+    id: 'archContext',
+    title: '25. Request Context & Anti-Spoofing Security',
+    category: 'Architecture',
+    method: 'POST',
+    path: '/api/demo/architecture/request-context',
+    description: 'Compares insecure client-supplied request body user IDs against cryptographically verified identity claims stored in per-request Context.',
+    conceptNote: 'Proves why server layers must always read trusted identity from Request Context to prevent IDOR and impersonation attacks.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      userId: "usr_attacker_spoof_target_victim"
+    }
   }
 ];
 
