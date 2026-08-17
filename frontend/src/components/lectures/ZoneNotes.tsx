@@ -274,29 +274,35 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
 
       case 'table':
         return (
-          <div key={idx} className="my-5 overflow-x-auto rounded-2xl border border-[#1e2640] bg-[#090d16] shadow-md">
-            <table className="w-full text-left text-xs md:text-sm">
-              <thead className="bg-[#0f1424] border-b border-[#1e2640] text-zinc-200 font-semibold font-mono">
-                <tr>
-                  {block.headers.map((h, i) => (
-                    <th key={i} className="p-3.5">
-                      {renderFormattedText(h)}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#1e2640] text-zinc-300 font-normal">
-                {block.rows.map((row, rIdx) => (
-                  <tr key={rIdx} className="hover:bg-[#111728] transition">
-                    {row.map((cell, cIdx) => (
-                      <td key={cIdx} className="p-3.5 align-top leading-relaxed">
-                        {renderFormattedText(cell)}
-                      </td>
+          <div key={idx} className="my-5 rounded-2xl border border-[#1e2640] bg-[#090d16] shadow-md overflow-hidden">
+            <div className="sm:hidden px-3.5 py-1.5 bg-[#0f1424] border-b border-[#1e2640] text-[10px] text-zinc-400 font-mono flex items-center justify-between">
+              <span>Comparison Table</span>
+              <span className="text-brand-blue">↔ Scroll table horizontally</span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs md:text-sm min-w-[480px]">
+                <thead className="bg-[#0f1424] border-b border-[#1e2640] text-zinc-200 font-semibold font-mono">
+                  <tr>
+                    {block.headers.map((h, i) => (
+                      <th key={i} className="p-3 md:p-3.5 whitespace-nowrap">
+                        {renderFormattedText(h)}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[#1e2640] text-zinc-300 font-normal">
+                  {block.rows.map((row, rIdx) => (
+                    <tr key={rIdx} className="hover:bg-[#111728] transition">
+                      {row.map((cell, cIdx) => (
+                        <td key={cIdx} className="p-3 md:p-3.5 align-top leading-relaxed">
+                          {renderFormattedText(cell)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         );
 

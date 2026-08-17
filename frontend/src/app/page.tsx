@@ -152,6 +152,57 @@ export default function HomePage() {
                 <span>Interactive Lab</span>
               </Link>
             </div>
+
+            {/* Mobile & Tablet Core Cards Grid (Visible below XL) */}
+            <div className="xl:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-10 pt-4 text-left">
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0d1222]/85 backdrop-blur-xl border border-white/10 shadow-lg">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple p-0.5 shrink-0 flex items-center justify-center">
+                  <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                    <Network className="w-4 h-4 text-brand-blue" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">TCP Wire Protocol</div>
+                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-tight">Master raw \r\n byte streams behind HTTP.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0d1222]/85 backdrop-blur-xl border border-white/10 shadow-lg">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-purple to-indigo-500 p-0.5 shrink-0 flex items-center justify-center">
+                  <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                    <Layers className="w-4 h-4 text-brand-purple" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Zero Syntax Fatigue</div>
+                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-tight">Concepts transfer 1:1 across any language.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0d1222]/85 backdrop-blur-xl border border-white/10 shadow-lg">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 shrink-0 flex items-center justify-center">
+                  <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                    <Database className="w-4 h-4 text-emerald-400" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">On-Disk SQL & WAL</div>
+                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-tight">ACID persistence, B-Trees & relations.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#0d1222]/85 backdrop-blur-xl border border-white/10 shadow-lg">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-500 p-0.5 shrink-0 flex items-center justify-center">
+                  <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                    <Terminal className="w-4 h-4 text-cyan-300" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Live Interactive Lab</div>
+                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-tight">Real HTTP requests & wire byte validation.</p>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
