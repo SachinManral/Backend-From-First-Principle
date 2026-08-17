@@ -375,6 +375,53 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
       price: 45.99,
       tags: ["databases", "distributed-systems", "architecture"]
     }
+  },
+  {
+    id: 'authLogin',
+    title: '19. Login & Token Issuer (JWT vs Session)',
+    category: 'Authentication',
+    method: 'POST',
+    path: '/api/demo/auth/login',
+    description: 'Simulates secure credential verification with constant-time timing protection, generic error responses, and dual issuance of stateless JWT and stateful Session ID.',
+    conceptNote: 'Demonstrates why generic errors prevent username enumeration and compares stateless tokens against server-side session stores.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      email: "engineer@firstprinciples.dev",
+      password: "FirstPrinciples2026!"
+    }
+  },
+  {
+    id: 'authVerifyJwt',
+    title: '20. Stateless JWT Signature Verification',
+    category: 'Authentication',
+    method: 'POST',
+    path: '/api/demo/auth/verify-jwt',
+    description: 'Cryptographically verifies the HMAC-SHA256 signature and decodes token claims in memory without requiring any database lookups.',
+    conceptNote: 'Inspects header, claims payload, and signature integrity in pure memory.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfOGY5YTJiMWMiLCJlbWFpbCI6ImVuZ2luZWVyQGZpcnN0cHJpbmNpcGxlcy5kZXYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODY5NzAwMDAsImV4cCI6MTc4Njk3MzYwMH0.signature"
+    }
+  },
+  {
+    id: 'authRbac',
+    title: '21. Role-Based Access Control (RBAC Guard)',
+    category: 'Authorization',
+    method: 'POST',
+    path: '/api/demo/auth/rbac-guard',
+    description: 'Enforces permission boundaries across viewer, editor, and admin roles, differentiating 401 Unauthorized from 403 Forbidden.',
+    conceptNote: 'Shows how server middleware evaluates identity claims against endpoint permission requirements.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      role: "viewer",
+      action: "delete_database"
+    }
   }
 ];
 

@@ -1384,6 +1384,287 @@
         "As a backend engineer, you operate at the Application Layer (Layer 7)—you define schemas and contracts while network hardware handles packet transmission.",
         "For high-speed internal microservices, binary serialization formats like Protocol Buffers reduce payload sizes by up to 50% compared to JSON."
       ]
+    },
+    {
+      "slug": "08-auth-and-authorization",
+      "order": 8,
+      "phase": 2,
+      "phaseTitle": "Phase 2 — HTTP & Data Wire Protocols",
+      "lectureNumber": "8",
+      "title": "Authentication and Authorization for Backend Engineers",
+      "subtitle": "The evolution of identity, stateful sessions vs stateless JWTs, cookies, API keys, OAuth 2.0/OIDC delegation, RBAC, and timing attack mitigation.",
+      "duration": "1 hr 35 min",
+      "youtubeUrl": "https://youtu.be/A95rliroC8Q?si=I-n5SPFZ_fkX3EiN",
+      "visualizerType": "none",
+      "playgroundDemoIds": [
+        "authLogin",
+        "authVerifyJwt",
+        "authRbac"
+      ],
+      "tldr": "Authentication determines 'Who are you?' (identity verification), while Authorization determines 'What can you do?' (permissions). Modern backends balance centralized stateful sessions (Redis + cookies) for instant revocation against stateless JWTs for distributed horizontal scale, hardening systems with generic error responses, constant-time comparisons, and OAuth 2.0 delegation.",
+      "tags": [
+        "Authentication",
+        "Authorization",
+        "JWT",
+        "Sessions",
+        "Cookies",
+        "OAuth 2.0",
+        "RBAC",
+        "Security"
+      ],
+      "sections": [
+        {
+          "id": "authn-vs-authz-definitions",
+          "title": "1. Authentication vs. Authorization: The 'Who' vs. The 'What'",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Every secure backend system separates access control into two distinct, sequential phases: verifying identity first, and then validating permissions."
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Authentication (AuthN — The 'Who')",
+                  "text": "The mechanism that verifies the claimed identity of an incoming client or user. It answers: 'Who are you in this context?' (e.g., verifying a password hash or JWT signature)."
+                },
+                {
+                  "number": 2,
+                  "title": "Authorization (AuthZ — The 'What')",
+                  "text": "The mechanism that evaluates a verified user's permissions against the requested resource. It answers: 'What actions are you allowed to perform?' (e.g., can this user delete a database record?)."
+                }
+              ]
+            },
+            {
+              "type": "callout",
+              "variant": "info",
+              "title": "The Status Code Rule (401 vs 403)",
+              "text": "Return 401 Unauthorized when credentials are missing or invalid ('I do not know who you are'). Return 403 Forbidden when the identity is verified, but lacks sufficient permissions ('I know who you are, but you cannot access this')."
+            }
+          ]
+        },
+        {
+          "id": "evolution-of-authentication",
+          "title": "2. The Historical Evolution of Identity & Hashing",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Understanding how security evolved explains why modern backend protocols are designed the way they are:"
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Era",
+                "Mechanism",
+                "Vulnerability & Innovation"
+              ],
+              "rows": [
+                [
+                  "Pre-Industrial",
+                  "Implicit Village Trust",
+                  "Personal vouching and handshakes. Zero technical scalability beyond local communities."
+                ],
+                [
+                  "Medieval",
+                  "Wax Seals & Physical Signets",
+                  "Authentication based on possession. Gave rise to early physical forgery attacks."
+                ],
+                [
+                  "Industrial",
+                  "Telegraph Passphrases",
+                  "Shifted security to 'something you know' across long-distance wire communications."
+                ],
+                [
+                  "1960s Mainframes",
+                  "Plaintext Passwords ➔ Hashing",
+                  "An accidental password file print at MIT led to the invention of one-way cryptographic hashing (irreversible mathematical transforms like bcrypt/Argon2)."
+                ],
+                [
+                  "Modern MFA",
+                  "Multi-Factor Authentication",
+                  "Combines Knowledge (Password), Possession (Authenticator OTP / Phone), and Inherence (Biometrics)."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sessions-vs-jwts",
+          "title": "3. Stateful Sessions vs. Stateless JWTs",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Because HTTP is fundamentally stateless, backend engineers use two primary patterns to maintain user authentication across requests:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Stateful Sessions (Server-Side Memory)",
+                  "text": "Upon login, the server creates a unique Session ID, stores the user context in an in-memory database (like Redis), and sends the ID to the client in an HttpOnly, Secure cookie. This allows instant server-side revocation, but requires centralized storage lookups."
+                },
+                {
+                  "number": 2,
+                  "title": "Stateless JWTs (Client-Side Tokens)",
+                  "text": "The server signs an encoded JSON token containing user claims (sub, exp, role) using a private secret key. The client attaches this token to every request header. Servers verify the cryptographic signature in memory with zero database lookups, making it ideal for distributed microservices."
+                }
+              ]
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Feature",
+                "Stateful Sessions (Redis/DB)",
+                "Stateless JWTs"
+              ],
+              "rows": [
+                [
+                  "Storage Location",
+                  "Server-side store (Redis / Database)",
+                  "Client-side (Memory / HttpOnly Cookie)"
+                ],
+                [
+                  "Revocation",
+                  "Instant (delete session from Redis)",
+                  "Difficult before token expiration (requires token blocklists)"
+                ],
+                [
+                  "Microservice Scaling",
+                  "Requires shared cache lookup on every hop",
+                  "Zero database hits; verified locally via shared secret"
+                ],
+                [
+                  "Payload Size",
+                  "Tiny (32-character opaque Session ID)",
+                  "Larger (base64 encoded JSON string with claims)"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "jwt-anatomy-and-cookies",
+          "title": "4. JWT Anatomy & Secure Cookie Transport",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A JSON Web Token consists of three base64url-encoded components separated by dots (`.`):"
+            },
+            {
+              "type": "example",
+              "title": "Example: JWT Anatomy Breakdown",
+              "input": "// 1. HEADER (Algorithm & Type)\n{ \"alg\": \"HS256\", \"typ\": \"JWT\" }\n\n// 2. PAYLOAD (Claims)\n{ \"sub\": \"usr_8f9a2b1c\", \"role\": \"admin\", \"exp\": 1786973600 }\n\n// 3. SIGNATURE (HMAC-SHA256)\nHMACSHA256(base64Url(header) + \".\" + base64Url(payload), secretKey)",
+              "output": "// 4. COMPLETE WIRE TOKEN TRANSMITTED OVER HTTP\neyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfOGY5YTJiMWMiLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3ODY5NzM2MDB9.i_7E9WbM-4Y0U_8h1O1k7qN9QWq2e5R",
+              "explanation": "If an attacker tampers with any character in the payload (like changing role to admin), the signature fails verification immediately."
+            },
+            {
+              "type": "callout",
+              "variant": "warning",
+              "title": "The Golden Cookie Rule",
+              "text": "Always transmit session tokens inside cookies configured with: HttpOnly (blocks malicious JavaScript from stealing tokens during XSS attacks), Secure (enforces HTTPS-only transmission), and SameSite=Strict (prevents CSRF attacks)."
+            }
+          ]
+        },
+        {
+          "id": "api-keys-and-oauth",
+          "title": "5. API Keys, OAuth 2.0 & OpenID Connect (OIDC)",
+          "blocks": [
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "API Keys (Machine-to-Machine)",
+                  "text": "High-entropy random strings used by automated servers and SDKs to bypass human login interfaces and authenticate background microservice jobs."
+                },
+                {
+                  "number": 2,
+                  "title": "OAuth 2.0 (Delegated Authorization)",
+                  "text": "Solves the 'Delegation Problem' where users previously had to share master passwords with third-party apps. OAuth grants scoped, revocable access tokens (e.g. 'read-only contacts access') without sharing passwords."
+                },
+                {
+                  "number": 3,
+                  "title": "OpenID Connect (OIDC Identity Layer)",
+                  "text": "An identity protocol built on top of OAuth 2.0. It introduces standardized ID Tokens (JWTs) containing profile data (email, name), powering modern 'Sign in with Google' federated authentication."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rbac-implementation",
+          "title": "6. Role-Based Access Control (RBAC)",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "RBAC restricts system access based on assigned user roles. Backend middleware intercepts requests, extracts user claims, and checks if the role possesses the required permission before running business logic."
+            },
+            {
+              "type": "code",
+              "caption": "Multi-Language RBAC Middleware Implementations",
+              "code": "// ─── 1. NODE.JS / EXPRESS ───\nfunction requireRole(requiredRole) {\n  return (req, res, next) => {\n    if (req.user?.role !== requiredRole) {\n      return res.status(403).json({ error: '403 Forbidden: Insufficient permissions' });\n    }\n    next();\n  };\n}\n\n// ─── 2. GO (net/http) ───\nfunc RequireRole(role string, next http.HandlerFunc) http.HandlerFunc {\n    return func(w http.ResponseWriter, r *http.Request) {\n        userRole := r.Header.Get(\"X-User-Role\")\n        if userRole != role {\n            http.Error(w, \"403 Forbidden\", http.StatusForbidden)\n            return\n        }\n        next(w, r)\n    }\n}\n\n// ─── 3. RUST (Actix / Axum) ───\nasync fn admin_guard(req: ServiceRequest) -> Result<ServiceRequest, Error> {\n    let claims = extract_claims(&req)?;\n    if claims.role != \"admin\" {\n        return Err(error::ErrorForbidden(\"403 Forbidden: Admin role required\"));\n    }\n    Ok(req)\n}",
+              "tabs": [
+                {
+                  "label": "Node.js",
+                  "language": "javascript",
+                  "code": "function requireRole(allowedRoles) {\n  return (req, res, next) => {\n    if (!req.user || !allowedRoles.includes(req.user.role)) {\n      return res.status(403).json({ error: '403 Forbidden: Insufficient permissions' });\n    }\n    next();\n  };\n}\n\napp.delete('/api/database', requireRole(['admin']), (req, res) => {\n  res.json({ message: 'Database operation executed' });\n});"
+                },
+                {
+                  "label": "Go",
+                  "language": "go",
+                  "code": "func RequireRole(allowedRole string, next http.HandlerFunc) http.HandlerFunc {\n    return func(w http.ResponseWriter, r *http.Request) {\n        claims, err := ValidateToken(r)\n        if err != nil || claims.Role != allowedRole {\n            http.Error(w, \"403 Forbidden\", http.StatusForbidden)\n            return\n        }\n        next(w, r)\n    }\n}"
+                },
+                {
+                  "label": "Rust (Axum)",
+                  "language": "rust",
+                  "code": "async fn delete_database(\n    Extension(claims): Extension<Claims>,\n) -> Result<Json<StatusResponse>, StatusCode> {\n    if claims.role != \"admin\" {\n        return Err(StatusCode::FORBIDDEN);\n    }\n    Ok(Json(StatusResponse { status: \"ok\" }))\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "critical-security-practices",
+          "title": "7. Critical Security: Generic Errors & Timing Attack Mitigation",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Building secure authentication requires protecting against subtle side-channel attacks:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Generic Error Messages (Prevent Enumeration)",
+                  "text": "Never return specific messages like 'User not found' or 'Incorrect password'. Attackers use these to harvest lists of registered emails. Always return a uniform 'Invalid email or password'."
+                },
+                {
+                  "number": 2,
+                  "title": "Equalized Latency & Constant-Time Comparisons (Prevent Timing Attacks)",
+                  "text": "Password hashing (Argon2 / bcrypt) takes ~100ms. If an invalid username returns in 1ms while a valid username returns in 100ms, attackers measure response time to identify valid users. Perform dummy hashes or constant-time comparison to ensure uniform latency."
+                }
+              ]
+            },
+            {
+              "type": "example",
+              "title": "Example: Constant-Time Login Implementation",
+              "input": "POST /api/auth/login HTTP/1.1\nHost: api.example.com\nContent-Type: application/json\n\n{\n  \"email\": \"nonexistent_user@example.com\",\n  \"password\": \"wrong_password_123\"\n}",
+              "output": "HTTP/1.1 401 Unauthorized\nContent-Type: application/json\n\n{\n  \"error\": \"Invalid email or password\"\n}",
+              "explanation": "Even though the user does not exist, the server executes a dummy hash step, returning 401 in constant ~120ms to completely neutralize timing analysis."
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "Authentication verifies identity ('Who are you?'); Authorization evaluates permissions ('What can you do?').",
+        "401 Unauthorized means credentials are missing or invalid; 403 Forbidden means the identity is valid but lacks required privileges.",
+        "Stateful sessions (Redis + HttpOnly cookies) provide instant revocation; Stateless JWTs offer horizontal scalability across microservices without database lookups.",
+        "Always use generic error messages ('Invalid email or password') and constant-time comparisons to prevent account enumeration and timing attacks.",
+        "OAuth 2.0 delegates scoped permissions to third parties without sharing master passwords; OpenID Connect (OIDC) standardizes federated user identity."
+      ]
     }
   ]
 }
