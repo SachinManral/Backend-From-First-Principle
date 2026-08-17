@@ -14,8 +14,16 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# SQLite Databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+data/
+
 # Editor & OS files
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
