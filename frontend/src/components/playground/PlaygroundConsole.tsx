@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Play, Copy, Check, Terminal, Download, Clock, ShieldCheck, ArrowUpRight, FileCode, Layers, Radio, Sparkles } from 'lucide-react';
+import { Play, Copy, Check, Terminal, Clock, ShieldCheck, FileCode, Layers, Zap } from 'lucide-react';
 import { DemoEndpoint } from '@/lib/types';
 import { API_BASE_URL, generateCurlSnippet } from '@/lib/demos';
 
@@ -133,7 +133,6 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
             if (done) break;
             const text = decoder.decode(value, { stream: true });
             
-            // Parse event stream lines
             const lines = text.split('\n');
             lines.forEach(line => {
               if (line.startsWith('data:')) {
@@ -154,7 +153,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
         }
       } catch (err: any) {
         setResponseStatus(0);
-        setResponseRawText(`Failed to connect to API server: ${err.message}. Is backend running on http://localhost:4000?`);
+        setResponseRawText(`Failed to connect to API server: ${err.message}. Ensure backend is running on port 4000.`);
       } finally {
         setLatencyMs(Math.round(performance.now() - startTime));
         setLoading(false);
@@ -205,8 +204,8 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
     } catch (err: any) {
       setLatencyMs(Math.round(performance.now() - startTime));
       setResponseStatus(0);
-      setResponseStatusText('Network / CORS Exception');
-      setResponseRawText(`Failed to fetch: ${err.message}\n\nTroubleshooting:\n1. Ensure Express API is running: 'npm run dev' inside /backend (listening on port 4000).\n2. If testing CORS blocked mode, this browser error is the intended teaching behavior!`);
+      setResponseStatusText('Network Exception');
+      setResponseRawText(`Failed to fetch: ${err.message}\n\nTroubleshooting:\n1. Ensure backend is running on http://localhost:4000.\n2. If testing CORS blocked simulation, this exception is expected behavior.`);
     } finally {
       setLoading(false);
     }
@@ -220,94 +219,65 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
   };
 
   return (
-    <div className="qt-card p-6 md:p-8 space-y-6 shadow-2xl">
+    <div className="p-6 md:p-7 rounded-2xl bg-[#090e1c]/90 border border-[#1b2644] shadow-2xl space-y-5">
+      
       {/* Console Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-surface-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#1b2644]">
         <div>
-          <div className="flex items-center gap-2.5">
-            <span className="px-3 py-0.5 rounded-full text-xs font-bold font-mono bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
-              Live Practical Playground
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
+              Live Interactive Lab
             </span>
-            <span className="text-xs text-zinc-400 font-mono">Port 4000 Express Socket</span>
+            <span className="text-[11px] text-zinc-400 font-mono">Port 4000 Express Socket</span>
           </div>
-          <h4 className="text-lg font-bold text-white mt-1.5">
+          <h4 className="text-base font-bold text-white mt-1">
             {demo.title}
           </h4>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={copyCurl}
-            className="qt-btn-secondary py-2 px-3.5 text-xs"
-            title="Copy cURL snippet"
-          >
-            {copiedCurl ? <Check className="w-3.5 h-3.5 text-brand-emerald" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copiedCurl ? 'Copied!' : 'Copy cURL'}</span>
-          </button>
-          
-          <a
-            href={`${API_BASE_URL}/api/export/postman`}
-            download="backend-first-principles.postman_collection.json"
-            target="_blank"
-            rel="noreferrer"
-            className="qt-btn-secondary py-2 px-3.5 text-xs hover:text-brand-amber hover:border-amber-500/40"
-          >
-            <Download className="w-3.5 h-3.5 text-brand-amber" />
-            <span>Postman</span>
-          </a>
-        </div>
+        <button
+          onClick={copyCurl}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0d1428] hover:bg-[#141e3c] border border-[#202e52] text-xs font-semibold text-zinc-300 transition w-fit"
+          title="Copy cURL snippet"
+        >
+          {copiedCurl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-zinc-400" />}
+          <span>{copiedCurl ? 'Copied' : 'Copy cURL'}</span>
+        </button>
       </div>
 
-      <p className="text-xs md:text-sm text-zinc-400 leading-relaxed font-normal">
+      <p className="text-xs text-zinc-400 leading-relaxed font-normal">
         {demo.description}
       </p>
 
-      {/* Dynamic Controls if present */}
+      {/* Preset Action Switcher Tabs (Clean pill tabs instead of clunky dropdown) */}
       {demo.customControls && demo.customControls.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-surface-muted border border-surface-border rounded-2xl">
+        <div className="flex flex-wrap items-center gap-2 pt-1">
           {demo.customControls.map(ctrl => (
-            <div key={ctrl.key} className="space-y-2">
-              <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
-                {ctrl.label}
-              </label>
-              {ctrl.type === 'select' && ctrl.options && (
-                <select
-                  value={controlValues[ctrl.key] || ctrl.defaultValue}
-                  onChange={(e) => setControlValues(prev => ({ ...prev, [ctrl.key]: e.target.value }))}
-                  className="w-full bg-background border border-surface-border rounded-xl px-3.5 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-blue transition"
-                >
-                  {ctrl.options.map(opt => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              )}
-              {ctrl.type === 'toggle' && ctrl.options && (
-                <div className="flex gap-2">
-                  {ctrl.options.map(opt => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setControlValues(prev => ({ ...prev, [ctrl.key]: opt.value }))}
-                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition ${
-                        (controlValues[ctrl.key] || ctrl.defaultValue) === opt.value
-                          ? 'bg-brand-blue text-black shadow-md shadow-blue-500/20'
-                          : 'bg-background text-zinc-400 border border-surface-border hover:text-white'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+            <div key={ctrl.key} className="flex flex-wrap items-center gap-1.5">
+              {ctrl.options?.map(opt => {
+                const isSelected = (controlValues[ctrl.key] || ctrl.defaultValue) === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => setControlValues(prev => ({ ...prev, [ctrl.key]: opt.value }))}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                      isSelected
+                        ? 'bg-brand-blue text-white shadow-md shadow-brand-blue/25 border border-brand-blue/50'
+                        : 'bg-[#0d1428] text-zinc-400 hover:text-white border border-[#202e52] hover:border-zinc-500'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
             </div>
           ))}
         </div>
       )}
 
-      {/* Request Bar & Fire Button */}
-      <div className="flex flex-col md:flex-row gap-3">
-        <div className="flex items-center flex-1 bg-background border border-surface-border rounded-2xl overflow-hidden focus-within:border-brand-blue/60 transition shadow-inner">
+      {/* Unified URL Bar & Fire Button */}
+      <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+        <div className="flex items-center flex-1 bg-[#060a14] border border-[#1b2644] rounded-xl overflow-hidden focus-within:border-brand-blue/60 transition shadow-inner">
           <select
             value={method}
             onChange={(e) => {
@@ -317,11 +287,11 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
                 setBodyText(JSON.stringify({ title: "New Book from Interactive Lab", author: "Sachin Manral" }, null, 2));
               }
             }}
-            className={`px-3.5 py-2.5 text-xs font-bold font-mono border-r border-surface-border bg-surface-muted focus:outline-none cursor-pointer ${
+            className={`px-3 py-2 text-xs font-bold font-mono border-r border-[#1b2644] bg-[#0b1020] focus:outline-none cursor-pointer ${
               method === 'GET'
-                ? 'text-brand-blue'
+                ? 'text-cyan-400'
                 : method === 'POST'
-                ? 'text-brand-emerald'
+                ? 'text-emerald-400'
                 : method === 'PUT' || method === 'PATCH'
                 ? 'text-amber-400'
                 : method === 'DELETE'
@@ -335,13 +305,12 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
             <option value="PATCH">PATCH</option>
             <option value="DELETE">DELETE</option>
             <option value="OPTIONS">OPTIONS</option>
-            <option value="HEAD">HEAD</option>
           </select>
           <input
             type="text"
             value={urlPath}
             onChange={(e) => setUrlPath(e.target.value)}
-            className="flex-1 bg-transparent px-4 py-2.5 text-xs font-mono text-white focus:outline-none"
+            className="flex-1 bg-transparent px-3.5 py-2 text-xs font-mono text-white focus:outline-none"
             placeholder="/api/demo/..."
           />
         </div>
@@ -349,140 +318,111 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
         <button
           onClick={handleFireRequest}
           disabled={loading}
-          className="qt-btn-primary py-2.5 px-6 shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand-blue to-brand-purple hover:opacity-95 shadow-md shadow-brand-blue/20 transition cursor-pointer shrink-0 disabled:opacity-50"
         >
-          <Play className="w-4 h-4 fill-white" />
+          <Play className="w-3.5 h-3.5 fill-white" />
           <span>{loading ? 'Executing...' : 'Fire Request'}</span>
         </button>
       </div>
 
-      {/* Headers Editor Tab */}
+      {/* Request Headers Pill Row */}
       {Object.keys(headers).length > 0 && (
-        <div className="space-y-2">
-          <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
-            Active Request Headers:
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(headers).map(([k, v]) => (
-              <span
-                key={k}
-                className="px-3 py-1 rounded-xl bg-background border border-surface-border font-mono text-xs text-zinc-300"
-              >
-                <span className="text-zinc-500">{k}:</span> <span className="text-brand-blue font-bold">{v}</span>
-              </span>
-            ))}
-          </div>
+        <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
+          <span className="text-zinc-500 font-bold">Headers:</span>
+          {Object.entries(headers).map(([k, v]) => (
+            <span
+              key={k}
+              className="px-2.5 py-0.5 rounded-md bg-[#0d1428] border border-[#1b2644] text-zinc-300"
+            >
+              <span className="text-zinc-400">{k}:</span> <span className="text-cyan-400 font-semibold">{v}</span>
+            </span>
+          ))}
         </div>
       )}
 
       {/* Body Input Editor if method allows */}
       {['POST', 'PUT', 'PATCH'].includes(method) && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
-            Request Body (JSON / text):
+            Request Body (JSON Payload):
           </div>
           <textarea
             value={bodyText}
             onChange={(e) => setBodyText(e.target.value)}
             rows={3}
-            className="w-full p-3.5 bg-background border border-surface-border rounded-2xl font-mono text-xs text-zinc-200 focus:outline-none focus:border-brand-blue/60 transition"
+            className="w-full p-3 bg-[#060a14] border border-[#1b2644] rounded-xl font-mono text-xs text-emerald-400 focus:outline-none focus:border-brand-blue/60 transition"
           />
         </div>
       )}
 
       {/* Response Panel */}
-      {(responseStatus !== null || streamEvents.length > 0) && (
-        <div className="space-y-4 pt-4 border-t border-surface-border animate-fade-in">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              {/* Status Badge */}
-              <div
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold border ${
-                  responseStatus && responseStatus >= 200 && responseStatus < 300
-                    ? 'bg-brand-emerald/15 text-brand-emerald border-emerald-500/30'
-                    : responseStatus === 304
-                    ? 'bg-brand-blue/15 text-brand-blue border-blue-500/30'
-                    : responseStatus && responseStatus >= 400 && responseStatus < 500
-                    ? 'bg-brand-amber/15 text-brand-amber border-amber-500/30'
-                    : 'bg-brand-rose/15 text-brand-rose border-rose-500/30'
+      {responseStatus !== null && (
+        <div className="rounded-xl bg-[#060a14] border border-[#1b2644] overflow-hidden space-y-0">
+          
+          {/* Status Bar */}
+          <div className="px-4 py-2 bg-[#0b1020] border-b border-[#1b2644] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span
+                className={`px-2 py-0.5 rounded text-[11px] font-bold font-mono ${
+                  responseStatus >= 200 && responseStatus < 300
+                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                    : responseStatus >= 300 && responseStatus < 400
+                    ? 'bg-blue-500/15 text-cyan-300 border border-cyan-400/30'
+                    : responseStatus >= 400 && responseStatus < 500
+                    ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                    : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
                 }`}
               >
-                <span>HTTP {responseStatus}</span>
-                {responseStatusText && <span className="opacity-80 font-sans">• {responseStatusText}</span>}
-              </div>
-
+                HTTP {responseStatus} {responseStatusText}
+              </span>
               {latencyMs !== null && (
-                <div className="flex items-center gap-1 text-xs font-mono text-zinc-400">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>{latencyMs} ms</span>
-                </div>
+                <span className="text-[11px] text-zinc-400 font-mono">
+                  {latencyMs}ms
+                </span>
               )}
             </div>
 
-            {/* Protocol Principle Callout */}
-            {responseData && responseData._note && (
-              <div className="text-xs text-brand-blue font-mono font-medium flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Principle Note: {responseData._note}</span>
-              </div>
-            )}
+            <span className="text-[10px] text-zinc-500 font-mono">
+              Live Express Response
+            </span>
           </div>
 
-          {/* SSE Stream Logs */}
-          {streamEvents.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isStreamingActive ? 'bg-brand-blue animate-ping' : 'bg-brand-emerald'}`} />
-                <span>Chunked Event Stream (text/event-stream)</span>
-              </div>
-              <div className="p-4 rounded-2xl bg-background border border-surface-border space-y-2 max-h-60 overflow-y-auto font-mono text-xs">
-                {streamEvents.map((evt, i) => (
-                  <div key={i} className="flex items-start justify-between gap-2 border-b border-surface-border/40 pb-1.5">
-                    <div className="text-brand-blue">
-                      <span className="text-zinc-500">[{evt.time}] Step {evt.step || i + 1}: </span>
-                      <span>{evt.message || evt.raw}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Response Payload Inspector */}
-          {responseRawText && streamEvents.length === 0 && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
-                <span>Response Body:</span>
-                <span className="text-zinc-500 font-normal lowercase">{responseHeaders['content-type'] || 'raw bytes'}</span>
-              </div>
-              <pre className="p-4 rounded-2xl bg-background border border-surface-border font-mono text-xs text-zinc-200 overflow-x-auto max-h-72 shadow-inner">
-                <code>
-                  {typeof responseData === 'object'
-                    ? JSON.stringify(responseData, null, 2)
-                    : responseRawText}
-                </code>
+          {/* Response Payload */}
+          <div className="p-4 overflow-x-auto">
+            {responseData !== null ? (
+              <pre className="font-mono text-xs text-zinc-200 leading-relaxed">
+                {typeof responseData === 'object'
+                  ? JSON.stringify(responseData, null, 2)
+                  : String(responseData)}
               </pre>
-            </div>
-          )}
+            ) : responseRawText ? (
+              <pre className="font-mono text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                {responseRawText}
+              </pre>
+            ) : null}
+          </div>
 
-          {/* Response Headers Table */}
-          {Object.keys(responseHeaders).length > 0 && (
-            <details className="text-xs group">
-              <summary className="cursor-pointer font-mono font-bold text-zinc-400 hover:text-white py-1 transition flex items-center gap-2 select-none">
-                <span>View Raw Response Headers ({Object.keys(responseHeaders).length})</span>
-              </summary>
-              <div className="mt-2 p-3 rounded-2xl bg-background border border-surface-border font-mono text-[11px] space-y-1 overflow-x-auto">
-                {Object.entries(responseHeaders).map(([k, v]) => (
-                  <div key={k} className="flex gap-2">
-                    <span className="text-brand-blue">{k}:</span>
-                    <span className="text-zinc-300">{v}</span>
-                  </div>
-                ))}
-              </div>
-            </details>
-          )}
         </div>
       )}
+
+      {/* SSE Streaming Console */}
+      {demo.id === 'stream' && streamEvents.length > 0 && (
+        <div className="space-y-2 pt-2">
+          <div className="text-[11px] font-bold text-cyan-400 font-mono">
+            Chunked SSE Stream Events ({streamEvents.length} frames received):
+          </div>
+          <div className="p-3 bg-[#060a14] border border-[#1b2644] rounded-xl space-y-1.5 font-mono text-xs max-h-48 overflow-y-auto">
+            {streamEvents.map((ev, i) => (
+              <div key={i} className="flex items-center gap-2 text-zinc-300">
+                <span className="text-zinc-500">[{ev.time}]</span>
+                <span className="text-emerald-400 font-bold">chunk #{i + 1}:</span>
+                <span>{ev.message || ev.raw}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

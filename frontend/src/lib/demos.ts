@@ -28,8 +28,8 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     category: 'Status Codes',
     method: 'GET',
     path: '/api/demo/status/200',
-    description: 'Returns realistic HTTP responses for any standard status code (200, 201, 204, 301, 302, 304, 400, 401, 403, 404, 409, 500, 503, 504).',
-    conceptNote: 'Examine response status line headers and learn typical fixes for 2xx, 3xx, 4xx, and 5xx families.',
+    description: 'Returns realistic HTTP responses for standard status codes across 2xx, 3xx, 4xx, and 5xx families.',
+    conceptNote: 'Examine response status line headers and learn typical behavior for each status code family.',
     customControls: [
       {
         type: 'select',
@@ -37,21 +37,18 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
         key: 'code',
         defaultValue: '200',
         options: [
-          { label: '200 OK (Success)', value: '200' },
-          { label: '201 Created (New Resource)', value: '201' },
-          { label: '204 No Content (Empty Body)', value: '204' },
-          { label: '301 Moved Permanently', value: '301' },
-          { label: '302 Found (Temp Redirect)', value: '302' },
-          { label: '304 Not Modified (Cache Match)', value: '304' },
-          { label: '400 Bad Request (Invalid Schema)', value: '400' },
-          { label: '401 Unauthorized (Missing Auth)', value: '401' },
-          { label: '403 Forbidden (Denied Perms)', value: '403' },
-          { label: '404 Not Found (Missing URI)', value: '404' },
-          { label: '409 Conflict (Duplicate State)', value: '409' },
-          { label: '500 Internal Server Error (Crash)', value: '500' },
-          { label: '502 Bad Gateway (Upstream Down)', value: '502' },
-          { label: '503 Service Unavailable (Overload)', value: '503' },
-          { label: '504 Gateway Timeout (Slow DB)', value: '504' }
+          { label: '200 OK', value: '200' },
+          { label: '201 Created', value: '201' },
+          { label: '204 No Content', value: '204' },
+          { label: '301 Moved', value: '301' },
+          { label: '304 Not Modified', value: '304' },
+          { label: '400 Bad Request', value: '400' },
+          { label: '401 Unauthorized', value: '401' },
+          { label: '403 Forbidden', value: '403' },
+          { label: '404 Not Found', value: '404' },
+          { label: '409 Conflict', value: '409' },
+          { label: '500 Server Error', value: '500' },
+          { label: '504 Timeout', value: '504' }
         ]
       }
     ]
@@ -75,21 +72,21 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     customControls: [
       {
         type: 'toggle',
-        label: 'Enable CORS on Server (Access-Control-Allow-Origin)',
+        label: 'Server CORS Policy',
         key: 'allowCors',
         defaultValue: 'true',
         options: [
-          { label: 'Allowed (true)', value: 'true' },
-          { label: 'Blocked Simulation (false)', value: 'false' }
+          { label: 'CORS Allowed', value: 'true' },
+          { label: 'CORS Blocked', value: 'false' }
         ]
       },
       {
         type: 'select',
-        label: 'Request Flow Type',
+        label: 'Flow Type',
         key: 'flow',
         defaultValue: 'preflight',
         options: [
-          { label: 'Preflight Flow (PUT with custom headers)', value: 'preflight' },
+          { label: 'Preflight Flow (PUT)', value: 'preflight' },
           { label: 'Simple Request (GET)', value: 'simple' }
         ]
       }
@@ -101,7 +98,7 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     category: 'Performance',
     method: 'GET',
     path: '/api/demo/cache/resource',
-    description: 'Serves ETag and Cache-Control headers. Repeat GET with If-None-Match to witness a 304 Not Modified 0-byte transfer!',
+    description: 'Serves ETag and Cache-Control headers. Repeat GET with If-None-Match to witness a 304 Not Modified 0-byte transfer.',
     conceptNote: 'Understand the difference between fresh 200 payload transfers and 304 bandwidth-saving validation checks.',
     defaultHeaders: {
       'If-None-Match': 'W/"f9a8b7c6d5e4"'
@@ -109,13 +106,13 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     customControls: [
       {
         type: 'select',
-        label: 'Action',
+        label: 'Cache Action',
         key: 'action',
         defaultValue: 'get_conditional',
         options: [
-          { label: 'GET (Conditional with If-None-Match)', value: 'get_conditional' },
-          { label: 'GET (Fresh / No ETag header)', value: 'get_fresh' },
-          { label: 'PATCH (Mutate resource & generate new ETag)', value: 'patch_mutate' }
+          { label: 'Conditional 304 (with ETag)', value: 'get_conditional' },
+          { label: 'Fresh 200 (No ETag)', value: 'get_fresh' },
+          { label: 'Mutate (New ETag)', value: 'patch_mutate' }
         ]
       }
     ]
@@ -139,9 +136,9 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
         key: 'acceptFormat',
         defaultValue: 'application/json',
         options: [
-          { label: 'JSON (application/json)', value: 'application/json' },
-          { label: 'XML (application/xml)', value: 'application/xml' },
-          { label: 'Plain Text (text/plain)', value: 'text/plain' }
+          { label: 'JSON', value: 'application/json' },
+          { label: 'XML', value: 'application/xml' },
+          { label: 'Plain Text', value: 'text/plain' }
         ]
       },
       {
@@ -150,10 +147,10 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
         key: 'acceptLang',
         defaultValue: 'en',
         options: [
-          { label: 'English (en)', value: 'en' },
-          { label: 'Spanish (es)', value: 'es' },
-          { label: 'Hindi (hi)', value: 'hi' },
-          { label: 'French (fr)', value: 'fr' }
+          { label: 'English', value: 'en' },
+          { label: 'Spanish', value: 'es' },
+          { label: 'Hindi', value: 'hi' },
+          { label: 'French', value: 'fr' }
         ]
       }
     ]
@@ -169,12 +166,12 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     customControls: [
       {
         type: 'toggle',
-        label: 'Gzip Compression',
+        label: 'Compression',
         key: 'gzip',
         defaultValue: 'true',
         options: [
-          { label: 'Gzip Enabled (Content-Encoding: gzip)', value: 'true' },
-          { label: 'Uncompressed (Raw JSON bytes)', value: 'false' }
+          { label: 'Gzip Enabled', value: 'true' },
+          { label: 'Uncompressed', value: 'false' }
         ]
       }
     ]
@@ -204,13 +201,13 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     customControls: [
       {
         type: 'select',
-        label: 'Number of Stream Steps',
+        label: 'Stream Steps',
         key: 'steps',
         defaultValue: '5',
         options: [
-          { label: '3 Steps (Fast)', value: '3' },
-          { label: '5 Steps (Standard)', value: '5' },
-          { label: '8 Steps (Detailed)', value: '8' }
+          { label: '3 Chunks', value: '3' },
+          { label: '5 Chunks', value: '5' },
+          { label: '8 Chunks', value: '8' }
         ]
       }
     ]
@@ -237,10 +234,10 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
         key: 'method',
         defaultValue: 'POST',
         options: [
-          { label: 'POST (Non-idempotent: Creates 1 new record every click)', value: 'POST' },
-          { label: 'GET (Idempotent & Safe: Read-only)', value: 'GET' },
-          { label: 'PUT (Idempotent: Replaces target value)', value: 'PUT' },
-          { label: 'DELETE (Idempotent: Deletes target resource)', value: 'DELETE' }
+          { label: 'POST (Non-Idempotent)', value: 'POST' },
+          { label: 'GET (Safe & Idempotent)', value: 'GET' },
+          { label: 'PUT (Idempotent)', value: 'PUT' },
+          { label: 'DELETE (Idempotent)', value: 'DELETE' }
         ]
       }
     ]
@@ -263,12 +260,12 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     customControls: [
       {
         type: 'select',
-        label: 'Action from Burp Suite Video',
+        label: 'Action Preset',
         key: 'action',
         defaultValue: 'get_books',
         options: [
-          { label: 'Fetch Books (GET /api/demo/routing/books)', value: 'get_books' },
-          { label: 'Post Book (POST /api/demo/routing/books)', value: 'post_book' }
+          { label: 'Fetch Books (GET)', value: 'get_books' },
+          { label: 'Create Book (POST)', value: 'post_book' }
         ]
       }
     ]
@@ -284,13 +281,13 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     customControls: [
       {
         type: 'select',
-        label: 'Select Dynamic User',
+        label: 'User Preset',
         key: 'userId',
         defaultValue: '123',
         options: [
-          { label: 'Fetch User 123 (GET /api/demo/routing/users/123)', value: '123' },
-          { label: 'Fetch User 456 (GET /api/demo/routing/users/456)', value: '456' },
-          { label: 'Fetch Non-Existent User 999 (404 Test)', value: '999' }
+          { label: 'User 123', value: '123' },
+          { label: 'User 456', value: '456' },
+          { label: 'User 999 (404)', value: '999' }
         ]
       }
     ]
