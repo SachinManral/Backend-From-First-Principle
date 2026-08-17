@@ -251,8 +251,27 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     category: 'Routing',
     method: 'GET',
     path: '/api/demo/routing/books',
-    description: 'Demonstrates static route mapping where fixed paths serve different handlers based on HTTP method.',
-    conceptNote: 'Method + URL Path forms the composite lookup key in the server router tree.'
+    description: 'Demonstrates static route mapping where the same fixed path serves different handlers based on the HTTP method.',
+    conceptNote: 'Method + URL Path forms the composite lookup key in the server router tree.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      title: "Building Microservices with Go",
+      author: "Sachin Manral"
+    },
+    customControls: [
+      {
+        type: 'select',
+        label: 'Action from Burp Suite Video',
+        key: 'action',
+        defaultValue: 'get_books',
+        options: [
+          { label: 'Fetch Books (GET /api/demo/routing/books)', value: 'get_books' },
+          { label: 'Post Book (POST /api/demo/routing/books)', value: 'post_book' }
+        ]
+      }
+    ]
   },
   {
     id: 'routingDynamic',
@@ -260,8 +279,21 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     category: 'Routing',
     method: 'GET',
     path: '/api/demo/routing/users/123',
-    description: 'Extracts dynamic entity identifiers from path slots (:id) to perform record lookups.',
-    conceptNote: 'Semantic entity addressing: URL path parameters represent specific resources.'
+    description: 'Extracts dynamic entity identifiers from path slots (:id) to perform database record lookups.',
+    conceptNote: 'Semantic entity addressing: URL path parameters represent specific resources.',
+    customControls: [
+      {
+        type: 'select',
+        label: 'Select Dynamic User',
+        key: 'userId',
+        defaultValue: '123',
+        options: [
+          { label: 'Fetch User 123 (GET /api/demo/routing/users/123)', value: '123' },
+          { label: 'Fetch User 456 (GET /api/demo/routing/users/456)', value: '456' },
+          { label: 'Fetch Non-Existent User 999 (404 Test)', value: '999' }
+        ]
+      }
+    ]
   },
   {
     id: 'routingQuery',

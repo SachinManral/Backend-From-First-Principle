@@ -80,6 +80,21 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
       setUrlPath(`/api/demo/stream?steps=${controlValues.steps || '5'}&interval=500`);
     } else if (demo.id === 'idempotency') {
       setMethod(controlValues.method || 'POST');
+    } else if (demo.id === 'routingStatic') {
+      if (controlValues.action === 'post_book') {
+        setMethod('POST');
+        setUrlPath('/api/demo/routing/books');
+        setHeaders({ 'Content-Type': 'application/json' });
+        setBodyText(JSON.stringify({ title: "Building Microservices with Go", author: "Sachin Manral" }, null, 2));
+      } else {
+        setMethod('GET');
+        setUrlPath('/api/demo/routing/books');
+        setHeaders({});
+      }
+    } else if (demo.id === 'routingDynamic') {
+      const uId = controlValues.userId || '123';
+      setMethod('GET');
+      setUrlPath(`/api/demo/routing/users/${uId}`);
     }
   }, [controlValues, demo.id]);
 
@@ -293,9 +308,35 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
       {/* Request Bar & Fire Button */}
       <div className="flex flex-col md:flex-row gap-3">
         <div className="flex items-center flex-1 bg-background border border-surface-border rounded-2xl overflow-hidden focus-within:border-brand-blue/60 transition shadow-inner">
-          <span className="px-4 py-2.5 text-xs font-bold font-mono bg-surface-muted text-brand-blue border-r border-surface-border">
-            {method}
-          </span>
+          <select
+            value={method}
+            onChange={(e) => {
+              const newMethod = e.target.value;
+              setMethod(newMethod);
+              if (['POST', 'PUT', 'PATCH'].includes(newMethod) && !bodyText) {
+                setBodyText(JSON.stringify({ title: "New Book from Interactive Lab", author: "Sachin Manral" }, null, 2));
+              }
+            }}
+            className={`px-3.5 py-2.5 text-xs font-bold font-mono border-r border-surface-border bg-surface-muted focus:outline-none cursor-pointer ${
+              method === 'GET'
+                ? 'text-brand-blue'
+                : method === 'POST'
+                ? 'text-brand-emerald'
+                : method === 'PUT' || method === 'PATCH'
+                ? 'text-amber-400'
+                : method === 'DELETE'
+                ? 'text-rose-400'
+                : 'text-zinc-300'
+            }`}
+          >
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="PATCH">PATCH</option>
+            <option value="DELETE">DELETE</option>
+            <option value="OPTIONS">OPTIONS</option>
+            <option value="HEAD">HEAD</option>
+          </select>
           <input
             type="text"
             value={urlPath}
