@@ -102,6 +102,17 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
             Playground
           </Link>
           <Link
+            href="/chat"
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition flex items-center gap-1.5 ${
+              pathname === '/chat'
+                ? 'bg-gradient-to-r from-brand-blue/30 to-brand-purple/30 text-white font-bold border border-brand-blue/50 shadow-md'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Neo AI</span>
+          </Link>
+          <Link
             href="/progress"
             className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition ${
               pathname === '/progress'
