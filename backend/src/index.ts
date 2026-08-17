@@ -10,6 +10,7 @@ import compressRouter from './routes/demos/compress.js';
 import uploadRouter from './routes/demos/upload.js';
 import streamRouter from './routes/demos/stream.js';
 import idempotencyRouter from './routes/demos/idempotency.js';
+import routingRouter from './routes/demos/routing.js';
 import postmanRouter from './routes/postman.js';
 
 dotenv.config();
@@ -88,6 +89,13 @@ app.get('/', (_req: Request, res: Response) => {
       upload: "/api/demo/upload",
       stream: "/api/demo/stream",
       idempotency: "/api/demo/idempotent-check",
+      routingStatic: "/api/demo/routing/books",
+      routingDynamic: "/api/demo/routing/users/:id",
+      routingQuery: "/api/demo/routing/search?query=first-principles",
+      routingPagination: "/api/demo/routing/books-paginated?page=1&limit=2",
+      routingNested: "/api/demo/routing/users/123/posts/456",
+      routingV1: "/api/demo/routing/v1/products",
+      routingV2: "/api/demo/routing/v2/products",
       postmanCollection: "/api/export/postman"
     }
   });
@@ -103,6 +111,7 @@ app.use('/api/demo', compressRouter);
 app.use('/api/demo', uploadRouter);
 app.use('/api/demo', streamRouter);
 app.use('/api/demo', idempotencyRouter);
+app.use('/api/demo', routingRouter);
 
 // Mount Utilities & Postman Export Router
 app.use('/api', postmanRouter);

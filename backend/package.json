@@ -2,6 +2,7 @@
   "name": "backend-first-principles-api",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Express Backend API for Sriniously's Backend First Principles course",
   "main": "dist/index.js",
   "scripts": {
