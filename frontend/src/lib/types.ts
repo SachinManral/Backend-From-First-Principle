@@ -4,15 +4,19 @@ export type BlockType =
   | 'callout'
   | 'cards'
   | 'table'
-  | 'checklist';
+  | 'checklist'
+  | 'example'
+  | 'points';
 
 export type LectureBlock = 
   | { type: 'paragraph'; text: string }
-  | { type: 'code'; code: string; language?: string; caption?: string }
+  | { type: 'code'; code: string; language?: string; caption?: string; tabs?: Array<{ label: string; code: string; language?: string }> }
   | { type: 'callout'; variant: 'info' | 'warning' | 'success'; title: string; text: string }
   | { type: 'cards'; items: Array<{ title: string; desc: string; badge: string }> }
   | { type: 'table'; headers: string[]; rows: string[][] }
-  | { type: 'checklist'; items: string[] };
+  | { type: 'checklist'; items: string[] }
+  | { type: 'example'; title: string; input?: string; output?: string; explanation: string }
+  | { type: 'points'; items: Array<{ number?: number | string; title: string; text: string; code?: string }> };
 
 export interface LectureSection {
   id?: string;
@@ -62,6 +66,7 @@ export interface Lecture {
   tags: string[];
   order: number;
   tldr: string;
+  youtubeUrl?: string;
   sections: LectureSection[];
   selfCheckQuestions?: string[];
   keyTakeaways?: string[];

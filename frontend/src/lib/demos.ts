@@ -244,6 +244,69 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
         ]
       }
     ]
+  },
+  {
+    id: 'routingStatic',
+    title: '10. Static Routing (GET vs POST)',
+    category: 'Routing',
+    method: 'GET',
+    path: '/api/demo/routing/books',
+    description: 'Demonstrates static route mapping where fixed paths serve different handlers based on HTTP method.',
+    conceptNote: 'Method + URL Path forms the composite lookup key in the server router tree.'
+  },
+  {
+    id: 'routingDynamic',
+    title: '11. Dynamic Path Parameters (:id)',
+    category: 'Routing',
+    method: 'GET',
+    path: '/api/demo/routing/users/123',
+    description: 'Extracts dynamic entity identifiers from path slots (:id) to perform record lookups.',
+    conceptNote: 'Semantic entity addressing: URL path parameters represent specific resources.'
+  },
+  {
+    id: 'routingQuery',
+    title: '12. Query Parameters & Search',
+    category: 'Routing',
+    method: 'GET',
+    path: '/api/demo/routing/search?query=first-principles&filter=backend',
+    description: 'Transmits non-semantic filtering and search criteria using key-value pairs after the ? delimiter.',
+    conceptNote: 'Used with GET requests which do not carry payload bodies.'
+  },
+  {
+    id: 'routingPagination',
+    title: '13. Pagination Data Contracts',
+    category: 'Routing',
+    method: 'GET',
+    path: '/api/demo/routing/books-paginated?page=2&limit=2',
+    description: 'Slices large datasets into pages with metadata (currentPage, limit, totalPages, totalRecords).',
+    conceptNote: 'Essential for scalable APIs avoiding memory-crashing full-table scans.'
+  },
+  {
+    id: 'routingNested',
+    title: '14. Nested Entity Routes',
+    category: 'Routing',
+    method: 'GET',
+    path: '/api/demo/routing/users/123/posts/456',
+    description: 'Expresses parent-child domain hierarchies (User #123 ➔ Post #456) in clean REST paths.',
+    conceptNote: 'Multi-level path parameter extraction mirroring relational foreign key relationships.'
+  },
+  {
+    id: 'routingV1',
+    title: '15. Route Versioning (v1 Legacy)',
+    category: 'Routing',
+    method: 'GET',
+    path: '/api/demo/routing/v1/products',
+    description: 'Serves legacy contract format with name field for older client applications.',
+    conceptNote: 'Provides backward compatibility while modernizing backend systems.'
+  },
+  {
+    id: 'routingV2',
+    title: '16. Route Versioning (v2 Breaking Schema)',
+    category: 'Routing',
+    method: 'GET',
+    path: '/api/demo/routing/v2/products',
+    description: 'Serves modern schema with title, currency, and SKU fields without breaking v1 clients.',
+    conceptNote: 'Graceful migration window for frontend teams before deprecating legacy endpoints.'
   }
 ];
 
