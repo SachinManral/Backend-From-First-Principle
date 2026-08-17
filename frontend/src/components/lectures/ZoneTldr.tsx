@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
-import { Zap, Clock, Bookmark, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { Zap, Clock, Bookmark, Play, ExternalLink, ThumbsUp, ThumbsDown, Share2, ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
 import { Lecture } from '@/lib/types';
 import { useProgress } from '@/context/ProgressContext';
 
@@ -9,62 +10,147 @@ interface ZoneTldrProps {
   lecture: Lecture;
 }
 
+function renderFormattedText(text: string): React.ReactNode {
+  if (!text) return null;
+
+  const regex = /(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\([^)]+\))/g;
+  const parts = text.split(regex);
+
+  return parts.map((part, i) => {
+    if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+      return (
+        <code
+          key={i}
+          className="px-1.5 py-0.5 mx-0.5 rounded-md bg-[#141b2d] border border-[#232f4e] font-mono text-[12px] text-brand-rose font-medium"
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+      return (
+        <strong key={i} className="font-semibold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
+      return (
+        <em key={i} className="italic text-zinc-200">
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+    return part;
+  });
+}
+
 export default function ZoneTldr({ lecture }: ZoneTldrProps) {
   const { isCompleted, toggleComplete } = useProgress();
   const completed = isCompleted(lecture.slug);
+  const [likes, setLikes] = useState(0);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
+
+  const handleLike = () => {
+    if (hasLiked) {
+      setLikes(prev => prev - 1);
+      setHasLiked(false);
+    } else {
+      setLikes(prev => prev + 1);
+      setHasLiked(true);
+    }
+  };
+
+  const handleShare = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedShare(true);
+      setTimeout(() => setCopiedShare(false), 2000);
+    }
+  };
 
   return (
-    <div className="qt-card p-6 md:p-8 shadow-2xl relative overflow-hidden">
-      {/* Ambient glow highlight */}
-      <div className="absolute -right-16 -top-16 w-56 h-56 bg-brand-indigo/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-surface-border">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <span className="px-3.5 py-1 rounded-full text-xs font-bold font-mono bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
-            Lecture {lecture.lectureNumber}
-          </span>
-          <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-surface-muted text-zinc-300 border border-surface-border">
-            {lecture.phaseTitle}
-          </span>
-          <span className="flex items-center gap-1.5 text-xs text-zinc-400 font-mono">
-            <Clock className="w-3.5 h-3.5" />
-            <span>{lecture.duration}</span>
-          </span>
-        </div>
-
-        <button
-          onClick={() => toggleComplete(lecture.slug)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition border ${
-            completed
-              ? 'bg-brand-emerald/20 text-brand-emerald border-emerald-500/30'
-              : 'bg-surface-muted hover:bg-surface-highlight text-zinc-300 border-surface-border hover:border-zinc-500'
-          }`}
+    <div className="space-y-4 pt-1">
+      {/* Top Breadcrumb & Action Toolbar (CodeHelp Article Style) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground pb-2 border-b border-border/60">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 hover:text-brand-blue transition font-mono"
         >
-          <Bookmark className={`w-3.5 h-3.5 ${completed ? 'fill-brand-emerald' : ''}`} />
-          <span>{completed ? 'Completed Module' : 'Mark Completed'}</span>
-        </button>
+          <ChevronLeft className="w-3.5 h-3.5" />
+          <span>Articles / {lecture.phaseTitle}</span>
+        </Link>
+
+        {/* Action Toolbar */}
+        <div className="flex items-center gap-3">
+          {lecture.youtubeUrl && (
+            <a
+              href={lecture.youtubeUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition shadow-sm"
+              title="Watch on YouTube"
+            >
+              <Play className="w-3 h-3 fill-red-400 text-red-400" />
+              <span>Watch on YouTube</span>
+              <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+            </a>
+          )}
+
+          <button
+            onClick={handleLike}
+            className={`flex items-center gap-1 hover:text-foreground transition cursor-pointer ${hasLiked ? 'text-brand-blue' : ''}`}
+            title="Like this article"
+          >
+            <ThumbsUp className="w-4 h-4" />
+            <span className="font-mono text-xs">{likes}</span>
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="hover:text-foreground transition cursor-pointer relative"
+            title="Share article link"
+          >
+            <Share2 className="w-4 h-4" />
+            {copiedShare && (
+              <span className="absolute -top-7 -left-6 px-2 py-0.5 rounded bg-brand-emerald text-black text-[10px] font-bold">
+                Copied!
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => toggleComplete(lecture.slug)}
+            className={`p-1 hover:text-foreground transition cursor-pointer ${completed ? 'text-brand-emerald' : ''}`}
+            title={completed ? "Completed" : "Bookmark module"}
+          >
+            <Bookmark className={`w-4 h-4 ${completed ? 'fill-brand-emerald' : ''}`} />
+          </button>
+        </div>
       </div>
 
-      <div className="mt-6 space-y-2">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
+      {/* Main Title & Subtitle */}
+      <div className="space-y-2 pt-1">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
           {lecture.title}
         </h1>
-        <p className="text-sm md:text-base text-zinc-400 font-normal">
-          {lecture.subtitle}
+        <p className="text-sm md:text-base text-zinc-400 leading-relaxed font-normal">
+          {renderFormattedText(lecture.subtitle)}
         </p>
       </div>
 
-      {/* TL;DR Callout Banner (Zone 1) */}
-      <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-brand-cyan/10 via-brand-indigo/10 to-transparent border border-brand-cyan/25 flex items-start gap-3.5">
-        <div className="p-2.5 rounded-xl bg-brand-cyan/20 text-brand-cyan shrink-0 mt-0.5">
-          <Zap className="w-4 h-4 fill-brand-cyan" />
+      {/* TL;DR Callout Box */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-[#0e1322] border border-[#1e2640] flex items-start gap-3.5 shadow-md">
+        <div className="p-2 rounded-xl bg-brand-blue/20 text-brand-blue shrink-0 mt-0.5">
+          <Zap className="w-4 h-4 fill-brand-blue" />
         </div>
         <div>
-          <div className="text-[11px] font-bold uppercase tracking-wider text-brand-cyan font-mono">
-            TL;DR — Core First Principle
+          <div className="text-[11px] font-bold uppercase tracking-wider text-brand-blue font-mono">
+            Core Concept & First Principle
           </div>
-          <p className="text-xs md:text-sm font-medium text-zinc-200 mt-1.5 leading-relaxed">
-            {lecture.tldr}
+          <p className="text-xs sm:text-sm text-zinc-200 mt-1 leading-relaxed">
+            {renderFormattedText(lecture.tldr)}
           </p>
         </div>
       </div>
