@@ -1,4 +1,4 @@
-import { TavilySearchResponse } from '../types/chat';
+import { TavilySearchResultItem, TavilySearchResponse } from '../types/chat.js';
 
 /**
  * Service for handling live search integrations with Tavily API
@@ -52,10 +52,10 @@ export class SearchService {
         return '';
       }
 
-      const data: TavilySearchResponse = await res.json();
+      const data = (await res.json()) as TavilySearchResponse;
       if (data.results && data.results.length > 0) {
         const snippets = data.results
-          .map(r => `• ${r.title}: ${r.content?.slice(0, 300)}`)
+          .map((r: TavilySearchResultItem) => `• ${r.title}: ${r.content?.slice(0, 300)}`)
           .join('\n');
         return `\n\n[Web Search Results — Tavily]:\n${snippets}\n`;
       }

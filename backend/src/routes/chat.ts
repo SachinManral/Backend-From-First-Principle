@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { AIService } from '../services/aiService';
-import { SearchService } from '../services/searchService';
-import { ChatStreamRequest } from '../types/chat';
+import { AIService } from '../services/aiService.js';
+import { SearchService } from '../services/searchService.js';
+import { ChatStreamRequest } from '../types/chat.js';
 
 const router = Router();
 

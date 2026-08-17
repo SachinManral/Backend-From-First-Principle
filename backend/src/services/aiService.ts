@@ -1,4 +1,4 @@
-import { ChatMessage, ModelFailoverConfig } from '../types/chat';
+import { ChatMessage, ModelFailoverConfig } from '../types/chat.js';
 
 /**
  * Service responsible for LLM orchestration, model failovers, prompt building, and stream transformations
