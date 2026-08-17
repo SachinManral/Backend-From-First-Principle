@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Terminal, Download, Menu, X, Sun, Moon, Flame } from 'lucide-react';
+import { Menu, X, Sun, Moon, Flame, Github } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/demos';
 import { useProgress } from '@/context/ProgressContext';
 
@@ -133,7 +133,7 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
                 ? 'bg-brand-rose/10 text-brand-rose border-brand-rose/30'
                 : 'bg-secondary text-muted-foreground border-border'
             }`}
-            title={apiOnline === true ? "Express API connected on Port 4000" : "Cannot reach http://localhost:4000"}
+            title={apiOnline === true ? "Backend Express & SQLite API Live" : "Cannot reach backend API"}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
@@ -141,7 +141,7 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
               }`}
             />
             <span className="hidden sm:inline font-semibold">
-              {apiOnline === true ? 'API :4000 Live' : apiOnline === false ? 'API :4000 Offline' : 'Connecting...'}
+              {apiOnline === true ? 'API Live' : apiOnline === false ? 'API Offline' : 'Connecting...'}
             </span>
           </div>
 
@@ -150,20 +150,21 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
             onClick={toggleTheme}
             className="p-2 rounded-full bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground border border-border transition cursor-pointer"
             title="Toggle theme"
+            aria-label="Toggle theme"
           >
             {isDark ? <Sun className="w-3.5 h-3.5 text-brand-amber" /> : <Moon className="w-3.5 h-3.5 text-brand-blue" />}
           </button>
 
-          {/* Postman Export CTA */}
+          {/* GitHub Repository Link */}
           <a
-            href={`${API_BASE_URL}/api/export/postman`}
-            download="backend-first-principles.postman_collection.json"
+            href="https://github.com/SachinManral/Backend-From-First-Principle.git"
             target="_blank"
-            rel="noreferrer"
-            className="codehelp-gradient-btn !py-1.5 !px-3.5 !rounded-full !text-xs !font-bold"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-secondary hover:bg-accent text-foreground hover:text-white border border-border hover:border-border/80 text-xs font-semibold transition cursor-pointer shadow-sm"
+            title="View Source on GitHub"
           >
-            <Download className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span className="hidden md:inline">Postman Export</span>
+            <Github className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">GitHub</span>
           </a>
         </div>
       </header>
