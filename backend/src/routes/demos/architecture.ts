@@ -29,7 +29,14 @@ const router = Router();
  * ============================================================================
  */
 
-import { BookRecord, RequestTraceStep, RequestContextData } from '../../types/architecture.js';
+interface BookRecord {
+  id: string;
+  title: string;
+  author: string;
+  userId: string;
+  sortOrder: number;
+  createdAt: string;
+}
 
 
 const booksDatabase: BookRecord[] = [

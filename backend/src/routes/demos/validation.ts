@@ -27,7 +27,13 @@ const router = Router();
  * ============================================================================
  */
 
-import { ValidationError } from '../../types/validation.js';
+interface ValidationError {
+  field: string;
+  expected: string;
+  received: string | null;
+  message: string;
+  type: 'type' | 'syntactic' | 'semantic' | 'complex';
+}
 
 
 /**
