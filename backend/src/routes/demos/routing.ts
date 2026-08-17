@@ -1,46 +1,32 @@
 import { Router, Request, Response } from 'express';
+import db from '../../db/index.js';
 
 const router = Router();
 
 /**
  * ============================================================================
- * LECTURE 6: BACKEND ROUTING FROM FIRST PRINCIPLES
+ * LECTURE 6: BACKEND ROUTING & RELATIONAL SQL DATABASE QUERIES
  * 
- * 1. Static Routes (/books)
- * 2. Dynamic Path Parameters (/users/:id)
- * 3. Query Parameters (/search?query=..., /books?page=2&limit=5)
- * 4. Nested Routes (/users/:userId/posts/:postId)
- * 5. Route Versioning (/v1/products vs /v2/products)
+ * 1. Static Routes (SELECT * FROM books, INSERT INTO books)
+ * 2. Dynamic Path Parameters (SELECT * FROM users WHERE id = ?)
+ * 3. Query Parameters & SQL Pagination (SELECT * FROM books LIMIT ? OFFSET ?)
+ * 4. Nested Routes (SELECT * FROM posts WHERE id = ? AND user_id = ?)
+ * 5. Route Versioning (v1 vs v2 SQL schema queries)
  * 6. Catch-All Fallback Wildcards
  * ============================================================================
  */
 
-// In-memory mock database for live interactive demos
-let books = [
-  { id: 1, title: "Designing Data-Intensive Applications", author: "Martin Kleppmann" },
-  { id: 2, title: "Computer Networking: A Top-Down Approach", author: "Kurose & Ross" },
-  { id: 3, title: "Operating Systems: Three Easy Pieces", author: "Arpaci-Dusseau" },
-  { id: 4, title: "Database Internals", author: "Alex Petrov" },
-  { id: 5, title: "System Design Interview", author: "Alex Xu" }
-];
-
-const mockUsers: Record<string, any> = {
-  "123": { id: 123, name: "Sachin Manral", role: "Backend Engineer", email: "sachin@example.com" },
-  "456": { id: 456, name: "Alex Rivera", role: "Distributed Systems Architect", email: "alex@example.com" }
-};
-
-const mockPosts: Record<string, any> = {
-  "456": { id: 456, authorId: 123, title: "Why First-Principles Thinking Matters in Backend", views: 1420 }
-};
-
 // 1. Static Route: GET /api/demo/routing/books
 router.get('/routing/books', (_req: Request, res: Response) => {
+  const books = db.prepare('SELECT * FROM books ORDER BY id ASC').all();
+
   res.json({
     _meta: {
-      routeType: "Static Route",
+      routeType: "Static Route (SQL SELECT)",
       method: "GET",
       matchedPattern: "/api/demo/routing/books",
-      explanation: "Fixed URL path with unchanging static matching."
+      database: "SQLite Disk Persistent (WAL Mode)",
+      sqlExecuted: "SELECT * FROM books ORDER BY id ASC"
     },
     count: books.length,
     data: books
@@ -50,42 +36,52 @@ router.get('/routing/books', (_req: Request, res: Response) => {
 // 1b. Static Route: POST /api/demo/routing/books (Different Method, Same Path)
 router.post('/routing/books', (req: Request, res: Response) => {
   const { title, author } = req.body || {};
-  const newBook = {
-    id: books.length + 1,
-    title: title || `Engineering Guide #${books.length + 1}`,
-    author: author || "First Principles Author"
-  };
-  books.push(newBook);
+  const bookTitle = title || `Engineering Guide #${Date.now().toString().slice(-4)}`;
+  const bookAuthor = author || "First Principles Author";
+
+  const stmt = db.prepare('INSERT INTO books (title, author) VALUES (?, ?)');
+  const result = stmt.run(bookTitle, bookAuthor);
+
+  const newBook = db.prepare('SELECT * FROM books WHERE id = ?').get(result.lastInsertRowid);
+  const totalCount = (db.prepare('SELECT COUNT(*) as count FROM books').get() as { count: number }).count;
 
   res.status(201).json({
     _meta: {
-      routeType: "Static Route (Creation)",
+      routeType: "Static Route (SQL INSERT)",
       method: "POST",
       matchedPattern: "/api/demo/routing/books",
-      keyCombination: "POST + /api/demo/routing/books ➔ Unique Handler"
+      sqlExecuted: "INSERT INTO books (title, author) VALUES (?, ?)",
+      persistedRowId: result.lastInsertRowid
     },
-    message: "New book record created successfully",
+    message: "New book record persisted to SQLite disk database successfully",
     created: newBook,
-    totalBooks: books.length
+    totalBooks: totalCount
   });
 });
 
 // 2. Dynamic Route: GET /api/demo/routing/users/:id
 router.get('/routing/users/:id', (req: Request, res: Response) => {
   const userId = req.params.id;
-  const user = mockUsers[userId] || {
-    id: userId,
-    name: `User_${userId}`,
-    role: "Software Engineer (Extracted from path param)",
-    email: `user${userId}@domain.com`
-  };
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+
+  if (!user) {
+    return res.status(404).json({
+      _meta: {
+        routeType: "Dynamic Route (404 Not Found)",
+        matchedPattern: "/api/demo/routing/users/:id",
+        extractedParam: userId,
+        sqlExecuted: `SELECT * FROM users WHERE id = ${userId}`
+      },
+      error: `User #${userId} not found in database.`
+    });
+  }
 
   res.json({
     _meta: {
-      routeType: "Dynamic Route (Path Parameter)",
+      routeType: "Dynamic Route (SQL Parameterized SELECT)",
       matchedPattern: "/api/demo/routing/users/:id",
       extractedParams: { id: userId },
-      explanation: "The colon ':id' informs the router to capture this segment as dynamic data."
+      sqlExecuted: "SELECT * FROM users WHERE id = ?"
     },
     user
   });
@@ -93,21 +89,23 @@ router.get('/routing/users/:id', (req: Request, res: Response) => {
 
 // 3. Query Parameters: GET /api/demo/routing/search?query=...
 router.get('/routing/search', (req: Request, res: Response) => {
-  const query = (req.query.query as string) || "backend-principles";
+  const query = (req.query.query as string) || "";
   const filter = (req.query.filter as string) || "all";
+
+  const matchedBooks = db.prepare('SELECT * FROM books WHERE title LIKE ? OR author LIKE ?')
+    .all(`%${query}%`, `%${query}%`);
 
   res.json({
     _meta: {
-      routeType: "Query Parameter Search",
+      routeType: "Query Parameter SQL Search",
       matchedPattern: "/api/demo/routing/search",
       extractedQueryParams: req.query,
-      explanation: "Non-semantic key-value metadata passed after the '?' delimiter."
+      sqlExecuted: "SELECT * FROM books WHERE title LIKE ? OR author LIKE ?"
     },
     query,
     filter,
-    matchedResults: [
-      { id: 101, title: `Search result matching query: '${query}'`, score: 0.98 }
-    ]
+    totalMatched: matchedBooks.length,
+    results: matchedBooks
   });
 });
 
@@ -115,16 +113,20 @@ router.get('/routing/search', (req: Request, res: Response) => {
 router.get('/routing/books-paginated', (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 2;
-  const startIndex = (page - 1) * limit;
-  const paginatedData = books.slice(startIndex, startIndex + limit);
+  const offset = (page - 1) * limit;
+
+  const totalRecords = (db.prepare('SELECT COUNT(*) as count FROM books').get() as { count: number }).count;
+  const paginatedData = db.prepare('SELECT * FROM books ORDER BY id ASC LIMIT ? OFFSET ?').all(limit, offset);
 
   res.json({
     _meta: {
-      routeType: "Paginated Query Route",
+      routeType: "Paginated SQL Query Route",
       currentPage: page,
       limit,
-      totalRecords: books.length,
-      totalPages: Math.ceil(books.length / limit)
+      offset,
+      totalRecords,
+      totalPages: Math.ceil(totalRecords / limit),
+      sqlExecuted: "SELECT * FROM books ORDER BY id ASC LIMIT ? OFFSET ?"
     },
     data: paginatedData
   });
@@ -133,19 +135,31 @@ router.get('/routing/books-paginated', (req: Request, res: Response) => {
 // 4. Nested Route: GET /api/demo/routing/users/:userId/posts/:postId
 router.get('/routing/users/:userId/posts/:postId', (req: Request, res: Response) => {
   const { userId, postId } = req.params;
-  const post = mockPosts[postId] || {
-    id: postId,
-    authorId: userId,
-    title: `Dynamic Post #${postId} by User ${userId}`,
-    views: 420
-  };
+  const post = db.prepare(`
+    SELECT posts.*, users.name as author_name, users.email as author_email
+    FROM posts
+    INNER JOIN users ON posts.user_id = users.id
+    WHERE posts.id = ? AND posts.user_id = ?
+  `).get(postId, userId);
+
+  if (!post) {
+    return res.status(404).json({
+      _meta: {
+        routeType: "Nested Resource (404 Not Found)",
+        matchedPattern: "/api/demo/routing/users/:userId/posts/:postId",
+        extractedParams: { userId, postId }
+      },
+      error: `Post #${postId} belonging to User #${userId} not found in database.`
+    });
+  }
 
   res.json({
     _meta: {
-      routeType: "Nested Resource Route",
+      routeType: "Nested Relational SQL JOIN Route",
       matchedPattern: "/api/demo/routing/users/:userId/posts/:postId",
       extractedParams: { userId, postId },
-      semanticHierarchy: "Users ➔ Specific User (:userId) ➔ Posts Collection ➔ Specific Post (:postId)"
+      sqlExecuted: "SELECT * FROM posts INNER JOIN users ON posts.user_id = users.id WHERE posts.id = ? AND posts.user_id = ?",
+      semanticHierarchy: "Users ➔ Specific User (:userId) ➔ Posts ➔ Specific Post (:postId)"
     },
     post
   });
@@ -153,31 +167,29 @@ router.get('/routing/users/:userId/posts/:postId', (req: Request, res: Response)
 
 // 5. Versioning V1: GET /api/demo/routing/v1/products
 router.get('/routing/v1/products', (_req: Request, res: Response) => {
+  const products = db.prepare('SELECT id, name, price FROM products ORDER BY id ASC').all();
+
   res.json({
     _meta: {
-      version: "v1 (Legacy Contract)",
+      version: "v1 (Legacy SQL Schema Contract)",
       route: "/api/demo/routing/v1/products",
-      contract: "Uses 'name' property for backward compatibility."
+      sqlExecuted: "SELECT id, name, price FROM products ORDER BY id ASC"
     },
-    data: [
-      { id: 1, name: "Mechanical Keyboard", price: 120 },
-      { id: 2, name: "4K IPS Monitor", price: 450 }
-    ]
+    data: products
   });
 });
 
 // 5b. Versioning V2: GET /api/demo/routing/v2/products (Breaking schema update)
 router.get('/routing/v2/products', (_req: Request, res: Response) => {
+  const products = db.prepare('SELECT id, title, price, currency, sku FROM products ORDER BY id ASC').all();
+
   res.json({
     _meta: {
-      version: "v2 (Modern Breaking Contract)",
+      version: "v2 (Modern Breaking SQL Schema Contract)",
       route: "/api/demo/routing/v2/products",
-      contract: "Replaced 'name' with 'title' and added ISO currency & SKU fields."
+      sqlExecuted: "SELECT id, title, price, currency, sku FROM products ORDER BY id ASC"
     },
-    data: [
-      { id: 1, title: "Mechanical Keyboard", price: 120, currency: "USD", sku: "KB-MECH-01" },
-      { id: 2, title: "4K IPS Monitor", price: 450, currency: "USD", sku: "DISP-4K-02" }
-    ]
+    data: products
   });
 });
 
