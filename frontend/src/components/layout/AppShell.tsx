@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import Footer from './Footer';
 import { Lecture } from '@/lib/types';
 import { ProgressProvider } from '@/context/ProgressContext';
 
@@ -13,28 +15,40 @@ interface AppShellProps {
 
 export default function AppShell({ lectures, children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const isLandingPage = pathname === '/';
 
   return (
     <ProgressProvider>
-      <div className="min-h-screen bg-background text-zinc-100 flex flex-col selection:bg-brand-cyan selection:text-black">
+      <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-brand-blue/25 selection:text-white">
+        {/* Floating Capsule Top Navbar */}
         <Navbar
           onToggleSidebar={() => setSidebarOpen(prev => !prev)}
           isSidebarOpen={sidebarOpen}
+          showSidebarToggle={!isLandingPage}
         />
 
-        <div className="flex-1 flex max-w-7xl w-full mx-auto">
-          <Sidebar
-            lectures={lectures}
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-          />
+        {/* Content Container */}
+        <div className={`flex-1 flex ${!isLandingPage ? 'gap-6 lg:gap-8' : ''} max-w-7xl w-full mx-auto pt-20 sm:pt-24 px-3 sm:px-6`}>
+          {/* Sidebar (Desktop Sticky + Mobile Drawer) */}
+          {!isLandingPage && (
+            <Sidebar
+              lectures={lectures}
+              isOpen={sidebarOpen}
+              onClose={() => setSidebarOpen(false)}
+            />
+          )}
 
-          <main className="flex-1 md:pl-72 w-full min-w-0 pb-16">
-            <div className="px-4 sm:px-6 lg:px-8 pt-6 md:pt-8 max-w-5xl mx-auto">
+          {/* Main Content Area */}
+          <main className="flex-1 min-w-0 pb-16">
+            <div className={isLandingPage ? 'w-full' : 'w-full max-w-4xl mx-auto'}>
               {children}
             </div>
           </main>
         </div>
+
+        {/* Platform Footer (Landing Page) */}
+        {isLandingPage && <Footer />}
       </div>
     </ProgressProvider>
   );
