@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import HeroBackground from '@/components/visualizers/HeroBackground';
-import LikeButton from '@/components/common/LikeButton';
 import { ArrowRight, Terminal, BookOpen, Layers, Zap, Database, Network, Code, Sparkles, Check } from 'lucide-react';
 
 export default function HomePage() {
@@ -152,8 +151,6 @@ export default function HomePage() {
                 <Terminal className="w-4 h-4 text-brand-blue" />
                 <span>Interactive Lab</span>
               </Link>
-
-              <LikeButton targetId="platform-root" label="Support Platform" size="lg" />
             </div>
 
             {/* Mobile & Tablet Core Cards Grid (Visible below XL) */}

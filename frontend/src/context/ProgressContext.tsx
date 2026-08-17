@@ -8,6 +8,7 @@ interface ProgressContextType {
   completedSlugs: string[];
   isCompleted: (slug: string) => boolean;
   toggleComplete: (slug: string) => void;
+  markComplete: (slug: string) => void;
   getCompletionPercentage: (totalLectures: number) => number;
   resetProgress: () => void;
   // Likes system
@@ -101,7 +102,43 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     };
 
     syncWithBackend();
+
+    // Recurring 5-second live polling for real-time like count updates across all devices
+    const interval = setInterval(async () => {
+      try {
+        const likesRes = await fetch(`${API_BASE_URL}/api/likes?deviceId=${devId}`, { cache: 'no-store' });
+        if (likesRes.ok) {
+          const likesData = await likesRes.json();
+          if (likesData.likesMap) setLikesMap(likesData.likesMap);
+        }
+      } catch {}
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
+
+  // Mark Lecture Complete (idempotent addition)
+  const markComplete = useCallback((slug: string) => {
+    setCompletedSlugs(prev => {
+      if (prev.includes(slug)) return prev;
+      const next = [...prev, slug];
+      try {
+        localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(next));
+      } catch (e) {
+        console.error('Failed to save progress locally', e);
+      }
+
+      // Sync with SQLite backend
+      const devId = deviceId || getOrCreateDeviceId();
+      fetch(`${API_BASE_URL}/api/progress/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId: devId, completedSlugs: next })
+      }).catch(() => {});
+
+      return next;
+    });
+  }, [deviceId]);
 
   // Toggle Lecture Complete per-device
   const toggleComplete = useCallback((slug: string) => {
@@ -200,6 +237,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         completedSlugs,
         isCompleted,
         toggleComplete,
+        markComplete,
         getCompletionPercentage,
         resetProgress,
         likesMap,
