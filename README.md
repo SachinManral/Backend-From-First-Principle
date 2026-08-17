@@ -22,21 +22,6 @@ This repository is built on **First Principles**:
 
 ---
 
-## 📚 Curriculum & Live Lab Catalog
-
-| # | Lecture Title | Duration | Key First Principles | Live Interactive Demos |
-|:---:|---|:---:|---|---|
-| **01** | **Roadmap for Backend Engineers** | 18 min | 6-phase engineering trajectory, CS fundamentals, wire protocols, scaling | Request Anatomy Inspector |
-| **02** | **Walk the Path of a True Backend Engineer** | 16 min | Mental models, decoupling business logic, avoiding tutorial traps | Status Code Matrix (2xx–5xx) |
-| **03** | **What is a Backend, How it Works?** | 22 min | 6-hop packet journey (Browser ➔ DNS ➔ Firewall ➔ Host ➔ Nginx ➔ Express) | Request Journey Packet Tracer |
-| **04** | **Why Learn Backend Engineering from First Principles?** | 14 min | Transferable intuition across Go, Rust, Java, and Node.js | Protocol Echo & TCP Stream Inspector |
-| **05** | **Understanding HTTP for Backend Engineers** | 48 min | CRLF wire structure, CORS preflight, ETags/Caching, SSE streaming, Gzip, Idempotency | CORS Handshake, 304 Caching, SSE Stream, Gzip Comparison |
-| **06** | **Understanding Routing in Backend Applications** | 33 min | Static vs dynamic routes, path params (`:id`), query strings, nested resources, API versioning | Dynamic Routing, Paginated Contracts, Nested Entities, v1/v2 Versioning |
-| **07** | **Serialization & Deserialization for Backend Engineers** | 22 min | Language-agnostic wire protocols, OSI layer boundaries, JSON structure, Protobuf vs JSON | JSON Wire Serialization Flow, Format Comparison (JSON vs YAML vs XML vs Protobuf) |
-| **08** | **Authentication & Authorization for Backend Engineers** | 1 hr 35 min | Evolution of identity, Sessions (Redis) vs Stateless JWTs, Cookies, OAuth 2.0/OIDC, RBAC, Timing attacks | Constant-Time Login Issuer, Stateless JWT Signature Verification, RBAC Guard |
-
----
-
 ## ⚡ Quick Start (Run Locally)
 
 ### Prerequisites
