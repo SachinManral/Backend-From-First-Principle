@@ -210,7 +210,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-surface-border">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="px-3 py-0.5 rounded-full text-xs font-bold font-mono bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
+            <span className="px-3 py-0.5 rounded-full text-xs font-bold font-mono bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
               Live Practical Playground
             </span>
             <span className="text-xs text-zinc-400 font-mono">Port 4000 Express Socket</span>
@@ -259,7 +259,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
                 <select
                   value={controlValues[ctrl.key] || ctrl.defaultValue}
                   onChange={(e) => setControlValues(prev => ({ ...prev, [ctrl.key]: e.target.value }))}
-                  className="w-full bg-background border border-surface-border rounded-xl px-3.5 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-cyan transition"
+                  className="w-full bg-background border border-surface-border rounded-xl px-3.5 py-2 text-xs font-medium text-white focus:outline-none focus:border-brand-blue transition"
                 >
                   {ctrl.options.map(opt => (
                     <option key={opt.value} value={opt.value}>
@@ -276,7 +276,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
                       onClick={() => setControlValues(prev => ({ ...prev, [ctrl.key]: opt.value }))}
                       className={`px-3.5 py-2 rounded-xl text-xs font-bold transition ${
                         (controlValues[ctrl.key] || ctrl.defaultValue) === opt.value
-                          ? 'bg-brand-cyan text-black shadow-md shadow-cyan-500/20'
+                          ? 'bg-brand-blue text-black shadow-md shadow-blue-500/20'
                           : 'bg-background text-zinc-400 border border-surface-border hover:text-white'
                       }`}
                     >
@@ -292,8 +292,8 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
 
       {/* Request Bar & Fire Button */}
       <div className="flex flex-col md:flex-row gap-3">
-        <div className="flex items-center flex-1 bg-background border border-surface-border rounded-2xl overflow-hidden focus-within:border-brand-cyan/60 transition shadow-inner">
-          <span className="px-4 py-2.5 text-xs font-bold font-mono bg-surface-muted text-brand-cyan border-r border-surface-border">
+        <div className="flex items-center flex-1 bg-background border border-surface-border rounded-2xl overflow-hidden focus-within:border-brand-blue/60 transition shadow-inner">
+          <span className="px-4 py-2.5 text-xs font-bold font-mono bg-surface-muted text-brand-blue border-r border-surface-border">
             {method}
           </span>
           <input
@@ -327,7 +327,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
                 key={k}
                 className="px-3 py-1 rounded-xl bg-background border border-surface-border font-mono text-xs text-zinc-300"
               >
-                <span className="text-zinc-500">{k}:</span> <span className="text-brand-cyan font-bold">{v}</span>
+                <span className="text-zinc-500">{k}:</span> <span className="text-brand-blue font-bold">{v}</span>
               </span>
             ))}
           </div>
@@ -344,7 +344,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
             value={bodyText}
             onChange={(e) => setBodyText(e.target.value)}
             rows={3}
-            className="w-full p-3.5 bg-background border border-surface-border rounded-2xl font-mono text-xs text-zinc-200 focus:outline-none focus:border-brand-cyan/60 transition"
+            className="w-full p-3.5 bg-background border border-surface-border rounded-2xl font-mono text-xs text-zinc-200 focus:outline-none focus:border-brand-blue/60 transition"
           />
         </div>
       )}
@@ -360,7 +360,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
                   responseStatus && responseStatus >= 200 && responseStatus < 300
                     ? 'bg-brand-emerald/15 text-brand-emerald border-emerald-500/30'
                     : responseStatus === 304
-                    ? 'bg-brand-cyan/15 text-brand-cyan border-cyan-500/30'
+                    ? 'bg-brand-blue/15 text-brand-blue border-blue-500/30'
                     : responseStatus && responseStatus >= 400 && responseStatus < 500
                     ? 'bg-brand-amber/15 text-brand-amber border-amber-500/30'
                     : 'bg-brand-rose/15 text-brand-rose border-rose-500/30'
@@ -380,7 +380,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
 
             {/* Protocol Principle Callout */}
             {responseData && responseData._note && (
-              <div className="text-xs text-brand-cyan font-mono font-medium flex items-center gap-1.5">
+              <div className="text-xs text-brand-blue font-mono font-medium flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Principle Note: {responseData._note}</span>
               </div>
@@ -391,13 +391,13 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
           {streamEvents.length > 0 && (
             <div className="space-y-2">
               <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isStreamingActive ? 'bg-brand-cyan animate-ping' : 'bg-brand-emerald'}`} />
+                <span className={`w-2 h-2 rounded-full ${isStreamingActive ? 'bg-brand-blue animate-ping' : 'bg-brand-emerald'}`} />
                 <span>Chunked Event Stream (text/event-stream)</span>
               </div>
               <div className="p-4 rounded-2xl bg-background border border-surface-border space-y-2 max-h-60 overflow-y-auto font-mono text-xs">
                 {streamEvents.map((evt, i) => (
                   <div key={i} className="flex items-start justify-between gap-2 border-b border-surface-border/40 pb-1.5">
-                    <div className="text-brand-cyan">
+                    <div className="text-brand-blue">
                       <span className="text-zinc-500">[{evt.time}] Step {evt.step || i + 1}: </span>
                       <span>{evt.message || evt.raw}</span>
                     </div>
@@ -433,7 +433,7 @@ export default function PlaygroundConsole({ demo, compact = false }: PlaygroundC
               <div className="mt-2 p-3 rounded-2xl bg-background border border-surface-border font-mono text-[11px] space-y-1 overflow-x-auto">
                 {Object.entries(responseHeaders).map(([k, v]) => (
                   <div key={k} className="flex gap-2">
-                    <span className="text-brand-cyan">{k}:</span>
+                    <span className="text-brand-blue">{k}:</span>
                     <span className="text-zinc-300">{v}</span>
                   </div>
                 ))}
