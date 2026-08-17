@@ -1,23 +1,67 @@
-# Backend, First Principles — Learning Hub & Live Lab
+# 🚀 Backend, From First Principles
 
-A full-stack, dark-themed learning platform and interactive lab for Sriniously's **"Backend Engineering — First Principles"** YouTube course.
+> An open-source, interactive learning platform and real-time backend lab for mastering backend engineering from the ground up, based on **Sriniously's** *"Backend Engineering — First Principles"* series.
 
-This repository is structured into two completely independent, decoupled projects:
-- **`backend/`** — Standalone Node.js + Express TypeScript API running on `http://localhost:4000`, containing heavily-commented demo routes for all 9 practical endpoints + Postman collection generator.
-- **`frontend/`** — Standalone Next.js 14 + Tailwind CSS + Three.js app running on `http://localhost:3000`, containing 4-zone lecture templates, interactive 3D visualizers, and practical playground consoles.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg)](https://nextjs.org)
+[![Express](https://img.shields.io/badge/Express-4.19-lightgrey.svg)](https://expressjs.com)
+[![SQLite](https://img.shields.io/badge/SQLite-WAL_Mode-003B57.svg)](https://sqlite.org)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ---
 
-## Quick Start
+## 🎯 Purpose & Philosophy
 
-### Option A: Run Both Together
-You can run both concurrently from the root directory:
+Most backend tutorials jump straight to frameworks, ORMs, and cloud tools without explaining **why** protocols and databases were designed the way they are. 
+
+This repository is built on **First Principles**:
+* **Language-Agnostic Understanding**: Understanding raw HTTP wire bytes, TCP sockets, and serialization before choosing Node.js, Go, or Rust.
+* **Hands-on Verification**: Every theoretical concept comes with a **live, executable Express endpoint** and on-disk SQLite query.
+* **Open Source & Community-Driven**: Built for students, self-taught engineers, and developers preparing for system design interviews to learn, fork, experiment, and contribute back.
+
+---
+
+## 📚 Curriculum & Live Lab Catalog
+
+| # | Lecture Title | Duration | Key First Principles | Live Interactive Demos |
+|:---:|---|:---:|---|---|
+| **01** | **Roadmap for Backend Engineers** | 18 min | 6-phase engineering trajectory, CS fundamentals, wire protocols, scaling | Request Anatomy Inspector |
+| **02** | **Walk the Path of a True Backend Engineer** | 16 min | Mental models, decoupling business logic, avoiding tutorial traps | Status Code Matrix (2xx–5xx) |
+| **03** | **What is a Backend, How it Works?** | 22 min | 6-hop packet journey (Browser ➔ DNS ➔ Firewall ➔ Host ➔ Nginx ➔ Express) | Request Journey Packet Tracer |
+| **04** | **Why Learn Backend Engineering from First Principles?** | 14 min | Transferable intuition across Go, Rust, Java, and Node.js | Protocol Echo & TCP Stream Inspector |
+| **05** | **Understanding HTTP for Backend Engineers** | 48 min | CRLF wire structure, CORS preflight, ETags/Caching, SSE streaming, Gzip, Idempotency | CORS Handshake, 304 Caching, SSE Stream, Gzip Comparison |
+| **06** | **Understanding Routing in Backend Applications** | 33 min | Static vs dynamic routes, path params (`:id`), query strings, nested resources, API versioning | Dynamic Routing, Paginated Contracts, Nested Entities, v1/v2 Versioning |
+| **07** | **Serialization & Deserialization for Backend Engineers** | 22 min | Language-agnostic wire protocols, OSI layer boundaries, JSON structure, Protobuf vs JSON | JSON Wire Serialization Flow, Format Comparison (JSON vs YAML vs XML vs Protobuf) |
+| **08** | **Authentication & Authorization for Backend Engineers** | 1 hr 35 min | Evolution of identity, Sessions (Redis) vs Stateless JWTs, Cookies, OAuth 2.0/OIDC, RBAC, Timing attacks | Constant-Time Login Issuer, Stateless JWT Signature Verification, RBAC Guard |
+
+---
+
+## ⚡ Quick Start (Run Locally)
+
+### Prerequisites
+* **Node.js** v18.0.0 or higher
+* **npm** or **pnpm** / **yarn**
+
+### Option A: Run Full Stack (Frontend + Backend Together)
 ```bash
+# 1. Clone the repository
+git clone https://github.com/SachinManral/Backend-From-First-Principle.git
+cd Backend-From-First-Principle
+
+# 2. Install root dependencies
 npm install
+
+# 3. Start both dev servers concurrently
 npm run dev
 ```
 
-### Option B: Run Independently (Real Deployed Setup)
+* **Frontend Web App**: [http://localhost:3000](http://localhost:3000)
+* **Backend Express API**: [http://localhost:4000](http://localhost:4000)
+
+---
+
+### Option B: Run Standalone Services
 
 #### 1. Start the Backend API (Port 4000)
 ```bash
@@ -25,54 +69,110 @@ cd backend
 npm install
 npm run dev
 ```
-API endpoints will be live at `http://localhost:4000`.
+* The SQLite database will automatically initialize in `backend/data/dev.db` with WAL (Write-Ahead Logging) enabled.
 
-#### 2. Start the Frontend App (Port 3000)
+#### 2. Start the Frontend Next.js App (Port 3000)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+* Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 4-Zone Lecture Architecture
+## 🏗️ Architecture & Technical Stack
 
-Each lecture is organized into four consistent, focused zones:
-1. **Zone 1: TL;DR** — Concise 1–2 line core takeaway with rule summary.
-2. **Zone 2: Structured Notes** — Clean explanations, comparison tables, code snippets, and key first principles.
-3. **Zone 3: Visualize It** — Interactive 3D/animated visualizer:
-   - **Request Journey (Lecture 3)**: 6-hop packet flow (Browser ➔ DNS ➔ Firewall ➔ Host ➔ Nginx ➔ Express App) with inspection of ports, sockets, and TLS termination.
-   - **CORS Preflight (Lecture 5)**: Step-by-step OPTIONS handshake, header inspection, and allowed vs blocked verdict.
-   - **HTTP Caching & ETags (Lecture 5)**: Fresh 200 OK vs 304 Not Modified 0-byte transfer and PATCH mutation.
-4. **Zone 4: Try It Yourself (Practical Playground)** — Live in-browser request fire panel, raw request/response side-by-side inspector, copyable `curl`, and Postman export.
+```
+Backend-From-First-Principle/
+├── backend/                  # Standalone Express + TypeScript API (Port 4000)
+│   ├── data/                 # SQLite Database (dev.db in WAL mode)
+│   ├── src/
+│   │   ├── db/               # SQLite schema & database connection
+│   │   ├── routes/
+│   │   │   ├── demos/        # Live interactive demo endpoints (Auth, Routing, CORS, etc.)
+│   │   │   ├── deviceState.ts# 1-Like-per-device & anonymous progress synchronization
+│   │   │   └── postman.ts    # Dynamic Postman collection export endpoint
+│   │   └── index.ts          # Server entry point
+│   └── package.json
+│
+├── frontend/                 # Standalone Next.js 14 App (Port 3000)
+│   ├── content/
+│   │   └── lectures/         # manifest.json (Single source of truth for lectures)
+│   ├── src/
+│   │   ├── app/              # Next.js App Router pages (/, /lectures/[slug], /playground, /progress)
+│   │   ├── components/       # Reusable UI, Visualizers, and Consoles
+│   │   ├── context/          # ProgressContext (Local + SQLite device sync)
+│   │   └── lib/              # Demos catalog, types, and helper utilities
+│   └── package.json
+│
+└── README.md
+```
+
+### Key Engineering Features:
+1. **Per-Device Likes & Anonymous Progress**:
+   * Uses persistent UUIDs stored in `localStorage` without requiring user accounts or PII.
+   * Guaranteed **1-like-per-device** enforced by SQLite composite primary keys (`PRIMARY KEY (device_id, target_id)`).
+   * Background polling synchronizes live community counts in real time.
+2. **Interactive API Sandbox (`/playground`)**:
+   * 21+ executable endpoints simulating CORS preflight, idempotency checks, JWT signing, and RBAC guards.
+   * Generates copyable, production-ready `cURL` commands for every endpoint.
+3. **Auto-Complete Navigation**:
+   * Moving to the next lesson automatically ticks the previous lecture as completed.
 
 ---
 
-## 9 Live Interactive Demo Endpoints
+## 🤝 How to Contribute (Student & Developer Guide)
 
-All live endpoints are implemented with detailed teaching comments in `backend/src/routes/demos/`:
+This is an **open-source educational project**, and contributions from students and engineers around the world are warmly welcomed!
 
-| Concept | Endpoint | Description |
-|---|---|---|
-| **Request Anatomy** | `ANY /api/demo/echo` | Echoes method, headers, query params, and body |
-| **Status Codes** | `GET /api/demo/status/:code` | Realistic bodies for 200, 201, 204, 301, 302, 304, 400, 401, 403, 404, 409, 500, 503, 504 |
-| **CORS** | `GET /api/demo/cors/simple`<br>`PUT /api/demo/cors/preflight` | Access-Control toggle to test both allowed and blocked browser flows |
-| **HTTP Caching** | `GET /api/demo/cache/resource`<br>`PATCH /api/demo/cache/resource` | ETag and `Cache-Control` validation with 304 Not Modified |
-| **Content Negotiation** | `GET /api/demo/negotiate` | Adapts format (JSON/XML/Text) and language (en/es/hi/fr) based on `Accept` headers |
-| **Compression** | `GET /api/demo/compress` | Gzip active vs uncompressed size comparison (~85% reduction) |
-| **Multipart Upload** | `POST /api/demo/upload` | Parses `multipart/form-data` with boundaries and file metadata |
-| **Chunked Streaming** | `GET /api/demo/stream` | Server-Sent Events (`text/event-stream`) streaming progress chunks |
-| **Idempotency** | `GET/PUT/POST/DELETE /api/demo/idempotent-check` | Proves state change characteristics of safe vs idempotent methods |
+### Ways You Can Contribute:
+* 📝 **Expand Lecture Notes**: Improve explanations, add diagrams, or clarify complex concepts in `frontend/content/lectures/manifest.json`.
+* 💻 **Add Code Snippets**: Add equivalent snippets in other backend languages (Python, Java, Rust, Go, C#).
+* 🧪 **Build New Playground Demos**: Create new interactive demo routes in `backend/src/routes/demos/` and register them in `frontend/src/lib/demos.ts`.
+* 🐛 **Report or Fix Bugs**: Open an issue or fix UI/API bugs across the platform.
+
+### Step-by-Step Contribution Workflow:
+1. **Fork** the repository to your GitHub account.
+2. **Clone** your fork locally:
+   ```bash
+   git clone https://github.com/<your-username>/Backend-From-First-Principle.git
+   cd Backend-From-First-Principle
+   ```
+3. **Create a Feature Branch**:
+   ```bash
+   git checkout -b feature/lecture-notes-refinement
+   ```
+4. **Make Your Changes & Test Locally**:
+   * Ensure both frontend (`http://localhost:3000`) and backend (`http://localhost:4000`) build with zero errors:
+   ```bash
+   # In frontend directory
+   npm run build
+   
+   # In backend directory
+   npm run build
+   ```
+5. **Commit Your Changes**:
+   ```bash
+   git commit -m "docs: expand database indexing notes in lecture 8"
+   ```
+6. **Push to Your Fork & Open a Pull Request (PR)**:
+   ```bash
+   git push origin feature/lecture-notes-refinement
+   ```
+   * Open a PR against the `main` branch with a clear summary of what you improved!
 
 ---
 
-## How to Add Lecture 6, 7, 8... (Zero App Code Changes)
+## 📄 License
 
-To add a new lecture in the future:
-1. Drop a new JSON file into `frontend/content/lectures/NN-slug.json`.
-2. Add its entry to `frontend/content/lectures/manifest.json`.
-3. (Optional) If it needs a new backend endpoint, add a route file in `backend/src/routes/demos/`.
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
-The sidebar, progress tracker, and global playground will update **automatically**!
+---
+
+## ⭐ Support & Community
+
+If you found this learning platform helpful:
+* Star ⭐ the repository on GitHub!
+* Share it with fellow developers and computer science students.
+* Check out [Sriniously's YouTube Channel](https://www.youtube.com/@sriniously) for the complete video series.
