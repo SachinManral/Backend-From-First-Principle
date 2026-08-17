@@ -16,19 +16,19 @@ export default function GlobalPlaygroundPage() {
     : DEMO_CATALOG.filter(d => d.category === selectedCategory);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-16">
       {/* Header Banner */}
-      <div className="qt-card p-6 md:p-8 space-y-5 relative overflow-hidden">
+      <div className="codehelp-glow-card p-6 md:p-8 space-y-5 relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="qt-pill mb-3">
-              <Terminal className="w-3.5 h-3.5" />
+            <div className="codehelp-pill mb-3">
+              <Terminal className="w-3.5 h-3.5 text-brand-blue" />
               <span>Full Interactive API Sandbox</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
               Global Practical Playground
             </h1>
-            <p className="text-xs md:text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs md:text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
               Every live Express demo endpoint gathered in one place. Fire real HTTP requests, inspect wire formats, and observe server mechanics.
             </p>
           </div>
@@ -38,7 +38,7 @@ export default function GlobalPlaygroundPage() {
             download="backend-first-principles.postman_collection.json"
             target="_blank"
             rel="noreferrer"
-            className="qt-btn-primary py-2.5 px-5 text-xs shrink-0"
+            className="codehelp-gradient-btn text-xs shrink-0"
           >
             <Download className="w-4 h-4 stroke-[2.5]" />
             <span>Download All in Postman</span>
@@ -47,17 +47,17 @@ export default function GlobalPlaygroundPage() {
 
         {/* Category Filters */}
         <div className="flex items-center gap-2 pt-2 overflow-x-auto">
-          <span className="text-xs text-zinc-500 font-mono flex items-center gap-1 shrink-0">
+          <span className="text-xs text-muted-foreground font-mono flex items-center gap-1 shrink-0">
             <Filter className="w-3 h-3" /> Filter:
           </span>
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-brand-cyan text-black shadow-md shadow-cyan-500/20'
-                  : 'bg-surface-muted hover:bg-surface-highlight text-zinc-400 hover:text-white border border-surface-border'
+                  ? 'bg-brand-blue text-white shadow-md shadow-brand-blue/20'
+                  : 'bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground border border-border'
               }`}
             >
               {cat}
