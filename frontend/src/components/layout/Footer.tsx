@@ -2,16 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Terminal, Github, Database, Network, BookOpen, Layers } from 'lucide-react';
-import { API_BASE_URL } from '@/lib/demos';
+import { Github, Terminal, BookOpen, CheckCircle, ExternalLink, ShieldCheck } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-[#1e2640] bg-[#070b14]/90 backdrop-blur-xl pt-12 pb-8 mt-20">
+    <footer className="w-full border-t border-[#1e2640] bg-[#070b14]/95 backdrop-blur-xl pt-12 pb-8 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-[#1e2640]">
           
-          {/* Brand Col */}
+          {/* Brand Column */}
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 group">
               <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-blue/20 to-brand-purple/20 border border-brand-blue/40 shadow-md shadow-brand-blue/15 group-hover:scale-105 transition">
@@ -27,69 +26,87 @@ export default function Footer() {
             </Link>
 
             <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-              Mastering backend systems from absolute first principles. From raw TCP sockets and HTTP wire anatomy to persistent SQLite WAL storage and production scalability.
+              An open-source interactive learning platform and real-time backend lab designed to teach core backend engineering concepts from first principles.
             </p>
 
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0d1222] border border-[#1e2640] text-xs font-mono text-emerald-400 w-fit">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Express & SQLite Engine Live (:4000)</span>
+              <span>Express & SQLite Engine Live</span>
             </div>
           </div>
 
-          {/* Curriculum Links */}
+          {/* Navigation Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-zinc-200">Curriculum</h4>
-            <ul className="space-y-2 text-xs text-zinc-400 font-normal">
+            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-zinc-200">Platform</h4>
+            <ul className="space-y-2.5 text-xs text-zinc-400 font-normal">
               <li>
-                <Link href="/lectures/01-roadmap" className="hover:text-brand-blue transition">
-                  Lecture 01: Complete 31 Roadmap
+                <Link href="/" className="hover:text-white transition">
+                  Home
                 </Link>
               </li>
               <li>
-                <Link href="/lectures/02-walk-the-path" className="hover:text-brand-blue transition">
-                  Lecture 02: The 3-Phase Journey
+                <Link href="/lectures/01-roadmap" className="hover:text-white transition">
+                  Interactive Articles
                 </Link>
               </li>
               <li>
-                <Link href="/lectures/03-what-is-a-backend" className="hover:text-brand-blue transition">
-                  Lecture 03: What is a Backend & Why
+                <Link href="/playground" className="hover:text-white transition">
+                  API Playground & Lab
                 </Link>
               </li>
               <li>
-                <Link href="/lectures/05-http-protocol" className="hover:text-brand-blue transition">
-                  Lecture 05: HTTP Protocol Anatomy
-                </Link>
-              </li>
-              <li>
-                <Link href="/lectures/06-backend-routing" className="hover:text-brand-blue transition">
-                  Lecture 06: Backend Routing & SQL
+                <Link href="/progress" className="hover:text-white transition">
+                  Mastery Tracker
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Interactive Tools */}
+          {/* Resources & Open Source */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-zinc-200">Interactive Sandbox</h4>
-            <ul className="space-y-2 text-xs text-zinc-400 font-normal">
+            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-zinc-200">Resources</h4>
+            <ul className="space-y-2.5 text-xs text-zinc-400 font-normal">
               <li>
-                <Link href="/playground" className="hover:text-brand-blue transition">
-                  Interactive API Console
-                </Link>
-              </li>
-              <li>
-                <Link href="/progress" className="hover:text-brand-emerald transition">
-                  Module Mastery Tracker
-                </Link>
+                <a
+                  href="https://github.com/SachinManral/Backend-From-First-Principle/blob/main/CONTRIBUTING.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition flex items-center gap-1.5"
+                >
+                  <span>Contributing Guide</span>
+                  <ExternalLink className="w-3 h-3 text-zinc-500" />
+                </a>
               </li>
               <li>
                 <a
-                  href="http://localhost:4000/"
+                  href="https://github.com/SachinManral/Backend-From-First-Principle"
                   target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-cyan-300 transition"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition flex items-center gap-1.5"
                 >
-                  Live Server Catalog (:4000)
+                  <span>GitHub Repository</span>
+                  <ExternalLink className="w-3 h-3 text-zinc-500" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="http://localhost:4000/api/export/postman"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition flex items-center gap-1.5"
+                >
+                  <span>Postman Collection</span>
+                  <ExternalLink className="w-3 h-3 text-zinc-500" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/SachinManral/Backend-From-First-Principle/blob/main/LICENSE"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition"
+                >
+                  MIT License
                 </a>
               </li>
             </ul>
@@ -97,12 +114,12 @@ export default function Footer() {
 
           {/* Core Foundations */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-zinc-200">Core Foundations</h4>
+            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-zinc-200">Foundations</h4>
             <ul className="space-y-2 text-xs text-zinc-400 font-normal">
-              <li>• Eliminate Syntax Fatigue</li>
-              <li>• Wire & TCP Socket Level Inspection</li>
+              <li>• Wire & TCP Socket Level Anatomy</li>
+              <li>• HTTP/1.1 vs HTTP/2 Multiplexing</li>
+              <li>• 3-Layer Clean Architecture</li>
               <li>• On-Disk SQLite WAL Persistence</li>
-              <li>• Zero-Boilerplate Conceptual Mastery</li>
             </ul>
           </div>
 
@@ -111,20 +128,20 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <div>
-            © {new Date().getFullYear()} Backend First Principles. Free and open learning platform.
+            © {new Date().getFullYear()} Backend, From First Principles. Free and open source under MIT License.
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             <a
-              href="https://github.com/SachinManral/Backend-From-First-Principle.git"
+              href="https://github.com/SachinManral/Backend-From-First-Principle"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition flex items-center gap-1.5"
             >
               <Github className="w-3.5 h-3.5" />
-              <span>GitHub Repository</span>
+              <span>GitHub</span>
             </a>
             <Link href="/" className="hover:text-white transition">Home</Link>
-            <Link href="/lectures/01-roadmap" className="hover:text-white transition">Curriculum</Link>
+            <Link href="/lectures/01-roadmap" className="hover:text-white transition">Articles</Link>
             <Link href="/playground" className="hover:text-white transition">Playground</Link>
           </div>
         </div>
