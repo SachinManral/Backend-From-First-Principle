@@ -283,13 +283,13 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Before jumping into code, we clarify how to learn backend engineering effectively: by understanding the story, the big architectural questions, and how multiple machines collaborate across a network."
+              "text": "Before writing code, you need a clear mental picture of how machines communicate across a network. Understanding the story and core mechanics prevents hours of debugging confusion down the road."
             },
             {
               "type": "callout",
               "variant": "info",
               "title": "Appreciating the Abstractions",
-              "text": "Languages, runtimes, and frameworks hide massive complexity behind simple functions. When you understand what is happening beneath those abstractions, you gain the confidence to diagnose any production issue."
+              "text": "Modern frameworks hide complex network operations behind simple helper functions. When you understand what happens beneath these abstractions, you can confidently diagnose and solve production issues in any tech stack."
             }
           ]
         },
@@ -303,17 +303,17 @@
                 {
                   "number": "Phase 1",
                   "title": "Story & Philosophy (Foundations)",
-                  "text": "Language-agnostic mental models: why ports exist, how stateless HTTP scales, and how distributed machines collaborate across a network."
+                  "text": "Master language-agnostic mental models: why ports exist, how stateless HTTP scales, and how distributed machines collaborate across a network without getting out of sync."
                 },
                 {
                   "number": "Phase 2",
                   "title": "Hands-On Implementations (Node.js & Go)",
-                  "text": "Deep dives into Node.js and Go: writing raw socket handlers, custom database drivers, migrations, and connection pools."
+                  "text": "Build working mechanisms from the ground up in Node.js and Go: writing raw socket handlers, custom HTTP parsers, SQLite storage engines, and connection pools."
                 },
                 {
                   "number": "Phase 3",
                   "title": "Production-Level Projects (0 to 1M Users)",
-                  "text": "Architecting resilient, real-world systems designed to scale smoothly from 0 to 1,000,000+ users while remaining maintainable."
+                  "text": "Design resilient systems that handle real-world traffic. Learn how to add caching layers, manage message queues, and scale smoothly from zero to one million users."
                 }
               ]
             }
@@ -357,7 +357,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "A backend is the server-side engine of an application. It runs on a remote server machine and manages data persistence, business logic, authentication, database operations, and external API communication."
+              "text": "A backend is the server-side engine of an application that runs on remote cloud machines. It acts as the brain behind the scenes, managing data persistence, running business logic, verifying authentication, and communicating with databases and external APIs."
             },
             {
               "type": "callout",
@@ -370,7 +370,7 @@
               "title": "Example 1: The User Login Flow",
               "input": "POST /api/auth/login HTTP/1.1\nContent-Type: application/json\n\n{\n  \"email\": \"sachin@example.com\",\n  \"password\": \"••••••••\"\n}",
               "output": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"status\": \"success\",\n  \"token\": \"eyJhbGciOi...\",\n  \"user\": {\n    \"id\": 42,\n    \"name\": \"Sachin\"\n  }\n}",
-              "explanation": "Frontend collects credentials and sends an HTTP request. Backend verifies password hash against the database, generates a signed auth token, and returns the user profile."
+              "explanation": "The frontend collects user credentials and sends an HTTP request. The backend verifies the password hash in the database, generates a signed auth token, and returns the profile."
             }
           ]
         },
@@ -380,14 +380,14 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "A backend operates primarily on the **Client-Server model** over HTTP: the client dispatches a request, the server executes business logic, and returns a structured response."
+              "text": "A backend operates primarily on the **Client-Server model** over HTTP. The client dispatches an HTTP request across the network, the server parses the request headers and payload, runs the requested business rules, queries the database, and returns a structured response."
             },
             {
               "type": "example",
               "title": "Example 2: Reading Users List",
               "input": "GET /api/users HTTP/1.1\nHost: api.example.com\nAuthorization: Bearer eyJhbGciOi...\nAccept: application/json",
               "output": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"status\": \"success\",\n  \"users\": [\n    \"Sachin\",\n    \"Rahul\",\n    \"Aman\"\n  ]\n}",
-              "explanation": "The backend authenticates the token, queries the database table, serializes records into JSON, and sends back HTTP 200 OK."
+              "explanation": "The backend authenticates the client's token, queries the database table, serializes records into JSON, and sends back HTTP 200 OK."
             },
             {
               "type": "code",
@@ -419,14 +419,14 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Applications need a central, trusted authority to coordinate shared data, prevent race conditions, and enforce business rules across millions of independent users."
+              "text": "Applications need a single, trusted central authority to coordinate shared data across millions of independent users. Without a central backend, different users would overwrite each other's data, leading to race conditions and corrupted states."
             },
             {
               "type": "example",
               "title": "Example 3: The Instagram Like Lifecycle",
               "input": "POST /api/posts/101/like HTTP/1.1\nHost: api.instagram.com\nAuthorization: Bearer eyJhbGciOi...\nContent-Type: application/json\n\n{\n  \"action\": \"like\"\n}",
               "output": "HTTP/1.1 201 Created\nContent-Type: application/json\n\n{\n  \"status\": \"success\",\n  \"liked\": true,\n  \"totalLikes\": 1420\n}",
-              "explanation": "Backend identifies the user, writes a unique Like record to PostgreSQL, notifies Redis cache, and triggers an asynchronous push notification to the post creator."
+              "explanation": "The backend identifies the user, writes a unique Like record to PostgreSQL, updates the Redis cache, and triggers an asynchronous notification to the post creator."
             },
             {
               "type": "callout",
@@ -442,7 +442,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "The frontend is the client-side interface running directly on the user's phone or computer. For web applications, it combines HTML (Structure), CSS (Styling), and JavaScript (Behavior & Interaction)."
+              "text": "The frontend is the client-side interface running directly on the user's browser or mobile phone. It is responsible for rendering the user interface, handling clicks and keyboard input, and displaying server responses visually."
             },
             {
               "type": "table",
@@ -477,7 +477,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "There are 5 fatal reasons why client applications cannot replace servers:"
+              "text": "There are 5 fundamental reasons why client applications cannot replace servers:"
             },
             {
               "type": "points",
@@ -485,28 +485,28 @@
                 {
                   "number": 1,
                   "title": "Security & Secrets Exposure",
-                  "text": "Frontend code is delivered directly to the user's browser. Secret database passwords or private API keys hardcoded in JavaScript are immediately exposed to anyone inspecting Chrome DevTools.",
+                  "text": "Frontend code is delivered directly to the user's browser. Secret database passwords or private API keys hardcoded in client JavaScript are immediately visible to anyone inspecting Chrome DevTools.",
                   "code": "// ❌ DANGEROUS: Anyone opening DevTools can see your database credentials\nconst DB_PASSWORD = \"secret_postgres_pass_123\";"
                 },
                 {
                   "number": 2,
                   "title": "Browser Sandbox & OS Isolation",
-                  "text": "Browsers intentionally run JavaScript inside a strict security sandbox. They prevent web pages from accessing local operating system filesystems, managing hardware devices, or opening raw OS network sockets."
+                  "text": "Browsers run JavaScript inside a strict security sandbox. This security boundary intentionally prevents web pages from accessing local operating system filesystems or opening raw network sockets."
                 },
                 {
                   "number": 3,
                   "title": "CORS (Cross-Origin Resource Sharing) Policies",
-                  "text": "Browsers block client JavaScript from making cross-origin requests unless explicitly permitted by target server CORS headers. In contrast, backend-to-backend communication has zero CORS restrictions."
+                  "text": "Browsers automatically block client JavaScript from making cross-origin requests unless explicitly permitted by target server headers. Backend-to-backend communication has zero CORS restrictions."
                 },
                 {
                   "number": 4,
                   "title": "Database Connection Saturation & Pooling",
-                  "text": "Databases rely on long-lived TCP connections and have strict capacity limits (e.g. 100 max sockets). If 10,000 browsers opened direct database sockets, the database would instantly crash. The backend acts as a gateway, safely multiplexing thousands of requests across a small, reusable connection pool (e.g. 20 connections)."
+                  "text": "Databases rely on long-lived TCP connections and have strict limits (e.g. 100 max sockets). If thousands of browsers opened direct connections, the database would crash. The backend safely multiplexes traffic across a small, reusable connection pool."
                 },
                 {
                   "number": 5,
                   "title": "Computing Power & Device Heterogeneity",
-                  "text": "User devices vary widely—from high-end desktop workstations to low-spec mobile phones with limited CPU and battery life. Heavy business computation, image encoding, and AI processing must live on scalable, reliable cloud servers."
+                  "text": "User devices range from powerful desktop PCs to low-spec phones with limited battery life. Heavy business calculations, image processing, and secure cryptography belong on scalable cloud servers."
                 }
               ]
             }
@@ -549,13 +549,13 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Imagine you are a frontend engineer tasked with fixing a backend bug, or a Node.js/Go engineer suddenly asked to write a high-performance service in Rust or Python (FastAPI, Pydantic, Diesel). Where do you even begin without getting overwhelmed by thousands of lines of unfamiliar framework code?"
+              "text": "Entering a large production codebase in an unfamiliar language (like Go or Rust) can feel overwhelming. Without understanding the core mechanics, it is easy to get lost in thousands of lines of framework-specific boilerplate."
             },
             {
               "type": "callout",
               "variant": "info",
               "title": "The First-Principles Solution",
-              "text": "When you break complex software down into universal components—Routing, Middlewares, Authentication, Data Persistence, and Error Handling—syntax becomes secondary. You can navigate and contribute to any backend in any language."
+              "text": "Every backend is built from universal components: Routing, Middlewares, Authentication, Data Persistence, and Error Handling. When you master these fundamental pieces, syntax becomes secondary and you can navigate any codebase."
             }
           ]
         },
@@ -569,32 +569,32 @@
                 {
                   "number": 1,
                   "title": "Seeing the Big Picture (Mental Mapping)",
-                  "text": "When you enter a large codebase, you don't get overwhelmed by boilerplate. You mentally isolate the core business logic from routing layers, database connections, and over-engineered fluff. Senior engineers and CTOs spot root causes in minutes because they recognize universal system patterns."
+                  "text": "You can isolate core business logic from routing layers and boilerplate code in minutes. Senior engineers spot root causes quickly because they recognize universal system patterns rather than getting distracted by syntax."
                 },
                 {
                   "number": 2,
                   "title": "Faster Onboarding Across Any Tech Stack",
-                  "text": "Once you understand how HTTP flows through middleware, how connection pools interact with databases, and how tokens authenticate requests, you no longer need to spend days reading library documentation. You focus purely on business logic instead of syntax."
+                  "text": "Once you understand how HTTP flows through middleware and how connection pools query databases, you no longer need days of documentation study. You jump straight into building features."
                 },
                 {
                   "number": 3,
                   "title": "10x Speed in Building New Projects",
-                  "text": "Starting a new project from scratch becomes fast and precise. You build production-quality MVPs immediately because you understand what the system actually needs—structuring clean routes, database pools, caching, and structured logging—without blindly copying tutorial boilerplate."
+                  "text": "You build production-quality architectures from scratch without blindly copy-pasting tutorial boilerplate. You know exactly when to add database pools, caching, and structured logging."
                 },
                 {
                   "number": 4,
                   "title": "Eliminating Syntax Fatigue & The Language Transition Playbook",
-                  "text": "Learning a new language (e.g. transitioning from Node.js to Rust) often causes burnout when searching for elusive 5-hour complete project tutorials. With first principles, you simply assemble production modules one by one: Routing ➔ Request Validation ➔ Database Repositories ➔ Authentication ➔ Error Handling."
+                  "text": "Learning a new language (like moving from Node.js to Go or Rust) is simple when you assemble universal modules step-by-step: Routing ➔ Validation ➔ Repositories ➔ Auth ➔ Error Handling."
                 },
                 {
                   "number": 5,
                   "title": "Choosing the Right Tool for the Right Job",
-                  "text": "You escape stack lock-in. Instead of labeling yourself a 'Node developer' or 'Python developer', you pick the optimal tool for the requirement: Redis for fast in-memory caching, PostgreSQL for relational ACID transactions, MongoDB for flexible documents, Kafka for event streaming, or Go/Rust for ultra-low latency."
+                  "text": "You escape stack lock-in. Instead of picking tools by habit, you select the best tool for the job: Redis for caching, PostgreSQL for relational transactions, or Go for high throughput."
                 },
                 {
                   "number": 6,
                   "title": "True Career Versatility & High Employability",
-                  "text": "Tech stacks evolve constantly. Companies value engineers who think independently from first principles, join any engineering team, and deliver value immediately regardless of the programming language."
+                  "text": "Engineering frameworks change constantly, but core fundamentals remain stable. Companies value engineers who understand principles and can contribute on any tech stack."
                 }
               ]
             }
@@ -606,14 +606,14 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Notice how the exact same first-principles pattern (handler function ➔ validate input ➔ query database ➔ return JSON response) maps 1:1 between Express (Node.js) and Axum (Rust):"
+              "text": "Notice how the exact same architectural pattern (handler function ➔ validate input ➔ query database pool ➔ return JSON response) maps 1:1 between Express in Node.js and Axum in Rust:"
             },
             {
               "type": "example",
               "title": "Example: Conceptual Mapping from Node.js Express to Rust Axum",
               "input": "// Express (Node.js)\napp.post('/api/users', async (req, res) => {\n  const { name, email } = req.body;\n  const user = await db.users.create({ name, email });\n  return res.status(201).json(user);\n});",
               "output": "// Axum (Rust)\npub async fn create_user(\n    State(db): State<PgPool>,\n    Json(payload): Json<CreateUserDto>,\n) -> Result<(StatusCode, Json<User>), AppError> {\n    let user = db::create_user(&db, payload).await?;\n    Ok((StatusCode::CREATED, Json(user)))\n}",
-              "explanation": "Even though Rust adds strict type safety, state extraction, and compile-time error checking, the underlying architecture (extract request body ➔ query connection pool ➔ serialize 201 Created JSON) is identical."
+              "explanation": "Even though Rust adds strict type safety and compile-time checks, the underlying architectural flow is identical: extract body payload ➔ query database ➔ return status 201."
             }
           ]
         }
@@ -666,17 +666,17 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "HTTP is inherently **stateless**. The server treats every incoming request as completely isolated and new. Once the server sends back its response, it immediately forgets all context about the client."
+              "text": "HTTP is inherently **stateless**. The server treats every incoming request as completely isolated and independent, forgetting all client context as soon as the response is sent."
             },
             {
               "type": "callout",
               "variant": "info",
               "title": "The Courier Parcel Analogy for HTTP Headers",
-              "text": "When you ship a parcel, the delivery address, phone number, and postal code are written on the outside of the box, not sealed inside. Shipping handlers inspect this metadata on top without opening the contents. Similarly, HTTP headers live on top of the message so intermediate proxies, firewalls, and servers can route, authenticate, and process requests without parsing the body."
+              "text": "When you ship a parcel, the delivery address and postage are written on the outside of the box, not sealed inside. Handlers inspect this outer metadata without opening the contents. Similarly, HTTP headers live on top of the message so proxies and servers can route, authenticate, and process requests before parsing the body."
             },
             {
               "type": "paragraph",
-              "text": "Why was statelessness chosen? Because it enables seamless horizontal scaling: behind a load balancer with 10 servers, Request #1 can go to Server A and Request #2 to Server B without either server needing to synchronize shared in-memory session states."
+              "text": "Statelessness is essential for horizontal scaling. Behind a load balancer with multiple server instances, any server can handle any request without needing to synchronize shared in-memory session states."
             }
           ]
         },
@@ -686,7 +686,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "HTTP is a Layer 7 (Application) protocol that relies on Layer 4 (Transport) protocols for reliable byte delivery:"
+              "text": "HTTP is an Application Layer (Layer 7) protocol that relies on Transport Layer (Layer 4) protocols like TCP and UDP for reliable byte transmission across the network:"
             },
             {
               "type": "table",
@@ -726,7 +726,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "On the network wire, an HTTP/1.1 message consists of 4 distinct parts separated by carriage-return line-feeds (`\\r\\n`):"
+              "text": "On the network wire, an HTTP/1.1 message consists of 4 distinct parts separated by carriage-return line-feeds (`\\r\\n`): the request/status line, headers, a double blank line, and an optional body payload."
             },
             {
               "type": "code",
@@ -738,7 +738,7 @@
               "type": "callout",
               "variant": "warning",
               "title": "The Magic Double Blank Line (\\r\\n\\r\\n)",
-              "text": "The blank line between headers and the body is a universal delimiter. It informs the parser that header metadata is complete and payload bytes follow."
+              "text": "The blank line between headers and the body is a universal delimiter. It tells the parser that header metadata is complete and payload bytes follow."
             },
             {
               "type": "points",
@@ -746,17 +746,17 @@
                 {
                   "number": 1,
                   "title": "Request Headers",
-                  "text": "Sent by client to provide client context (`User-Agent`, `Host`, `Authorization: Bearer ...`, `Referer`)."
+                  "text": "Sent by the client to provide context, such as user identity (`Authorization: Bearer ...`), browser type (`User-Agent`), and target domain (`Host`)."
                 },
                 {
                   "number": 2,
                   "title": "Response Headers",
-                  "text": "Sent by server describing server environment and policies (`Server: nginx`, `Set-Cookie`, `Access-Control-Allow-Origin`)."
+                  "text": "Sent by the server describing its environment and policies, such as server software (`Server: nginx`), cookie updates (`Set-Cookie`), and CORS rules."
                 },
                 {
                   "number": 3,
                   "title": "Representation & Control Headers",
-                  "text": "Act as 'remote controls' allowing clients and servers to negotiate payload formats (`Content-Type`, `Accept-Language`, `Cache-Control: max-age=3600`, `Content-Encoding: gzip`)."
+                  "text": "Act as 'remote controls' allowing clients and servers to negotiate payload formats (`Content-Type`), language preferences (`Accept-Language`), and caching rules (`Cache-Control`)."
                 }
               ]
             }
@@ -768,7 +768,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "HTTP methods express the **intent** of a client's interaction. An operation is **idempotent** if executing it multiple times produces the exact same server state as executing it once:"
+              "text": "HTTP methods express the client's **intent**. An operation is **idempotent** if running it multiple times produces the exact same server state as running it once, making it safe to retry over unreliable networks:"
             },
             {
               "type": "table",
@@ -825,7 +825,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "CORS (Cross-Origin Resource Sharing) is a **browser security guardrail**, not a server firewall. Browsers enforce the Same-Origin Policy: if your frontend (`http://localhost:5173`) calls an API on a different port or domain (`http://localhost:3001`), the browser checks for explicit CORS permission."
+              "text": "CORS (Cross-Origin Resource Sharing) is a **browser security guardrail**, not a server firewall. Browsers enforce the Same-Origin Policy: if your frontend (`http://localhost:3000`) calls an API on a different port or domain (`http://localhost:4000`), the browser checks for explicit server permission."
             },
             {
               "type": "points",
@@ -833,12 +833,12 @@
                 {
                   "number": "A",
                   "title": "Simple Request Flow",
-                  "text": "Applies only if method is GET, POST, or HEAD, with no custom headers and standard content types (`application/x-www-form-urlencoded`, `multipart/form-data`, `text/plain`). Browser sends request directly with `Origin` header. If the response lacks `Access-Control-Allow-Origin`, the browser blocks JavaScript from reading the response."
+                  "text": "Applies to simple GET or POST requests with standard form content types. The browser sends the request directly with an `Origin` header. If the response lacks `Access-Control-Allow-Origin`, the browser blocks JavaScript from reading the data."
                 },
                 {
                   "number": "B",
                   "title": "Preflight Request Flow (OPTIONS Trigger)",
-                  "text": "Triggered whenever a request uses: (1) Methods other than GET/POST/HEAD (e.g. PUT, DELETE, PATCH), (2) Non-simple headers (e.g. `Authorization`, `X-Api-Key`), or (3) `Content-Type: application/json` (which covers 95% of modern APIs). Browser automatically dispatches an `OPTIONS` probe first before allowing the real request."
+                  "text": "Triggered when a request uses custom methods (PUT, DELETE, PATCH), custom headers (`Authorization`), or `Content-Type: application/json`. The browser automatically sends a lightweight `OPTIONS` probe first to confirm permissions before sending the real request."
                 }
               ]
             },
@@ -857,7 +857,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "HTTP status codes provide a universal, standardized contract so client apps handle outcomes programmatically without guessing from message bodies:"
+              "text": "HTTP status codes provide a standardized contract so client applications can handle outcomes programmatically without needing to parse text messages:"
             },
             {
               "type": "table",
@@ -902,7 +902,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "HTTP caching uses **ETags** (cryptographic fingerprints of resource state) and `Last-Modified` timestamps to eliminate redundant bandwidth and database load:"
+              "text": "HTTP caching uses **ETags** (fingerprint hashes of resource data) to eliminate redundant bandwidth and database queries. When data has not changed, the server sends an empty body with status 304, allowing the client to reuse its cached copy instantly."
             },
             {
               "type": "example",
@@ -919,14 +919,14 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Clients communicate preferences for data formats (`Accept`), languages (`Accept-Language`), and compression algorithms (`Accept-Encoding: gzip, deflate, br`):"
+              "text": "Content negotiation lets clients communicate their preferred data formats (`Accept: application/json`), language preferences (`Accept-Language`), and compression algorithms (`Accept-Encoding: gzip, br`) to save network bandwidth:"
             },
             {
               "type": "example",
               "title": "Example: Payload Shrink via Gzip Compression",
               "input": "GET /api/data/large HTTP/1.1\nHost: api.example.com\nAccept: application/json\nAccept-Language: en-US\nAccept-Encoding: gzip, deflate, br",
               "output": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\nContent-Encoding: gzip\nContent-Length: 3984580\n\n[Binary compressed gzip stream: 3.8 MB instead of 26.0 MB uncompressed]",
-              "explanation": "Compressing 11,000 JSON records on the fly shrinks the payload from 26 MB down to 3.8 MB (an 85% bandwidth savings) before automatic client decompression."
+              "explanation": "Compressing large JSON records on the fly shrinks payload size by up to 85%, significantly speeding up mobile load times."
             }
           ]
         },
@@ -936,7 +936,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Binary media uploads and real-time streaming require specialized transfer encoding:"
+              "text": "Binary media uploads and real-time event streaming require specialized transfer encodings rather than standard JSON bodies:"
             },
             {
               "type": "points",
@@ -961,7 +961,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "HTTPS is standard HTTP running over an encrypted **TLS (Transport Layer Security)** tunnel:"
+              "text": "HTTPS is standard HTTP running over an encrypted **TLS (Transport Layer Security)** tunnel, ensuring that credentials, session cookies, and database data cannot be intercepted in transit."
             },
             {
               "type": "points",
@@ -1032,7 +1032,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "In backend systems, every client interaction consists of two fundamental dimensions: the **intent** and the **destination**."
+              "text": "In backend systems, every client interaction consists of two fundamental dimensions: the **intent** and the **destination**. While HTTP methods specify what action to perform (e.g. fetch, create, delete), routing determines exactly which server-side controller and business logic should handle that request."
             },
             {
               "type": "points",
@@ -1062,7 +1062,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "A **static route** is defined by a fixed, unchanging URL path without variable segments:"
+              "text": "A **static route** is defined by a fixed, unchanging URL path without variable segments. Because the path never alters, the server relies on the HTTP method to distinguish between different operations on that resource (e.g. fetching records with `GET` vs creating records with `POST`)."
             },
             {
               "type": "example",
@@ -1079,7 +1079,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Dynamic routes incorporate variable parameters directly into the URL path, denoted conventionally with a colon (`:id` or `:userId`):"
+              "text": "Dynamic routes incorporate variable parameters directly into the URL path structure, typically denoted with a colon prefix (like `:id` or `:userId`). This allows a single route pattern to match thousands of individual entity IDs without registering separate routes for each record."
             },
             {
               "type": "example",
@@ -1096,7 +1096,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Because `GET` requests do not carry a payload body, query parameters (passed after the `?` delimiter as key-value pairs) provide the standard mechanism to send non-semantic filtering, sorting, and pagination metadata:"
+              "text": "Because `GET` requests do not carry a payload body, query parameters (passed after the `?` delimiter as key-value pairs) provide the standard mechanism to send non-semantic filtering, sorting, and pagination metadata without altering the core resource URL path."
             },
             {
               "type": "example",
@@ -1113,7 +1113,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Nested routes express parent-child domain relationships in clean, human-readable REST semantics:"
+              "text": "Nested routing is a structural convention in REST APIs used to express parent-child domain relationships. By combining multiple resource segments and path parameters, the URL clearly reflects relational database foreign key ownership."
             },
             {
               "type": "example",
@@ -1130,7 +1130,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "When APIs evolve and require breaking schema updates (such as renaming fields from `name` to `title` or introducing mandatory fields), path versioning (`/v1` vs `/v2`) gives client teams a safe migration window without breaking existing production apps:"
+              "text": "As applications evolve, backend APIs change. Embedding a version prefix (like `/v1` vs `/v2`) directly into the URL path gives client teams a stable migration window when breaking response schema changes are introduced."
             },
             {
               "type": "example",
@@ -1147,7 +1147,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "A **catch-all wildcard route** (`/*`) sits at the very bottom of the router. If incoming traffic fails to match any registered handler, the catch-all returns a descriptive JSON 404 response instead of hanging or returning an empty body:"
+              "text": "A **catch-all wildcard route** (`/*`) sits at the very bottom of the router configuration. If incoming traffic fails to match any registered endpoint, the catch-all cleanly intercepts the request and returns a structured JSON 404 response instead of allowing the connection to hang."
             },
             {
               "type": "example",
