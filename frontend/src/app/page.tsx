@@ -1,14 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
 import HeroBackground from '@/components/visualizers/HeroBackground';
-import { ArrowRight, Terminal, BookOpen, Layers, Zap, FlaskConical, Box, Shield, Code, Globe, Cloud, Database, Network, Cpu, CheckCircle2, Flame, Server, Sparkles, ChevronRight, Play } from 'lucide-react';
+import { ArrowRight, Terminal, BookOpen, Layers, Zap, Network, Database, Cpu, ChevronRight, Check, Sparkles, TerminalSquare } from 'lucide-react';
 
 export default function HomePage() {
   const stats = [
     {
       number: '31',
       title: 'Curriculum Milestones',
-      subtitle: 'From network sockets to scale',
+      subtitle: 'Complete foundational roadmap',
       icon: BookOpen,
       color: 'text-brand-purple bg-brand-purple/10 border-brand-purple/30',
       glow: 'group-hover:border-brand-purple/50 shadow-brand-purple/10',
@@ -44,7 +44,7 @@ export default function HomePage() {
       step: '01',
       title: 'Phase 1: Story & Mental Models',
       subtitle: 'Philosophy, Motivation & High-Level Architecture',
-      description: 'Understand why backends exist, eliminate syntax fatigue, discover the 6-hop packet journey, and form an unshakable mental model before writing a line of code.',
+      description: 'Understand why backends exist, eliminate syntax fatigue, discover the 6-hop packet journey, and form an unshakable mental model before writing code.',
       topics: ['Eliminating Syntax Fatigue', 'The 6-Hop Request Journey', 'State Synchronization & Concurrency', 'The 31-Milestone Roadmap'],
       color: 'border-brand-purple/40 text-brand-purple bg-brand-purple/10',
       tag: 'Mental Foundations',
@@ -84,46 +84,39 @@ export default function HomePage() {
         {/* Central Hero Container with Natural Floating Stickers */}
         <div className="relative w-full max-w-5xl mx-auto px-4 z-10 flex flex-col items-center">
           
-          {/* FLOATING CARD 1: Top-Left (Kernel Sockets) */}
+          {/* FLOATING CARD 1: Top-Left (Kernel Sockets & Wire Protocol) */}
           <div className="hidden xl:block absolute -top-4 -left-12 animate-float-slow z-20 pointer-events-auto">
             <div className="group flex items-start gap-3 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/85 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_20px_rgba(92,119,219,0.15)] hover:border-brand-blue/60 transition duration-300 -rotate-2 hover:rotate-0">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple p-0.5 shadow-md shadow-brand-blue/30 shrink-0 flex items-center justify-center">
                 <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-brand-blue fill-brand-blue/20" />
+                  <Network className="w-5 h-5 text-brand-blue" />
                 </div>
               </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-white tracking-tight">
-                  Kernel Sockets
+                  TCP Wire Protocol
                 </div>
                 <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[145px] leading-tight font-normal">
-                  Understand the backbone of real-time systems.
+                  Master raw \r\n byte streams behind HTTP.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* FLOATING CARD 2: Top-Right (HTTP Lifecycle + 3D Cloud) */}
+          {/* FLOATING CARD 2: Top-Right (Zero Syntax Fatigue) */}
           <div className="hidden xl:block absolute -top-2 -right-12 animate-float-reverse z-20 pointer-events-auto">
-            {/* Small Floating 3D Cloud */}
-            <div className="absolute -top-5 -right-3 text-brand-purple animate-float-gentle">
-              <div className="p-1.5 rounded-xl bg-[#141a33]/90 border border-brand-purple/30 backdrop-blur-md shadow-lg shadow-brand-purple/20">
-                <Cloud className="w-3.5 h-3.5 text-brand-purple fill-brand-purple/30" />
-              </div>
-            </div>
-
             <div className="group flex items-start gap-3 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/85 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_20px_rgba(172,132,235,0.15)] hover:border-brand-purple/60 transition duration-300 rotate-2 hover:rotate-0">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-purple to-indigo-500 p-0.5 shadow-md shadow-brand-purple/30 shrink-0 flex items-center justify-center">
                 <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-brand-purple" />
+                  <Layers className="w-5 h-5 text-brand-purple" />
                 </div>
               </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-white tracking-tight">
-                  HTTP Lifecycle
+                  Zero Syntax Fatigue
                 </div>
                 <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[145px] leading-tight font-normal">
-                  See how a request travels end-to-end.
+                  Concepts transfer 1:1 across Node, Go & Rust.
                 </p>
               </div>
             </div>
@@ -144,7 +137,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* FLOATING CARD 4: Bottom-Right (SQL Persistence) */}
+          {/* FLOATING CARD 4: Bottom-Right (On-Disk SQL & WAL Persistence) */}
           <div className="hidden xl:block absolute bottom-4 -right-14 animate-float-slow z-20 pointer-events-auto">
             <div className="group flex items-start gap-3 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/85 backdrop-blur-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_20px_rgba(16,185,129,0.15)] hover:border-emerald-500/60 transition duration-300 -rotate-1 hover:rotate-0">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 shadow-md shadow-emerald-500/30 shrink-0 flex items-center justify-center">
@@ -154,10 +147,10 @@ export default function HomePage() {
               </div>
               <div className="text-left">
                 <div className="text-xs font-bold text-white tracking-tight">
-                  SQL Persistence
+                  On-Disk SQL & WAL
                 </div>
                 <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[145px] leading-tight font-normal">
-                  Store data that scales. Query like a pro.
+                  ACID persistence, B-Trees & relations.
                 </p>
               </div>
             </div>
@@ -168,13 +161,12 @@ export default function HomePage() {
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] text-white">
               Master Backend <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
-                Architecture
+                Engineering.
               </span>
             </h1>
 
             <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-lg mx-auto leading-relaxed font-normal">
-              Learn by building. Understand by doing.<br className="hidden sm:inline" />
-              From first principles to production systems.
+              Learn how distributed systems work beneath the frameworks. From raw TCP sockets and HTTP byte streams to persistent SQL databases and scalable architecture.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
@@ -198,27 +190,27 @@ export default function HomePage() {
 
         </div>
 
-        {/* 2. Feature Badges Pill Bar */}
+        {/* 2. Practical Project Badges Bar */}
         <div className="w-full max-w-3xl mx-auto mt-14 sm:mt-18 z-10 px-4">
           <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-4 sm:gap-6 py-2.5 px-6 rounded-full bg-[#0b1020]/80 border border-white/10 shadow-2xl backdrop-blur-2xl text-xs text-zinc-300 font-medium">
             <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
-              <FlaskConical className="w-3.5 h-3.5 text-brand-blue" />
-              <span>Hands-on Labs</span>
+              <Layers className="w-3.5 h-3.5 text-brand-purple" />
+              <span>3-Phase Mental Models</span>
             </div>
             <span className="text-zinc-600 hidden sm:inline">•</span>
             <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
-              <Box className="w-3.5 h-3.5 text-brand-purple" />
-              <span>Real World Concepts</span>
+              <Network className="w-3.5 h-3.5 text-brand-blue" />
+              <span>Raw Sockets & Protocols</span>
             </div>
             <span className="text-zinc-600 hidden sm:inline">•</span>
             <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
-              <Shield className="w-3.5 h-3.5 text-amber-400" />
-              <span>Production Ready</span>
+              <Database className="w-3.5 h-3.5 text-emerald-400" />
+              <span>SQLite WAL Disk Persistence</span>
             </div>
             <span className="text-zinc-600 hidden sm:inline">•</span>
             <div className="flex items-center gap-1.5 text-zinc-300 shrink-0">
-              <Code className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Open Source</span>
+              <TerminalSquare className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Live Port 4000 Sandbox</span>
             </div>
           </div>
         </div>
