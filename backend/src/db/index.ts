@@ -75,7 +75,35 @@ export function initDatabase() {
       action TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS device_likes (
+      device_id TEXT NOT NULL,
+      target_id TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (device_id, target_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS device_progress (
+      device_id TEXT PRIMARY KEY,
+      completed_slugs TEXT NOT NULL,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
+
+  // Seed default platform likes if empty
+  const likeCount = db.prepare('SELECT COUNT(*) as count FROM device_likes').get() as { count: number };
+  if (likeCount.count === 0) {
+    const insertLike = db.prepare('INSERT OR IGNORE INTO device_likes (device_id, target_id) VALUES (?, ?)');
+    insertLike.run('device-seed-1', 'platform-root');
+    insertLike.run('device-seed-2', 'platform-root');
+    insertLike.run('device-seed-3', 'platform-root');
+    insertLike.run('device-seed-1', '01-roadmap');
+    insertLike.run('device-seed-2', '01-roadmap');
+    insertLike.run('device-seed-1', '03-what-is-a-backend');
+    insertLike.run('device-seed-3', '05-http-protocol');
+    insertLike.run('device-seed-1', '06-backend-routing');
+    insertLike.run('device-seed-2', '06-backend-routing');
+  }
 
   // 2. Seed Initial Records if empty
   const bookCount = db.prepare('SELECT COUNT(*) as count FROM books').get() as { count: number };

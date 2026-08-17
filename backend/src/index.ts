@@ -12,6 +12,7 @@ import streamRouter from './routes/demos/stream.js';
 import idempotencyRouter from './routes/demos/idempotency.js';
 import routingRouter from './routes/demos/routing.js';
 import postmanRouter from './routes/postman.js';
+import deviceStateRouter from './routes/deviceState.js';
 import { initDatabase } from './db/index.js';
 
 dotenv.config();
@@ -124,6 +125,7 @@ app.use('/api/demo', routingRouter);
 
 // Mount Utilities & Postman Export Router
 app.use('/api', postmanRouter);
+app.use('/api', deviceStateRouter);
 
 // 404 Handler for Unmatched Paths
 app.use((req: Request, res: Response) => {
