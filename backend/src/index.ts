@@ -12,8 +12,12 @@ import streamRouter from './routes/demos/stream.js';
 import idempotencyRouter from './routes/demos/idempotency.js';
 import routingRouter from './routes/demos/routing.js';
 import postmanRouter from './routes/postman.js';
+import { initDatabase } from './db/index.js';
 
 dotenv.config();
+
+// Initialize SQLite schema and tables on disk (backend/data/dev.db)
+initDatabase();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
