@@ -55,6 +55,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/chat" className="hover:text-cyan-300 text-brand-blue font-medium transition flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Neo AI Assistant</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/progress" className="hover:text-white transition">
                   Mastery Tracker
                 </Link>
