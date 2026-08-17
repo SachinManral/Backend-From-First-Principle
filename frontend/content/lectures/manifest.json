@@ -11,9 +11,16 @@
       "duration": "31 min",
       "youtubeUrl": "https://youtu.be/0Rwb4Xmlcwc?si=fmZqRuLD-1jkmSSw",
       "visualizerType": "none",
-      "playgroundDemoIds": ["echo"],
+      "playgroundDemoIds": [
+        "echo"
+      ],
       "tldr": "Backend engineering is not about memorizing framework syntax. It is mastering a chain of foundational concepts—from network sockets and serialization to databases, caching, and distributed scaling.",
-      "tags": ["Roadmap", "Foundations", "Architecture", "All 31 Topics"],
+      "tags": [
+        "Roadmap",
+        "Foundations",
+        "Architecture",
+        "All 31 Topics"
+      ],
       "sections": [
         {
           "id": "roadmap-intro",
@@ -259,9 +266,16 @@
       "duration": "4 min",
       "youtubeUrl": "https://youtu.be/3qFjZbFRSAU?si=vy7RAmyiAYOfGukJ",
       "visualizerType": "none",
-      "playgroundDemoIds": ["echo"],
+      "playgroundDemoIds": [
+        "echo"
+      ],
       "tldr": "A true backend engineer looks past temporary framework syntax to master the underlying mechanics—understanding the philosophy first, implementing raw principles in Node.js & Go second, and building systems that scale from 0 to 1M users third.",
-      "tags": ["Mindset", "Engineering Philosophy", "Node.js & Go", "Scale"],
+      "tags": [
+        "Mindset",
+        "Engineering Philosophy",
+        "Node.js & Go",
+        "Scale"
+      ],
       "sections": [
         {
           "id": "expectations-and-big-picture",
@@ -323,9 +337,19 @@
       "duration": "19 min",
       "youtubeUrl": "https://youtu.be/6Ss4dJD9Kzg?si=kll48fBITvNi4HKM",
       "visualizerType": "request-journey",
-      "playgroundDemoIds": ["echo", "status"],
+      "playgroundDemoIds": [
+        "echo",
+        "status"
+      ],
       "tldr": "Frontend displays and collects user interactions; Backend processes rules, secures credentials, and manages shared state. The separation exists because browsers are untrusted client environments.",
-      "tags": ["Architecture", "Client-Server", "Request Journey", "DNS", "Security", "Nginx"],
+      "tags": [
+        "Architecture",
+        "Client-Server",
+        "Request Journey",
+        "DNS",
+        "Security",
+        "Nginx"
+      ],
       "sections": [
         {
           "id": "what-is-a-backend",
@@ -422,11 +446,27 @@
             },
             {
               "type": "table",
-              "headers": ["Dimension", "Frontend (Client)", "Backend (Server)"],
+              "headers": [
+                "Dimension",
+                "Frontend (Client)",
+                "Backend (Server)"
+              ],
               "rows": [
-                ["Execution Location", "Runs on user's device inside the browser sandbox", "Runs privately on controlled cloud servers"],
-                ["Primary Responsibility", "Rendering UI, capturing input, animations", "Data persistence, security, business calculations"],
-                ["Code Visibility", "Completely public (viewable in Chrome DevTools)", "Completely private and protected by firewalls"]
+                [
+                  "Execution Location",
+                  "Runs on user's device inside the browser sandbox",
+                  "Runs privately on controlled cloud servers"
+                ],
+                [
+                  "Primary Responsibility",
+                  "Rendering UI, capturing input, animations",
+                  "Data persistence, security, business calculations"
+                ],
+                [
+                  "Code Visibility",
+                  "Completely public (viewable in Chrome DevTools)",
+                  "Completely private and protected by firewalls"
+                ]
               ]
             }
           ]
@@ -490,9 +530,18 @@
       "duration": "10 min",
       "youtubeUrl": "https://youtu.be/6fqZs5Z3k9A?si=KAWKX18ymcLAm5Hy",
       "visualizerType": "none",
-      "playgroundDemoIds": ["echo", "status"],
+      "playgroundDemoIds": [
+        "echo",
+        "status"
+      ],
       "tldr": "When you master underlying mechanics—how HTTP streams bytes, how databases pool connections, and how middlewares intercept requests—syntax becomes secondary. You can onboard into any codebase, transition to any language, and pick the right architecture with confidence.",
-      "tags": ["Philosophy", "First Principles", "Career", "Mental Models", "Language Agnostic"],
+      "tags": [
+        "Philosophy",
+        "First Principles",
+        "Career",
+        "Mental Models",
+        "Language Agnostic"
+      ],
       "sections": [
         {
           "id": "the-unfamiliar-codebase-dilemma",
@@ -586,9 +635,30 @@
       "duration": "1 hr 18 min",
       "youtubeUrl": "https://youtu.be/a3C1DMswClQ?si=X8ToAfGfUgDo7pjJ",
       "visualizerType": "cors-preflight",
-      "playgroundDemoIds": ["echo", "status", "cors", "cache", "negotiate", "compress", "upload", "stream", "idempotency"],
+      "playgroundDemoIds": [
+        "echo",
+        "status",
+        "cors",
+        "cache",
+        "negotiate",
+        "compress",
+        "upload",
+        "stream",
+        "idempotency"
+      ],
       "tldr": "HTTP is the universal application layer protocol of the internet. Understanding its stateless architecture, header metadata controls, CORS browser sandboxing, caching ETags, and streaming transforms backend engineering from guesswork into precision science.",
-      "tags": ["HTTP/1.1", "CORS", "ETag", "Caching", "SSE", "Idempotency", "Compression", "TLS", "Keep-Alive", "Multipart"],
+      "tags": [
+        "HTTP/1.1",
+        "CORS",
+        "ETag",
+        "Caching",
+        "SSE",
+        "Idempotency",
+        "Compression",
+        "TLS",
+        "Keep-Alive",
+        "Multipart"
+      ],
       "sections": [
         {
           "id": "statelessness-concept",
@@ -620,12 +690,32 @@
             },
             {
               "type": "table",
-              "headers": ["HTTP Version", "Underlying Transport", "Key Mechanism & Breakthrough"],
+              "headers": [
+                "HTTP Version",
+                "Underlying Transport",
+                "Key Mechanism & Breakthrough"
+              ],
               "rows": [
-                ["HTTP/1.0", "TCP (New connection per request)", "High latency overhead: each request required a full TCP 3-way handshake and connection teardown."],
-                ["HTTP/1.1", "TCP (Persistent keep-alive)", "Introduced connection reuse (`Connection: keep-alive`), pipelining, chunked transfer encoding, and mandatory Host headers."],
-                ["HTTP/2", "TCP (Binary framing multiplexing)", "Replaced plain text with binary framing. Multiplexes hundreds of concurrent requests over a single TCP connection, eliminating head-of-line blocking at the app layer, with HPACK header compression."],
-                ["HTTP/3", "QUIC over UDP", "Replaced TCP with QUIC over UDP. Eliminates transport-layer head-of-line blocking during packet loss and enables near-instantaneous 0-RTT connection establishment."]
+                [
+                  "HTTP/1.0",
+                  "TCP (New connection per request)",
+                  "High latency overhead: each request required a full TCP 3-way handshake and connection teardown."
+                ],
+                [
+                  "HTTP/1.1",
+                  "TCP (Persistent keep-alive)",
+                  "Introduced connection reuse (`Connection: keep-alive`), pipelining, chunked transfer encoding, and mandatory Host headers."
+                ],
+                [
+                  "HTTP/2",
+                  "TCP (Binary framing multiplexing)",
+                  "Replaced plain text with binary framing. Multiplexes hundreds of concurrent requests over a single TCP connection, eliminating head-of-line blocking at the app layer, with HPACK header compression."
+                ],
+                [
+                  "HTTP/3",
+                  "QUIC over UDP",
+                  "Replaced TCP with QUIC over UDP. Eliminates transport-layer head-of-line blocking during packet loss and enables near-instantaneous 0-RTT connection establishment."
+                ]
               ]
             }
           ]
@@ -682,14 +772,49 @@
             },
             {
               "type": "table",
-              "headers": ["Method", "Intent & Semantic Meaning", "Idempotent?", "Safe (Read-Only)?"],
+              "headers": [
+                "Method",
+                "Intent & Semantic Meaning",
+                "Idempotent?",
+                "Safe (Read-Only)?"
+              ],
               "rows": [
-                ["GET", "Fetches resource without modifying server state.", "Yes", "Yes"],
-                ["POST", "Creates a new subordinate resource. Each call produces a new record.", "No", "No"],
-                ["PUT", "Completely replaces the resource at target URI.", "Yes", "No"],
-                ["PATCH", "Applies selective/partial updates to fields (append/modify).", "No / Context-dependent", "No"],
-                ["DELETE", "Removes resource at target URI. Subsequent calls leave it deleted.", "Yes", "No"],
-                ["OPTIONS", "Queries server for supported methods and CORS capabilities.", "Yes", "Yes"]
+                [
+                  "GET",
+                  "Fetches resource without modifying server state.",
+                  "Yes",
+                  "Yes"
+                ],
+                [
+                  "POST",
+                  "Creates a new subordinate resource. Each call produces a new record.",
+                  "No",
+                  "No"
+                ],
+                [
+                  "PUT",
+                  "Completely replaces the resource at target URI.",
+                  "Yes",
+                  "No"
+                ],
+                [
+                  "PATCH",
+                  "Applies selective/partial updates to fields (append/modify).",
+                  "No / Context-dependent",
+                  "No"
+                ],
+                [
+                  "DELETE",
+                  "Removes resource at target URI. Subsequent calls leave it deleted.",
+                  "Yes",
+                  "No"
+                ],
+                [
+                  "OPTIONS",
+                  "Queries server for supported methods and CORS capabilities.",
+                  "Yes",
+                  "Yes"
+                ]
               ]
             }
           ]
@@ -736,13 +861,37 @@
             },
             {
               "type": "table",
-              "headers": ["Family", "Classification", "Crucial Production Codes to Master"],
+              "headers": [
+                "Family",
+                "Classification",
+                "Crucial Production Codes to Master"
+              ],
               "rows": [
-                ["1xx", "Informational", "100 Continue (large uploads), 101 Switching Protocols (WebSockets upgrade)"],
-                ["2xx", "Success", "200 OK (read/update success), 201 Created (POST success with resource), 204 No Content (preflight/DELETE success)"],
-                ["3xx", "Redirection", "301 Moved Permanently (SEO permanent redirect), 302 Found (temporary redirect), 304 Not Modified (conditional cache hit)"],
-                ["4xx", "Client Error", "400 Bad Request (malformed input), 401 Unauthorized (missing/expired token), 403 Forbidden (authenticated but lacks permission), 404 Not Found, 429 Too Many Requests (rate limit exceeded)"],
-                ["5xx", "Server Error", "500 Internal Server Error (unhandled exception), 501 Not Implemented, 502 Bad Gateway (upstream failed), 503 Service Unavailable (overloaded), 504 Gateway Timeout (upstream timeout)"]
+                [
+                  "1xx",
+                  "Informational",
+                  "100 Continue (large uploads), 101 Switching Protocols (WebSockets upgrade)"
+                ],
+                [
+                  "2xx",
+                  "Success",
+                  "200 OK (read/update success), 201 Created (POST success with resource), 204 No Content (preflight/DELETE success)"
+                ],
+                [
+                  "3xx",
+                  "Redirection",
+                  "301 Moved Permanently (SEO permanent redirect), 302 Found (temporary redirect), 304 Not Modified (conditional cache hit)"
+                ],
+                [
+                  "4xx",
+                  "Client Error",
+                  "400 Bad Request (malformed input), 401 Unauthorized (missing/expired token), 403 Forbidden (authenticated but lacks permission), 404 Not Found, 429 Too Many Requests (rate limit exceeded)"
+                ],
+                [
+                  "5xx",
+                  "Server Error",
+                  "500 Internal Server Error (unhandled exception), 501 Not Implemented, 502 Bad Gateway (upstream failed), 503 Service Unavailable (overloaded), 504 Gateway Timeout (upstream timeout)"
+                ]
               ]
             }
           ]
@@ -856,9 +1005,26 @@
       "duration": "24 min",
       "youtubeUrl": "https://youtu.be/SubuU1iOC2s?si=K6n2uE4ybqTE6AMn",
       "visualizerType": "none",
-      "playgroundDemoIds": ["routingStatic", "routingDynamic", "routingQuery", "routingPagination", "routingNested", "routingV1", "routingV2"],
+      "playgroundDemoIds": [
+        "routingStatic",
+        "routingDynamic",
+        "routingQuery",
+        "routingPagination",
+        "routingNested",
+        "routingV1",
+        "routingV2"
+      ],
       "tldr": "If HTTP methods define the 'What' (intent), Routing defines the 'Where' (resource destination). The unique combination of HTTP Method + URL Path forms the server lookup key that maps incoming TCP streams to specific business logic handlers.",
-      "tags": ["Routing", "REST API", "Path Params", "Query Strings", "Pagination", "Nested Routes", "Versioning", "Catch-All"],
+      "tags": [
+        "Routing",
+        "REST API",
+        "Path Params",
+        "Query Strings",
+        "Pagination",
+        "Nested Routes",
+        "Versioning",
+        "Catch-All"
+      ],
       "sections": [
         {
           "id": "what-is-routing",
@@ -1003,5 +1169,3 @@
     }
   ]
 }
-
-
