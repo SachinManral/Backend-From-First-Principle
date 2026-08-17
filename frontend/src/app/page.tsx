@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import HeroBackground from '@/components/visualizers/HeroBackground';
-import { ArrowRight, Terminal, BookOpen, Layers, ShieldCheck, Zap, Sparkles, Network, Database, Cpu, Flame, Check, HelpCircle, GitBranch, TerminalSquare } from 'lucide-react';
+import { ArrowRight, Terminal, BookOpen, Layers, ShieldCheck, Zap, Sparkles, Network, Database, Cpu, Flame, Check, HelpCircle, TerminalSquare, Globe } from 'lucide-react';
 
 export default function HomePage() {
   const stats = [
@@ -38,49 +38,123 @@ export default function HomePage() {
   return (
     <div className="space-y-16 sm:space-y-24 pb-20">
       
-      {/* 1. Hero Section Aligned with Project Goals */}
-      <section className="relative min-h-[620px] sm:min-h-[680px] flex flex-col items-center justify-center text-center pt-8 sm:pt-14 pb-10">
+      {/* 1. Hero Showcase with Freely Floating Tech Cards */}
+      <section className="relative min-h-[580px] sm:min-h-[640px] flex flex-col items-center justify-center text-center pt-6 sm:pt-12 pb-10">
         <HeroBackground />
 
-        <div className="space-y-6 max-w-3xl mx-auto px-4 z-10">
+        {/* Hero Central Wrapper with Floating Badges Attached */}
+        <div className="relative w-full max-w-5xl mx-auto px-4 z-10 flex flex-col items-center">
           
-          {/* Top Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#121426]/90 border border-brand-purple/40 text-xs font-semibold text-zinc-200 shadow-xl shadow-brand-purple/10 backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5 text-brand-purple animate-pulse" />
-            <span>The 31-Milestone Engineering Roadmap</span>
+          {/* FLOATING CARD 1: Top-Left (Visible on LG screens) */}
+          <div className="hidden lg:block absolute -top-4 -left-12 animate-float-slow z-20 pointer-events-auto">
+            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-brand-blue/60 transition duration-300">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-indigo-600 p-0.5 shadow-md shadow-brand-blue/30 shrink-0 flex items-center justify-center">
+                <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                  <Network className="w-5 h-5 text-brand-blue" />
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-bold text-white tracking-tight">
+                  TCP Wire Protocol
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
+                  Master raw \r\n byte streams behind HTTP.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* FLOATING CARD 2: Top-Right (Visible on LG screens) */}
+          <div className="hidden lg:block absolute -top-2 -right-12 animate-float-reverse z-20 pointer-events-auto">
+            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-brand-purple/60 transition duration-300">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-purple to-pink-500 p-0.5 shadow-md shadow-brand-purple/30 shrink-0 flex items-center justify-center">
+                <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                  <Layers className="w-5 h-5 text-brand-purple" />
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-bold text-white tracking-tight">
+                  Zero Syntax Fatigue
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
+                  Concepts transfer 1:1 across Node, Go & Rust.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* FLOATING CARD 3: Bottom-Left (Visible on LG screens) */}
+          <div className="hidden lg:block absolute bottom-4 -left-16 animate-float-gentle z-20 pointer-events-auto">
+            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-emerald-500/60 transition duration-300">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 shadow-md shadow-emerald-500/30 shrink-0 flex items-center justify-center">
+                <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                  <Database className="w-5 h-5 text-emerald-400" />
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-bold text-white tracking-tight">
+                  On-Disk SQL & WAL
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
+                  ACID persistence, B-Trees & relations.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* FLOATING CARD 4: Bottom-Right (Visible on LG screens) */}
+          <div className="hidden lg:block absolute bottom-2 -right-16 animate-float-slow z-20 pointer-events-auto">
+            <div className="group flex items-start gap-3.5 p-3.5 pr-5 rounded-2xl bg-[#0d1222]/90 backdrop-blur-xl border border-[#232f4e] shadow-2xl shadow-black/60 hover:border-cyan-400/60 transition duration-300">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-500 p-0.5 shadow-md shadow-cyan-400/30 shrink-0 flex items-center justify-center">
+                <div className="w-full h-full bg-[#0d1222] rounded-[10px] flex items-center justify-center">
+                  <Terminal className="w-5 h-5 text-cyan-300" />
+                </div>
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-bold text-white tracking-tight">
+                  Live Interactive Lab
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-0.5 max-w-[155px] leading-tight">
+                  Real HTTP requests & wire byte validation.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Main Hero Headline */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
-            Master Backend Engineering.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
-              From First Principles.
-            </span>
-          </h1>
+          <div className="space-y-6 max-w-3xl mx-auto">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
+              Master Backend <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
+                Engineering.
+              </span>
+            </h1>
 
-          {/* Subtitle */}
-          <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            Understand how distributed systems work beneath the frameworks. From raw TCP sockets and HTTP byte streams to persistent SQL databases and scalable architecture.
-          </p>
+            {/* Subtitle */}
+            <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
+              Understand how distributed systems work beneath the frameworks. From raw TCP sockets and HTTP byte streams to persistent SQL databases and scalable architecture.
+            </p>
 
-          {/* Call-to-Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
-            <Link
-              href="/lectures/01-roadmap"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-bold text-white bg-gradient-to-r from-brand-blue to-brand-purple hover:opacity-95 shadow-xl shadow-brand-blue/25 transition duration-200 cursor-pointer"
-            >
-              <span>Explore 31-Milestone Roadmap</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            {/* Call-to-Action Buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+              <Link
+                href="/lectures/01-roadmap"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold text-white bg-gradient-to-r from-brand-blue to-brand-purple hover:opacity-95 shadow-xl shadow-brand-blue/25 transition duration-200 cursor-pointer"
+              >
+                <span>Explore</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
 
-            <Link
-              href="/playground"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-zinc-200 bg-[#0d1222]/90 hover:bg-[#151c33] border border-[#243050] hover:border-brand-blue/50 shadow-lg backdrop-blur-md transition duration-200 cursor-pointer"
-            >
-              <Terminal className="w-4 h-4 text-brand-blue" />
-              <span>Launch Interactive Lab</span>
-            </Link>
+              <Link
+                href="/playground"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-zinc-200 bg-[#0d1222]/90 hover:bg-[#151c33] border border-[#243050] hover:border-brand-blue/50 shadow-lg backdrop-blur-md transition duration-200 cursor-pointer"
+              >
+                <Terminal className="w-4 h-4 text-brand-blue" />
+                <span>Launch Interactive Lab</span>
+              </Link>
+            </div>
           </div>
+
         </div>
 
         {/* 2. Feature Badges Pill Bar (Just above the Horizon Grid / Stats) */}
@@ -257,7 +331,7 @@ export default function HomePage() {
             href="/lectures/01-roadmap"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white bg-gradient-to-r from-brand-blue to-brand-purple hover:opacity-95 shadow-lg shadow-brand-blue/25 transition cursor-pointer"
           >
-            <span>Explore 31-Milestone Roadmap</span>
+            <span>Explore</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
