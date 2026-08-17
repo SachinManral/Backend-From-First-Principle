@@ -29,7 +29,7 @@ export default function AppShell({ lectures, children }: AppShellProps) {
         />
 
         {/* Content Container */}
-        <div className={`flex-1 flex ${!isLandingPage ? 'gap-6 lg:gap-8' : ''} max-w-7xl w-full mx-auto pt-6 sm:pt-8 px-4 sm:px-6 lg:px-8`}>
+        <div className={`flex-1 flex ${!isLandingPage ? 'gap-6 lg:gap-8' : ''} max-w-7xl w-full mx-auto pt-20 sm:pt-24 px-3 sm:px-6`}>
           {/* Sidebar (Desktop Sticky + Mobile Drawer) */}
           {!isLandingPage && (
             <Sidebar

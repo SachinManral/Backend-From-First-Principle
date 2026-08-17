@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Download, Menu, X, Sun, Moon, Terminal, BookOpen, Layers } from 'lucide-react';
+import { Terminal, Download, Menu, X, Sun, Moon, Flame } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/demos';
+import { useProgress } from '@/context/ProgressContext';
 
 interface NavbarProps {
   onToggleSidebar?: () => void;
@@ -16,6 +17,7 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
   const [apiOnline, setApiOnline] = useState<boolean | null>(null);
   const [isDark, setIsDark] = useState<boolean>(true);
   const pathname = usePathname();
+  const { completedSlugs } = useProgress();
 
   useEffect(() => {
     const checkApi = async () => {
@@ -44,94 +46,101 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
     });
   };
 
-  const navLinks = [
-    { label: 'Overview', href: '/' },
-    { label: 'Curriculum', href: '/lectures/01-roadmap' },
-    { label: 'Interactive Lab', href: '/playground' },
-    { label: 'Mastery Checklist', href: '/progress' },
-  ];
-
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#1e2640] bg-[#070b14]/90 backdrop-blur-xl transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        
-        {/* Left: Mobile Toggle & Brand Logo */}
-        <div className="flex items-center gap-3">
+    <div className="fixed inset-x-0 top-3 md:top-4 z-50 w-full max-w-screen px-3 sm:px-6 pointer-events-none">
+      <header className="pointer-events-auto mx-auto max-w-7xl rounded-full bg-card/85 backdrop-blur-xl border border-border/80 shadow-lg shadow-black/25 px-3 sm:px-5 py-2 flex items-center justify-between transition-all duration-300">
+        {/* Left: Brand & Mobile Toggle */}
+        <div className="flex items-center gap-2 sm:gap-3">
           {showSidebarToggle && (
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 rounded-xl bg-[#0f1424] hover:bg-[#161d31] text-zinc-400 hover:text-white border border-[#1e2640] transition cursor-pointer"
-              aria-label="Toggle navigation menu"
+              className="md:hidden p-2 rounded-full bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground border border-border transition cursor-pointer"
+              aria-label="Toggle navigation"
             >
               {isSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           )}
 
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple p-0.5 shadow-md shadow-brand-blue/15 transition group-hover:scale-105">
-              <div className="w-full h-full bg-[#090d16] rounded-[10px] flex items-center justify-center">
-                <Terminal className="w-4 h-4 text-brand-blue" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple p-0.5 shadow-md shadow-brand-blue/20 group-hover:scale-105 transition">
+              <div className="w-full h-full bg-card rounded-[10px] flex items-center justify-center">
+                <Flame className="w-4 h-4 text-brand-purple fill-brand-purple animate-sparkle-pulse" />
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-white tracking-tight text-base sm:text-lg">
-                Backend <span className="text-brand-blue">First Principles</span>
-              </span>
-              <span className="hidden sm:inline-flex px-2 py-0.5 text-[10px] font-mono font-semibold rounded-md bg-[#0f1424] border border-[#1e2640] text-zinc-400">
-                v1.0
-              </span>
+            <div className="flex flex-col">
+              <div className="text-sm font-bold tracking-tight text-foreground flex items-center gap-1.5">
+                <span>Backend</span>
+                <span className="text-[10px] font-mono font-semibold px-2 py-0.2 rounded-full bg-secondary border border-border text-brand-blue">
+                  FIRST PRINCIPLES
+                </span>
+              </div>
             </div>
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation Tabs */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => {
-            const isActive = link.href === '/' 
-              ? pathname === '/' 
-              : pathname.startsWith(link.href);
-
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
-                  isActive
-                    ? 'bg-[#0f1424] text-white border border-[#1e2640] font-semibold'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#0f1424]/50'
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+        {/* Center: Navigation Links (Desktop) */}
+        <nav className="hidden lg:flex items-center gap-1.5">
+          <Link
+            href="/"
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition ${
+              pathname === '/'
+                ? 'bg-secondary text-foreground font-semibold shadow-top'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            Overview
+          </Link>
+          <Link
+            href="/lectures/01-roadmap"
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition ${
+              pathname.startsWith('/lectures')
+                ? 'bg-secondary text-foreground font-semibold shadow-top'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            Curriculum
+          </Link>
+          <Link
+            href="/playground"
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition ${
+              pathname === '/playground'
+                ? 'bg-secondary text-foreground font-semibold shadow-top'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            Interactive Lab
+          </Link>
+          <Link
+            href="/progress"
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition ${
+              pathname === '/progress'
+                ? 'bg-secondary text-foreground font-semibold shadow-top'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            Mastery Checklist
+          </Link>
         </nav>
 
-        {/* Right: Status Pill, Theme Toggle, and Postman Export */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          
+        {/* Right: Actions & Badges */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
           {/* Live API Health Badge */}
           <div
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-mono border transition ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono border transition ${
               apiOnline === true
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                ? 'bg-brand-emerald/10 text-brand-emerald border-brand-emerald/30'
                 : apiOnline === false
-                ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-                : 'bg-[#0f1424] text-zinc-400 border-[#1e2640]'
+                ? 'bg-brand-rose/10 text-brand-rose border-brand-rose/30'
+                : 'bg-secondary text-muted-foreground border-border'
             }`}
-            title={apiOnline === true ? "Connected to Express API on Port 4000" : "Cannot reach http://localhost:4000"}
+            title={apiOnline === true ? "Express API connected on Port 4000" : "Cannot reach http://localhost:4000"}
           >
             <span
-              className={`w-2 h-2 rounded-full ${
-                apiOnline === true 
-                  ? 'bg-emerald-400 animate-pulse' 
-                  : apiOnline === false 
-                  ? 'bg-rose-400' 
-                  : 'bg-zinc-500'
+              className={`w-1.5 h-1.5 rounded-full ${
+                apiOnline === true ? 'bg-brand-emerald animate-pulse' : apiOnline === false ? 'bg-brand-rose' : 'bg-muted-foreground'
               }`}
             />
-            <span className="hidden sm:inline font-medium">
+            <span className="hidden sm:inline font-semibold">
               {apiOnline === true ? 'API :4000 Live' : apiOnline === false ? 'API :4000 Offline' : 'Connecting...'}
             </span>
           </div>
@@ -139,28 +148,25 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl bg-[#0f1424] hover:bg-[#161d31] text-zinc-400 hover:text-white border border-[#1e2640] transition cursor-pointer"
+            className="p-2 rounded-full bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground border border-border transition cursor-pointer"
             title="Toggle theme"
-            aria-label="Toggle theme"
           >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-brand-blue" />}
+            {isDark ? <Sun className="w-3.5 h-3.5 text-brand-amber" /> : <Moon className="w-3.5 h-3.5 text-brand-blue" />}
           </button>
 
-          {/* Postman Export Button */}
+          {/* Postman Export CTA */}
           <a
             href={`${API_BASE_URL}/api/export/postman`}
             download="backend-first-principles.postman_collection.json"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-blue hover:bg-brand-indigo text-white text-xs font-bold transition shadow-md shadow-brand-blue/20 cursor-pointer"
-            title="Download Postman Collection"
+            className="codehelp-gradient-btn !py-1.5 !px-3.5 !rounded-full !text-xs !font-bold"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Postman Export</span>
+            <Download className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span className="hidden md:inline">Postman Export</span>
           </a>
         </div>
-
-      </div>
-    </header>
+      </header>
+    </div>
   );
 }
