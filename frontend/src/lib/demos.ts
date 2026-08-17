@@ -336,6 +336,45 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     path: '/api/demo/routing/v2/products',
     description: 'Serves modern schema with title, currency, and SKU fields without breaking v1 clients.',
     conceptNote: 'Graceful migration window for frontend teams before deprecating legacy endpoints.'
+  },
+  {
+    id: 'serializationJsonFlow',
+    title: '17. JSON Wire Serialization & Parsing',
+    category: 'Serialization',
+    method: 'POST',
+    path: '/api/demo/serialization/json-flow',
+    description: 'Sends a structured JSON payload, inspects server-side deserialization into memory, and observes re-serialized JSON response.',
+    conceptNote: 'Demonstrates converting dynamic client memory objects into wire strings and reconstructing them in backend memory.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      id: 101,
+      title: "Designing Data-Intensive Applications",
+      author: "Martin Kleppmann",
+      inStock: true,
+      price: 45.99
+    }
+  },
+  {
+    id: 'serializationFormatCompare',
+    title: '18. Format Comparison: JSON vs YAML vs XML vs Protobuf',
+    category: 'Serialization',
+    method: 'POST',
+    path: '/api/demo/serialization/format-compare',
+    description: 'Compares text-based formats (JSON, YAML, XML) with binary wire formats (Protobuf) showing byte compactness and parsing differences.',
+    conceptNote: 'Understand why JSON dominates REST APIs (~80%) and when to choose binary formats like Protobuf for high-speed gRPC microservices.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      id: 101,
+      title: "Designing Data-Intensive Applications",
+      author: "Martin Kleppmann",
+      inStock: true,
+      price: 45.99,
+      tags: ["databases", "distributed-systems", "architecture"]
+    }
   }
 ];
 

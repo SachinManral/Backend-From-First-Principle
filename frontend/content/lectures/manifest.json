@@ -1166,6 +1166,224 @@
         "API versioning (/v1 vs /v2) creates safe migration windows for frontend clients when introducing breaking response schema changes.",
         "Always place a wildcard catch-all (/*) at the end of the routing stack to return clear, structured JSON 404 responses."
       ]
+    },
+    {
+      "slug": "07-serialization-deserialization",
+      "order": 7,
+      "phase": 2,
+      "phaseTitle": "Phase 2 — HTTP & Data Wire Protocols",
+      "lectureNumber": "7",
+      "title": "Serialization and Deserialization for Backend Engineers",
+      "subtitle": "Language-agnostic wire communication, OSI application layer boundaries, JSON structure rules, and text vs binary serialization formats.",
+      "duration": "22 min",
+      "youtubeUrl": "https://youtu.be/vzg90tY3uM0?si=r6n2vB-5yS_U--mp",
+      "visualizerType": "none",
+      "playgroundDemoIds": [
+        "serializationJsonFlow",
+        "serializationFormatCompare"
+      ],
+      "tldr": "Serialization converts in-memory objects into a standard wire format (like JSON or Protobuf) for network transmission; Deserialization reconstructs wire bytes back into native objects. This common standard allows frontend apps in JavaScript and backends in Rust, Go, or Python to communicate seamlessly.",
+      "tags": [
+        "Serialization",
+        "Deserialization",
+        "JSON",
+        "Protobuf",
+        "YAML",
+        "XML",
+        "OSI Model",
+        "Wire Protocols"
+      ],
+      "sections": [
+        {
+          "id": "the-heterogeneous-language-problem",
+          "title": "1. The Core Problem: Heterogeneous Languages Across Networks",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "In modern software architecture, client and server applications are almost always written in completely different programming languages. A frontend client running JavaScript in Google Chrome might communicate with a backend microservice written in Rust, Go, Python, or Java."
+            },
+            {
+              "type": "paragraph",
+              "text": "Because JavaScript objects and Rust typed structs have completely different memory layouts, machines cannot simply pass raw internal memory pointers across a network wire. They need a shared, language-agnostic common standard."
+            },
+            {
+              "type": "callout",
+              "variant": "info",
+              "title": "The First-Principles Solution",
+              "text": "Both the client and server agree on a universal standard data format (like JSON). The client transforms its local data into this format before sending, and the server converts it into its own native types upon arrival."
+            }
+          ]
+        },
+        {
+          "id": "what-is-serialization-deserialization",
+          "title": "2. What is Serialization & Deserialization?",
+          "blocks": [
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Serialization (Encoding / Marshalling)",
+                  "text": "The process of taking an active in-memory data structure (an object, struct, or dictionary) and converting it into a standardized string or binary byte stream suitable for network transmission or disk storage."
+                },
+                {
+                  "number": 2,
+                  "title": "Deserialization (Decoding / Unmarshalling)",
+                  "text": "The reverse process of taking raw received wire bytes or text and parsing them back into native in-memory data types so backend business logic and database queries can safely run."
+                }
+              ]
+            },
+            {
+              "type": "example",
+              "title": "Example: JavaScript Client to Rust Backend Transformation",
+              "input": "// Client: JavaScript Object in Browser Memory\nconst newBook = { title: \"Designing Data-Intensive Applications\", author: \"Martin Kleppmann\" };\n// Serialized into wire string:\nJSON.stringify(newBook);\n// ➔ '{\"title\":\"Designing Data-Intensive Applications\",\"author\":\"Martin Kleppmann\"}'",
+              "output": "// Server: Deserialized into Rust Struct in Server Memory\n#[derive(Deserialize, Serialize)]\nstruct BookDto {\n    title: String,\n    author: String,\n}\n// let book: BookDto = serde_json::from_str(&wire_payload)?;",
+              "explanation": "Even though JavaScript and Rust share no runtime or memory model, both seamlessly understand the intermediate JSON wire format."
+            }
+          ]
+        },
+        {
+          "id": "osi-model-backend-mental-model",
+          "title": "3. The Backend Mental Model & The OSI Layer Boundary",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The Open Systems Interconnection (OSI) model describes network communication across 7 distinct layers, from the Application Layer (Layer 7) down to the Physical hardware layer (Layer 1)."
+            },
+            {
+              "type": "paragraph",
+              "text": "As network packets travel across the internet, operating systems and routers convert application data into data frames, IP packets, and raw electrical/optical bits (`010101`). However, as a backend engineer, you operate at the **Application Layer**."
+            },
+            {
+              "type": "callout",
+              "variant": "info",
+              "title": "The Golden Mental Model for Backend Engineers",
+              "text": "You do not need to manage intermediary packet slicing or physical voltage bits. You serialize data into JSON at the Application Layer; the network stack transmits it, and the receiving server reconstructs the exact same JSON format before passing it to your controller."
+            }
+          ]
+        },
+        {
+          "id": "text-based-vs-binary-formats",
+          "title": "4. Serialization Standards: Text-Based vs. Binary Formats",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Serialization standards generally fall into two primary architectural categories: text-based formats and binary formats:"
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Format",
+                "Category",
+                "Primary Use Case & Characteristics"
+              ],
+              "rows": [
+                [
+                  "JSON",
+                  "Text-Based",
+                  "Universal standard (~80% of Web & REST APIs). Completely human-readable, lightweight, and native to all major languages."
+                ],
+                [
+                  "YAML",
+                  "Text-Based",
+                  "Human-friendly configuration files (Kubernetes manifests, Docker Compose, CI/CD pipelines)."
+                ],
+                [
+                  "XML",
+                  "Text-Based",
+                  "Tag-heavy legacy enterprise format (SOAP web services, banking mainframes). Highly verbose."
+                ],
+                [
+                  "Protocol Buffers (Protobuf)",
+                  "Binary Format",
+                  "High-performance binary serialization used with gRPC for low-latency internal microservices. ~40-60% smaller than JSON."
+                ],
+                [
+                  "MessagePack / Avro",
+                  "Binary Format",
+                  "Compact schema-driven binary encoding for fast event streaming and analytics pipelines."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "json-wire-rules-and-anatomy",
+          "title": "5. JSON Structure & Syntax Rules",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "JSON (JavaScript Object Notation) is the most widely used serialization format for HTTP REST APIs. It is strictly governed by fundamental syntax rules:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Enclosing Braces",
+                  "text": "Objects must begin with an opening brace `{` and end with a matching closing brace `}`."
+                },
+                {
+                  "number": 2,
+                  "title": "Keys Must Be Quoted Strings",
+                  "text": "Every object key MUST be wrapped in double quotes (`\"name\": \"Sachin\"`). Single quotes or unquoted keys are invalid JSON."
+                },
+                {
+                  "number": 3,
+                  "title": "Supported Value Types",
+                  "text": "Values can be Strings, Numbers (integers or floats), Booleans (`true`/`false`), Arrays (`[...]`), Nested Objects (`{...}`), or `null`."
+                }
+              ]
+            },
+            {
+              "type": "code",
+              "caption": "Multi-Language Serialization / Deserialization Examples",
+              "code": "// ─── 1. NODE.JS / EXPRESS ───\n// Deserialization: JSON text to Object\nconst data = JSON.parse(req.body);\n// Serialization: Object to JSON wire text\nconst wireString = JSON.stringify(data);\n\n// ─── 2. GO (net/http) ───\ntype Book struct {\n    Title  string `json:\"title\"`\n    Author string `json:\"author\"`\n}\n// Deserialization\nvar b Book\njson.Unmarshal(bodyBytes, &b)\n// Serialization\nwireBytes, _ := json.Marshal(b)\n\n// ─── 3. RUST (serde_json) ───\n#[derive(Serialize, Deserialize)]\nstruct Book {\n    title: String,\n    author: String,\n}\n// Deserialization\nlet b: Book = serde_json::from_str(&wire_str)?;\n// Serialization\nlet wire_str = serde_json::to_string(&b)?;",
+              "tabs": [
+                {
+                  "label": "Node.js",
+                  "language": "javascript",
+                  "code": "// Deserialization: JSON wire string ➔ JavaScript Object\nconst book = JSON.parse(rawWireText);\n\n// Serialization: JavaScript Object ➔ JSON wire string\nconst wireText = JSON.stringify({ id: 101, title: 'Designing Data-Intensive Applications' });\nres.setHeader('Content-Type', 'application/json');\nres.send(wireText);"
+                },
+                {
+                  "label": "Go",
+                  "language": "go",
+                  "code": "type Book struct {\n    ID     int    `json:\"id\"`\n    Title  string `json:\"title\"`\n    Author string `json:\"author\"`\n}\n\n// Deserialization: Wire Bytes ➔ Go Struct\nvar book Book\nerr := json.Unmarshal(rawWireBytes, &book)\n\n// Serialization: Go Struct ➔ Wire Bytes\nwireBytes, err := json.Marshal(book)"
+                },
+                {
+                  "label": "Rust (Serde)",
+                  "language": "rust",
+                  "code": "use serde::{Deserialize, Serialize};\n\n#[derive(Serialize, Deserialize, Debug)]\nstruct Book {\n    id: u32,\n    title: String,\n    author: String,\n}\n\n// Deserialization: Wire String ➔ Rust Struct\nlet book: Book = serde_json::from_str(&raw_wire_str)?;\n\n// Serialization: Rust Struct ➔ Wire String\nlet wire_str = serde_json::to_string(&book)?;"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "end-to-end-serialization-lifecycle",
+          "title": "6. End-to-End Request & Response Serialization Flow",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Here is the complete lifecycle of a client-server interaction from first principles:"
+            },
+            {
+              "type": "example",
+              "title": "Example: Full Wire Serialization Cycle",
+              "input": "// 1. CLIENT SENDS REQUEST (Serialized JSON Body)\nPOST /api/books HTTP/1.1\nHost: api.example.com\nContent-Type: application/json\n\n{\n  \"id\": 6,\n  \"title\": \"Database Internals\",\n  \"author\": \"Alex Petrov\"\n}",
+              "output": "// 2. SERVER RESPONDS (Serialized JSON Response Array)\nHTTP/1.1 201 Created\nContent-Type: application/json\n\n{\n  \"status\": \"success\",\n  \"data\": [\n    { \"id\": 1, \"title\": \"Designing Data-Intensive Applications\" },\n    { \"id\": 6, \"title\": \"Database Internals\" }\n  ]\n}",
+              "explanation": "Client serializes an input object into JSON text. Server deserializes it into SQL records, writes to disk, serializes the updated list into a response JSON array, and client deserializes the response to render the UI."
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "Serialization converts in-memory objects into standardized wire formats (JSON, Protobuf) for network transmission or disk storage.",
+        "Deserialization reconstructs wire bytes back into native in-memory objects so business logic can run safely.",
+        "JSON is the universal (~80%) text standard for REST APIs because it is human-readable and language-agnostic.",
+        "As a backend engineer, you operate at the Application Layer (Layer 7)—you define schemas and contracts while network hardware handles packet transmission.",
+        "For high-speed internal microservices, binary serialization formats like Protocol Buffers reduce payload sizes by up to 50% compared to JSON."
+      ]
     }
   ]
 }
