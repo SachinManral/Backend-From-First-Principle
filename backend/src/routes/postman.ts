@@ -515,6 +515,75 @@ router.get('/export/postman', (_req: Request, res: Response) => {
               },
               description: "Proves why server layers must always read trusted identity claims from Request Context instead of user-supplied request bodies to prevent IDOR and impersonation attacks."
             }
+          },
+          {
+            name: "19. REST CRUD (Sane Defaults: Pagination & Sorting)",
+            request: {
+              method: "GET",
+              header: [
+                { key: "Accept", value: "application/json" }
+              ],
+              url: {
+                raw: `${baseUrl}/api/demo/api-design/projects?page=1&limit=2&status=active&sort=name-asc`,
+                protocol: "http",
+                host: ["localhost"],
+                port: "4000",
+                path: ["api", "demo", "api-design", "projects"],
+                query: [
+                  { key: "page", value: "1" },
+                  { key: "limit", value: "2" },
+                  { key: "status", value: "active" },
+                  { key: "sort", value: "name-asc" }
+                ]
+              },
+              description: "Demonstrates plural resource nouns (/projects), pagination sane defaults (page=1, limit=10), status filtering, and sorting."
+            }
+          },
+          {
+            name: "20. PUT vs PATCH (Complete vs Partial Modification)",
+            request: {
+              method: "PATCH",
+              header: [
+                { key: "Content-Type", value: "application/json" }
+              ],
+              body: {
+                mode: "raw",
+                raw: JSON.stringify({
+                  description: "Updated description via partial PATCH update (leaving all other fields intact)"
+                }, null, 2)
+              },
+              url: {
+                raw: `${baseUrl}/api/demo/api-design/projects/proj_alpha_01`,
+                protocol: "http",
+                host: ["localhost"],
+                port: "4000",
+                path: ["api", "demo", "api-design", "projects", "proj_alpha_01"]
+              },
+              description: "Demonstrates PATCH selective modification versus PUT complete entity replacement."
+            }
+          },
+          {
+            name: "21. Non-CRUD Custom Action (POST /projects/:id/clone)",
+            request: {
+              method: "POST",
+              header: [
+                { key: "Content-Type", value: "application/json" }
+              ],
+              body: {
+                mode: "raw",
+                raw: JSON.stringify({
+                  newName: "Cloned Distributed Sockets Gateway (v2)"
+                }, null, 2)
+              },
+              url: {
+                raw: `${baseUrl}/api/demo/api-design/projects/proj_alpha_01/clone`,
+                protocol: "http",
+                host: ["localhost"],
+                port: "4000",
+                path: ["api", "demo", "api-design", "projects", "proj_alpha_01", "clone"]
+              },
+              description: "Executes a custom business action that falls outside standard CRUD, creating a duplicated resource draft."
+            }
           }
         ]
       }

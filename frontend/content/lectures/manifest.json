@@ -2228,6 +2228,344 @@
         "Middleware order is critical: CORS and Request IDs execute first, while the Global Error Handler must sit at the very end of the pipeline to catch all upstream errors.",
         "Request Context carries per-request scoped metadata (like trusted user IDs and trace UUIDs) across function boundaries, preventing attacker impersonation."
       ]
+    },
+    {
+      "slug": "11-api-design-and-principles",
+      "order": 11,
+      "phase": 3,
+      "phaseTitle": "Phase 3 — Backend Architecture & Layering",
+      "lectureNumber": "11",
+      "title": "API Design & Principles: The Definitive Guide",
+      "subtitle": "From Roy Fielding's REST constraints and UI-first resource mapping to clean URLs, HTTP method semantics, pagination defaults, and custom actions.",
+      "duration": "120 min",
+      "youtubeUrl": "https://youtu.be/RG6q57DwV8Y?si=cZsF5GeRETbGMy3f",
+      "visualizerType": "none",
+      "playgroundDemoIds": [
+        "apiDesignCrud",
+        "apiDesignCustomAction"
+      ],
+      "tldr": "Designing a professional REST API means establishing clear standards: plural nouns in URLs, strict HTTP method semantics (GET, POST, PUT, PATCH, DELETE), automatic pagination defaults, and clean custom action endpoints.",
+      "tags": [
+        "API Design",
+        "REST",
+        "Roy Fielding",
+        "CRUD",
+        "Idempotency",
+        "PUT vs PATCH",
+        "Sane Defaults",
+        "Swagger"
+      ],
+      "sections": [
+        {
+          "id": "part-1-history-and-rest",
+          "title": "1. Why API Design Matters & The Historical Origins of REST",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Designing an API is not just about making code run—it is about creating an intuitive, stable, and predictable contract for frontend developers and external clients. Following established industry standards eliminates guesswork, reduces bugs, and lets engineering teams focus on business logic instead of debating URL syntax."
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "1990: Tim Berners-Lee & The Early Web",
+                  "text": "Tim Berners-Lee invented the World Wide Web, creating URIs (identifiers), HTTP (wire protocol), HTML (markup), and the first web server and browser. By 1993, unexpected user growth threatened to crash early internet servers because scalability had not been planned for."
+                },
+                {
+                  "number": 2,
+                  "title": "2000: Roy Fielding Introduces REST",
+                  "text": "Roy Fielding (co-founder of Apache HTTP Server and co-author of HTTP/1.1) solved the web scalability crisis in his doctoral dissertation by formalizing REST (Representational State Transfer)."
+                }
+              ]
+            },
+            {
+              "type": "callout",
+              "variant": "info",
+              "title": "Fielding's 6 Architectural Constraints (In Plain English)",
+              "text": "1. Client-Server Separation: Decouples UI concerns from database logic.\n2. Statelessness: The server never stores client session memory between requests. Every request carries all data needed to execute, making horizontal load balancing across clusters seamless.\n3. Cacheability: Responses must explicitly declare if they can be cached (Cache-Control, ETag) to eliminate redundant network traffic.\n4. Uniform Interface: All API routes look, navigate, and respond in a standardized, predictable pattern.\n5. Layered System: Clients cannot tell if they are connected directly to the server or to an intermediate proxy, load balancer, or CDN.\n6. Code on Demand (Optional): Servers can temporarily extend client features by sending executable code (JS/Wasm)."
+            },
+            {
+              "type": "callout",
+              "variant": "tip",
+              "title": "What 'Representational State Transfer' Literally Means",
+              "text": "• Resource: A domain entity (e.g. an Organization, Project, or Task).\n• State: The resource's current database condition and attributes.\n• Representation: The wire format used to expose the state (JSON, XML, Protocol Buffers).\n• Transfer: Moving that representation across the network using standard HTTP methods."
+            }
+          ]
+        },
+        {
+          "id": "part-2-ui-first-and-url-taxonomy",
+          "title": "2. UI-First Resource Mapping & URL Taxonomy",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Professional API design begins from user interfaces (e.g., Figma wireframes) before writing any backend code. Extract the nouns visible in the UI to discover your core domain resources:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "The UI-to-API Workflow",
+                  "text": "UI Wireframes (Linear/Jira clone) ➔ Identify Nouns (Organizations, Projects, Tasks, Users) ➔ Design Database Schema ➔ Design API URL Interfaces ➔ Implement Business Logic."
+                },
+                {
+                  "number": 2,
+                  "title": "Standard API URL Pattern",
+                  "text": "Always follow: Scheme (`https://`) + Subdomain (`api.`) + Version (`/v1/`) + Plural Resource Path (`/projects`). Example: `https://api.linear.app/v1/projects`."
+                },
+                {
+                  "number": 3,
+                  "title": "Always Use Plural Nouns for Resources",
+                  "text": "Always name your resource with a plural noun: `/v1/organizations`, `/v1/projects`, `/v1/tasks`. Even when targeting a single record, keep the path plural: `/v1/projects/proj_101`."
+                },
+                {
+                  "number": 4,
+                  "title": "Lowercase Kebab-Case Formatting",
+                  "text": "Use hyphens to separate multi-word paths (`/api/v1/user-profiles/`). Never use underscores (`_`), camelCase, or spaces in URLs."
+                },
+                {
+                  "number": 5,
+                  "title": "Hierarchical Sub-Resource Slashes",
+                  "text": "Use forward slashes to express parent-child ownership: `/organizations/:orgId/projects/:projectId/tasks` indicates tasks belonging to a specific project within an organization."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-3-http-verbs-and-idempotency",
+          "title": "3. HTTP Method Semantics & Idempotency Matrix",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "HTTP methods act as the semantic action verbs of your API. Each method carries strict guarantees regarding Safety (read-only) and Idempotency (repeated requests produce the same server state):"
+            },
+            {
+              "type": "table",
+              "title": "HTTP Methods Semantics & Idempotency Matrix",
+              "headers": [
+                "Method",
+                "Action Intent",
+                "Safe? (Read-Only)",
+                "Idempotent? (Same effect if repeated)",
+                "Standard Status Code"
+              ],
+              "rows": [
+                [
+                  "GET",
+                  "Fetch a resource or collection",
+                  "Yes (Zero state changes)",
+                  "Yes (Calling 100 times produces identical result)",
+                  "200 OK"
+                ],
+                [
+                  "POST",
+                  "Create a new resource / Execute custom action",
+                  "No (Mutates state)",
+                  "No (Calling 5 times creates 5 new distinct IDs)",
+                  "201 Created / 200 OK"
+                ],
+                [
+                  "PUT",
+                  "Completely replace an entire existing resource",
+                  "No (Mutates state)",
+                  "Yes (Overwriting with identical payload leaves identical state)",
+                  "200 OK / 204 No Content"
+                ],
+                [
+                  "PATCH",
+                  "Partially modify specific fields of a resource",
+                  "No (Mutates state)",
+                  "Yes (Applying identical field deltas leaves identical state)",
+                  "200 OK"
+                ],
+                [
+                  "DELETE",
+                  "Remove a resource",
+                  "No (Mutates state)",
+                  "Yes (Deleting an already-deleted item causes no further side effect)",
+                  "204 No Content / 200 OK"
+                ]
+              ]
+            },
+            {
+              "type": "callout",
+              "variant": "warning",
+              "title": "The PUT vs. PATCH Invariant",
+              "text": "• PUT = Complete Entity Replacement: The client must send the entire object representation. If existing properties are omitted from the payload, they are wiped out or reset to default.\n• PATCH = Selective Field Delta: The server modifies ONLY the specific attributes sent in the JSON payload, leaving all omitted properties untouched."
+            }
+          ]
+        },
+        {
+          "id": "part-4-crud-pagination-sane-defaults",
+          "title": "4. Production CRUD, Pagination, Filtering & Sane Defaults",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Never return unbounded database tables to clients. A production API must implement structured query controls with intelligent fallbacks:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "The Golden Rule of Sane Defaults",
+                  "text": "If a client calls `GET /projects` without query parameters, never crash or execute an unbounded query. Safely default to `page=1`, `limit=10`, `status=active`, and `sort=createdAt-desc`. This protects database CPU and memory pools."
+                },
+                {
+                  "number": 2,
+                  "title": "Query Parameter Filtering & Sorting",
+                  "text": "Allow clients to refine results without changing endpoint paths: `?status=active&sort=name-asc` or `?sort=-createdAt`."
+                },
+                {
+                  "number": 3,
+                  "title": "Structured Pagination Metadata Envelope",
+                  "text": "Wrap responses with a clean `data` array alongside a `meta.pagination` envelope containing `page`, `limit`, `totalItems`, `totalPages`, `hasNextPage`, and `hasPrevPage`."
+                }
+              ]
+            },
+            {
+              "type": "example",
+              "title": "Example: Production Paginated Response Structure",
+              "input": "GET /api/v1/projects?page=1&limit=2&status=active&sort=name-asc HTTP/1.1\nHost: api.linear.app\nAccept: application/json",
+              "output": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"data\": [\n    {\n      \"id\": \"proj_alpha_01\",\n      \"name\": \"Distributed Sockets Gateway\",\n      \"description\": \"High-throughput TCP & WebSocket connection proxy multiplexer\",\n      \"status\": \"active\",\n      \"tags\": [\"networking\", \"sockets\", \"tcp\"],\n      \"ownerId\": \"usr_sachin_101\",\n      \"createdAt\": \"2026-01-15T09:00:00Z\"\n    },\n    {\n      \"id\": \"proj_beta_02\",\n      \"name\": \"SQLite WAL Cache Engine\",\n      \"description\": \"Ultra low-latency on-disk relational caching engine\",\n      \"status\": \"active\",\n      \"tags\": [\"database\", \"sqlite\", \"wal\"],\n      \"ownerId\": \"usr_sachin_101\",\n      \"createdAt\": \"2026-02-10T14:30:00Z\"\n    }\n  ],\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 2,\n      \"totalItems\": 14,\n      \"totalPages\": 7,\n      \"hasNextPage\": true,\n      \"hasPrevPage\": false\n    },\n    \"filtersApplied\": {\n      \"status\": \"active\",\n      \"sort\": \"name-asc\"\n    }\n  }\n}",
+              "explanation": "Frontend clients can render pagination buttons, page counts, and active filters immediately without calculating offsets client-side."
+            }
+          ]
+        },
+        {
+          "id": "part-5-custom-actions",
+          "title": "5. Designing Custom Non-CRUD Actions",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "In real-world business domains, many operations represent workflows rather than simple CRUD (e.g., cloning a project with all sub-tasks, archiving an organization, locking an account, or triggering billing invoices):"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "The Sub-Resource Action Verb Pattern",
+                  "text": "When an operation is a specific business action, append an explicit action verb to the resource sub-path using `POST`: `POST /projects/:id/clone`, `POST /organizations/:id/archive`, `POST /invoices/:id/send`, `POST /tasks/:id/complete`."
+                },
+                {
+                  "number": 2,
+                  "title": "Why Always Use POST for Custom Actions?",
+                  "text": "Custom actions trigger complex side effects (duplicating sub-trees, dispatching emails, state transitions) that are non-idempotent and create new resources with new IDs."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-6-enterprise-patterns",
+          "title": "6. Enterprise Patterns: Standardized Errors, Rate Limiting & Content Negotiation",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Enterprise-grade APIs go beyond transport codes to provide predictable error structures, quota headers, and seamless format evolution:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Standardized Error Response Bodies",
+                  "text": "HTTP status codes describe the transport outcome, but error payloads must be strictly structured so frontend and mobile clients can parse errors automatically."
+                },
+                {
+                  "number": 2,
+                  "title": "Rate-Limiting & Quota Headers",
+                  "text": "Public APIs must include rate-limit headers informing clients of their remaining budget: `X-RateLimit-Limit` (max allowed), `X-RateLimit-Remaining` (calls left), and `X-RateLimit-Reset` (epoch reset timestamp)."
+                },
+                {
+                  "number": 3,
+                  "title": "Content Negotiation & Evolution",
+                  "text": "By inspecting `Accept` and `Content-Type` headers (e.g. `application/vnd.api+json` or `application/x-protobuf`), servers can evolve schemas and payload representations without breaking existing URL paths."
+                }
+              ]
+            },
+            {
+              "type": "example",
+              "title": "Example: Production Error Payload Schema",
+              "input": "PUT /api/v1/projects/proj_01 HTTP/1.1\nContent-Type: application/json\n\n{\n  \"name\": \"\"\n}",
+              "output": "HTTP/1.1 400 Bad Request\nContent-Type: application/json\nX-RateLimit-Limit: 100\nX-RateLimit-Remaining: 97\nX-RateLimit-Reset: 1786976400\n\n{\n  \"error\": {\n    \"code\": \"INVALID_REQUEST_BODY\",\n    \"message\": \"The provided payload failed validation constraints.\",\n    \"details\": [\n      {\n        \"field\": \"name\",\n        \"issue\": \"Project name cannot be empty.\"\n      },\n      {\n        \"field\": \"ownerId\",\n        \"issue\": \"Missing mandatory field 'ownerId' for complete PUT replacement.\"\n      }\n    ]\n  }\n}",
+              "explanation": "Client applications can programmatically match on `error.code` to trigger UI toasts or highlight specific input fields using `error.details`."
+            }
+          ]
+        },
+        {
+          "id": "part-7-consistency-and-dx",
+          "title": "7. Developer Experience (DX), Consistency & OpenAPI",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Great APIs are a joy to integrate with because they adhere to strict consistency and documentation standards:"
+            },
+            {
+              "type": "points",
+              "items": [
+                {
+                  "number": 1,
+                  "title": "Strict JSON Naming Consistency (camelCase)",
+                  "text": "Always standardize on `camelCase` for JSON payload keys (`ownerId`, `createdAt`, `totalPages`). Never mix `snake_case` and `camelCase` across different endpoints."
+                },
+                {
+                  "number": 2,
+                  "title": "Descriptive Field Names (Avoid Cryptic Abbreviations)",
+                  "text": "Use readable names like `description` and `createdAt`. Avoid cryptic abbreviations like `DSC` or `cr_dt` that create integration errors."
+                },
+                {
+                  "number": 3,
+                  "title": "Interactive OpenAPI / Swagger Documentation",
+                  "text": "Maintain an OpenAPI specification. Providing an interactive sandbox reduces integration friction and serves as the single source of truth."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "code-implementations",
+          "title": "8. Clean Multi-Language REST Architecture Implementations",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Production REST controller implementations with sane defaults, rate-limit headers, and structured error formatting across TypeScript, Go, and Rust:"
+            },
+            {
+              "type": "code",
+              "caption": "REST Controllers with Sane Defaults across TypeScript, Go, and Rust",
+              "code": "// ─── 1. TYPESCRIPT (Express REST Controller) ───\nexport const listProjectsHandler = async (req: Request, res: Response) => {\n  const page = Math.max(1, parseInt(req.query.page as string) || 1);\n  const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 10));\n  const status = (req.query.status as string) || 'all';\n  \n  const { projects, total } = await projectService.list({ page, limit, status });\n  res.setHeader('X-RateLimit-Limit', '100');\n  res.setHeader('X-RateLimit-Remaining', '97');\n  res.status(200).json({\n    data: projects,\n    meta: { page, limit, totalItems: total, totalPages: Math.ceil(total / limit) }\n  });\n};\n\n// ─── 2. GO (net/http + chi Router) ───\nfunc (h *ProjectHandler) ListProjects(w http.ResponseWriter, r *http.Request) {\n    page, _ := strconv.Atoi(r.URL.Query().Get(\"page\"))\n    if page < 1 { page = 1 }\n    limit, _ := strconv.Atoi(r.URL.Query().Get(\"limit\"))\n    if limit < 1 || limit > 50 { limit = 10 }\n    \n    result, err := h.service.List(r.Context(), page, limit)\n    if err != nil {\n        http.Error(w, err.Error(), http.StatusInternalServerError)\n        return\n    }\n    w.Header().Set(\"Content-Type\", \"application/json\")\n    w.Header().Set(\"X-RateLimit-Limit\", \"100\")\n    json.NewEncoder(w).Encode(result)\n}\n\n// ─── 3. RUST (Axum with Query Extractor) ───\n#[derive(Deserialize)]\npub struct PaginationParams {\n    #[serde(default = \"default_page\")]\n    pub page: usize,\n    #[serde(default = \"default_limit\")]\n    pub limit: usize,\n}\n\npub async fn list_projects(\n    Query(params): Query<PaginationParams>,\n) -> Result<Json<PaginatedResponse<Project>>, StatusCode> {\n    let response = project_service::list(params.page, params.limit).await\n        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;\n    Ok(Json(response))\n}",
+              "tabs": [
+                {
+                  "label": "TypeScript (Express)",
+                  "language": "typescript",
+                  "code": "import { Request, Response } from 'express';\n\n// GET /v1/projects?page=1&limit=10&status=active\nexport const listProjects = async (req: Request, res: Response) => {\n  // Inject Rate Limiting Headers\n  res.setHeader('X-RateLimit-Limit', '100');\n  res.setHeader('X-RateLimit-Remaining', '97');\n  res.setHeader('X-RateLimit-Reset', Math.floor(Date.now() / 1000 + 60).toString());\n\n  // Sane Defaults\n  const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);\n  const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string, 10) || 10));\n  const status = (req.query.status as string) || 'active';\n\n  const { data, total } = await projectService.findPaginated({ page, limit, status });\n\n  return res.status(200).json({\n    data,\n    meta: {\n      pagination: {\n        page,\n        limit,\n        totalItems: total,\n        totalPages: Math.ceil(total / limit)\n      }\n    }\n  });\n};\n\n// Standardized Error Response Handler\nexport const sendError = (res: Response, statusCode: number, code: string, message: string, details?: any[]) => {\n  return res.status(statusCode).json({\n    error: {\n      code,\n      message,\n      details: details || []\n    }\n  });\n};"
+                },
+                {
+                  "label": "Go (net/http)",
+                  "language": "go",
+                  "code": "package main\n\nimport (\n    \"encoding/json\"\n    \"net/http\"\n    \"strconv\"\n)\n\ntype ProjectHandler struct {\n    service *ProjectService\n}\n\nfunc (h *ProjectHandler) ListProjects(w http.ResponseWriter, r *http.Request) {\n    w.Header().Set(\"X-RateLimit-Limit\", \"100\")\n    w.Header().Set(\"X-RateLimit-Remaining\", \"97\")\n    \n    // Sane Defaults\n    page, _ := strconv.Atoi(r.URL.Query().Get(\"page\"))\n    if page < 1 { page = 1 }\n    limit, _ := strconv.Atoi(r.URL.Query().Get(\"limit\"))\n    if limit < 1 || limit > 50 { limit = 10 }\n\n    result, err := h.service.List(r.Context(), page, limit)\n    if err != nil {\n        w.WriteHeader(http.StatusInternalServerError)\n        json.NewEncoder(w).Encode(map[string]interface{}{\n            \"error\": map[string]string{\"code\": \"INTERNAL_ERROR\", \"message\": err.Error()},\n        })\n        return\n    }\n\n    w.Header().Set(\"Content-Type\", \"application/json\")\n    w.WriteHeader(http.StatusOK)\n    json.NewEncoder(w).Encode(result)\n}"
+                },
+                {
+                  "label": "Rust (Axum)",
+                  "language": "rust",
+                  "code": "use axum::{extract::Query, http::StatusCode, response::IntoResponse, Json};\nuse serde::{Deserialize, Serialize};\n\nfn default_page() -> usize { 1 }\nfn default_limit() -> usize { 10 }\n\n#[derive(Deserialize)]\npub struct ListQuery {\n    #[serde(default = \"default_page\")]\n    pub page: usize,\n    #[serde(default = \"default_limit\")]\n    pub limit: usize,\n}\n\npub async fn list_projects(\n    Query(params): Query<ListQuery>,\n) -> Result<Json<PaginatedResponse<Project>>, (StatusCode, Json<serde_json::Value>)> {\n    let projects = project_service::list_paginated(params.page, params.limit)\n        .await\n        .map_err(|e| (\n            StatusCode::INTERNAL_SERVER_ERROR,\n            Json(serde_json::json!({\n                \"error\": {\n                    \"code\": \"DATABASE_QUERY_ERROR\",\n                    \"message\": e.to_string()\n                }\n            }))\n        ))?;\n\n    Ok(Json(projects))\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "keyTakeaways": [
+        "REST was formalized by Roy Fielding in 2000 through 6 core constraints, with statelessness unlocking horizontal scaling and cluster load balancing.",
+        "Always start API design from UI wireframes (Figma), extracting nouns into plural resources (/organizations, /projects, /tasks) before writing code.",
+        "GET is safe and idempotent; PUT and PATCH are idempotent modifiers (PUT replaces the entire entity, PATCH updates partial fields); POST is non-idempotent.",
+        "Provide sane defaults for all query parameters (page=1, limit=10, sort=createdAt-desc) so requests never trigger unbounded database scans.",
+        "Standardize error responses with machine-readable error codes and field-level details, and include X-RateLimit headers to inform clients of quota usage."
+      ]
     }
   ]
 }

@@ -15,6 +15,7 @@ import serializationRouter from './routes/demos/serialization.js';
 import authRouter from './routes/demos/auth.js';
 import validationRouter from './routes/demos/validation.js';
 import architectureRouter from './routes/demos/architecture.js';
+import apiDesignRouter from './routes/demos/apiDesign.js';
 import postmanRouter from './routes/postman.js';
 import deviceStateRouter from './routes/deviceState.js';
 import { initDatabase } from './db/index.js';
@@ -130,6 +131,7 @@ app.use('/api/demo', serializationRouter);
 app.use('/api/demo', authRouter);
 app.use('/api/demo/validation', validationRouter);
 app.use('/api/demo/architecture', architectureRouter);
+app.use('/api/demo/api-design', apiDesignRouter);
 
 // Mount Utilities & Postman Export Router
 app.use('/api', postmanRouter);
