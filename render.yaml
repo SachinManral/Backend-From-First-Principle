@@ -13,3 +13,5 @@ services:
         value: 4000
       - key: FRONTEND_ORIGIN
         value: https://backend200.vercel.app
+      - key: DATABASE_URL
+        sync: false

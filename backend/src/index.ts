@@ -23,8 +23,10 @@ import { initDatabase } from './db/index.js';
 
 dotenv.config();
 
-// Initialize SQLite schema and tables on disk (backend/data/dev.db)
-initDatabase();
+// Initialize schema and tables on disk / cloud database
+initDatabase().catch(err => {
+  console.error('[DB INIT ERROR]', err);
+});
 
 const app = express();
 const PORT = process.env.PORT || 4000;

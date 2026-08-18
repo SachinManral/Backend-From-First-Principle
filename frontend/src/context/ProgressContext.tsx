@@ -46,14 +46,14 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
   const [likesMap, setLikesMap] = useState<Record<string, number>>({});
   const [userLikedList, setUserLikedList] = useState<string[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [, setIsLoaded] = useState(false);
 
   // Initialize per-device state on mount
   useEffect(() => {
     const devId = getOrCreateDeviceId();
     setDeviceId(devId);
 
-    // 1. Load local progress
+    // 1. Load local progress and cached liked list
     try {
       const savedProgress = localStorage.getItem(PROGRESS_STORAGE_KEY);
       if (savedProgress) {
@@ -95,7 +95,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (e) {
-        // Backend might be offline during initial boot; localStorage provides graceful offline resilience
+        // Graceful offline fallback
       } finally {
         setIsLoaded(true);
       }
@@ -103,7 +103,33 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
     syncWithBackend();
 
-    // Recurring 5-second live polling for real-time like count updates across all devices
+    // 3. Real-Time Server-Sent Events (SSE) Stream for sub-millisecond like updates
+    let eventSource: EventSource | null = null;
+    try {
+      eventSource = new EventSource(`${API_BASE_URL}/api/likes/stream`);
+
+      eventSource.addEventListener('like_update', (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          if (payload && payload.targetId && typeof payload.totalLikes === 'number') {
+            setLikesMap(prev => ({
+              ...prev,
+              [payload.targetId]: payload.totalLikes
+            }));
+          }
+        } catch (err) {
+          console.error('Error parsing live SSE like update:', err);
+        }
+      });
+
+      eventSource.onerror = () => {
+        // If SSE disconnects, browser automatically attempts reconnect
+      };
+    } catch (e) {
+      console.warn('SSE not supported or connection failed, relying on background polling:', e);
+    }
+
+    // 4. Fallback interval polling (every 10s) to guarantee resilience across intermittent networks
     const interval = setInterval(async () => {
       try {
         const likesRes = await fetch(`${API_BASE_URL}/api/likes?deviceId=${devId}`, { cache: 'no-store' });
@@ -112,9 +138,14 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
           if (likesData.likesMap) setLikesMap(likesData.likesMap);
         }
       } catch {}
-    }, 5000);
+    }, 10000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+      clearInterval(interval);
+    };
   }, []);
 
   // Mark Lecture Complete (idempotent addition)
@@ -128,7 +159,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         console.error('Failed to save progress locally', e);
       }
 
-      // Sync with SQLite backend
+      // Sync with database backend
       const devId = deviceId || getOrCreateDeviceId();
       fetch(`${API_BASE_URL}/api/progress/sync`, {
         method: 'POST',
@@ -150,15 +181,13 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         console.error('Failed to save progress locally', e);
       }
 
-      // Sync with SQLite backend
+      // Sync with database backend
       const devId = deviceId || getOrCreateDeviceId();
       fetch(`${API_BASE_URL}/api/progress/sync`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ deviceId: devId, completedSlugs: next })
-      }).catch(() => {
-        // Safe silent fallback to local storage
-      });
+      }).catch(() => {});
 
       return next;
     });
@@ -194,7 +223,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     const currentlyLiked = userLikedList.includes(targetId);
     const nextLiked = !currentlyLiked;
 
-    // 1. Optimistic UI update
+    // 1. Optimistic UI update (Instant sub-millisecond feedback)
     setUserLikedList(prev => {
       const updated = nextLiked ? [...prev, targetId] : prev.filter(id => id !== targetId);
       try {
@@ -208,7 +237,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       [targetId]: Math.max(0, (prev[targetId] || 0) + (nextLiked ? 1 : -1))
     }));
 
-    // 2. Transmit to SQLite backend
+    // 2. Transmit to backend & database
     try {
       const res = await fetch(`${API_BASE_URL}/api/likes/toggle`, {
         method: 'POST',
