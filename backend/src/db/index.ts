@@ -28,7 +28,7 @@ sqliteDb.pragma('journal_mode = WAL');
 sqliteDb.pragma('foreign_keys = ON');
 
 if (isPostgres) {
-  console.log('[DATABASE] 🐘 Connecting to Cloud PostgreSQL (Neon / Supabase / Render / Railway)...');
+  console.log('[DATABASE] Connected to Cloud PostgreSQL');
   pgPool = new Pool({
     connectionString: databaseUrl,
     ssl: process.env.NODE_ENV === 'production' || databaseUrl?.includes('sslmode=require') || databaseUrl?.includes('neon.tech') || databaseUrl?.includes('supabase')
@@ -39,7 +39,7 @@ if (isPostgres) {
     connectionTimeoutMillis: 5000,
   });
 } else {
-  console.log(`[SQLITE DB] 📦 Initialized local SQLite at: ${dbPath}`);
+  console.log('[DATABASE] Initialized local SQLite');
 }
 
 /**
@@ -327,7 +327,7 @@ async function initPostgresSchema() {
     `);
   }
 
-  console.log(`[POSTGRES DB] 🚀 Persistent Cloud PostgreSQL database connected & initialized.`);
+  console.log('[DATABASE] Cloud PostgreSQL schema initialized.');
 }
 
 export default sqliteDb;
