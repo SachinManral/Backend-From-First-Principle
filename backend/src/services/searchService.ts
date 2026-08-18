@@ -5,13 +5,17 @@ import { TavilySearchResultItem, TavilySearchResponse } from '../types/chat.js';
  */
 export class SearchService {
   private static readonly GENERAL_SEARCH_KEYWORDS = [
-    'time', 'date', 'today', 'now', 'current', 'clock',
-    'weather', 'temperature', 'forecast', 'rain', 'sunny',
-    'news', 'latest', 'recent', 'update', 'happened', 'event',
-    'prime minister', 'president', 'who is', 'who are', 'where is',
-    'capital', 'population', 'country', 'city',
-    'version', 'documentation', 'release', 'changelog',
-    'search', 'find', 'look up', 'google'
+    'weather', 'temperature', 'forecast',
+    'news', 'latest news', 'recent update', 'what happened in',
+    'prime minister', 'president of', 'who is the current',
+    'population of', 'capital of',
+    'release date', 'changelog', 'latest version of',
+    'search online', 'look up on web'
+  ];
+
+  private static readonly EXCLUDE_SEARCH_PHRASES = [
+    'my name', 'who am i', 'who are you', 'what is my', 'hello', 'hi', 'hey',
+    'what time', 'current time', 'what date'
   ];
 
   /**
@@ -19,7 +23,10 @@ export class SearchService {
    */
   public static shouldTriggerSearch(query: string, explicitlyEnabled: boolean): boolean {
     if (explicitlyEnabled) return true;
-    const lowerQuery = query.toLowerCase();
+    const lowerQuery = query.toLowerCase().trim();
+    if (this.EXCLUDE_SEARCH_PHRASES.some(phrase => lowerQuery.includes(phrase))) {
+      return false;
+    }
     return this.GENERAL_SEARCH_KEYWORDS.some(kw => lowerQuery.includes(kw));
   }
 
