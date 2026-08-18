@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Fira_Mono } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 import { getAllLectures } from "@/lib/lectures";
+import { Analytics } from "@vercel/analytics/next";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
         <AppShell lectures={lectures}>
           {children}
         </AppShell>
+        <Analytics />
       </body>
     </html>
   );
