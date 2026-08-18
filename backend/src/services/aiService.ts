@@ -33,7 +33,13 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
 
   private static readonly CONFIG: ModelFailoverConfig = {
     primaryModel: 'llama-3.3-70b-versatile',
-    fallbackModels: ['llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+    fallbackModels: [
+      'llama-3.1-8b-instant',
+      'gemma2-9b-it',
+      'llama-3.2-3b-preview',
+      'llama-3.2-1b-preview',
+      'deepseek-r1-distill-llama-70b'
+    ],
     maxTokens: 3500,
     temperature: 0.3
   };
@@ -118,6 +124,12 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
 
         const errorText = await response.text();
         console.warn(`Model ${model} failed (${response.status}): ${errorText}`);
+        try {
+          const parsed = JSON.parse(errorText);
+          lastError = new Error(parsed.error?.message || errorText);
+        } catch {
+          lastError = new Error(errorText);
+        }
       } catch (err: any) {
         if (err.name === 'AbortError') throw err;
         console.warn(`Model ${model} network error:`, err?.message);
