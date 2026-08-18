@@ -20,26 +20,25 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
    - Accurately recall user details shared earlier in the chat (such as their name, preferences, project context, or past queries).
    - Seamlessly handle chained, multi-turn, and connected prompts (e.g., "why is that better than the previous one?", "what is my name?", "can you give an example of that in Node.js?").
 
-4. **Response Style & Adaptive Formatting**:
-    - **Always Relevant & Direct**: Answer exactly what the user is asking. Never evade or provide irrelevant tangents.
-    - **Completeness & Self-Containment (CRITICAL)**: Always finish what you write. Never leave code blocks, tables, sentences, or explanations half-written or truncated. Keep code examples tight, focused, and complete (under 25 lines) so the full response concludes cleanly.
-    - **Clean & Accessible Language**: Use straightforward, accurate, and easy-to-understand phrasing. Avoid unnecessary fluff or overly dense academic jargon without explanation.
-    - **For Technical Explanations**:
-      * Start with a direct 1–2 sentence definition explaining what it is and why it matters.
-      * Use clean Markdown hierarchy (\`##\` / \`###\`), bullet points, and concise comparative tables when contrasting technologies (e.g. PUT vs PATCH, REST vs GraphQL).
-      * Provide minimal, runnable, well-commented code snippets (under 25 lines) when code is requested or adds clarity.
-      * Conclude with a punchy \`### In a Nutshell\` recap (2–3 bullet points).
-    - **For Conversational / Simple Questions**: Keep responses conversational, crisp, and direct without artificial headings or unnecessary structural boilerplate.`;
+4. **Response Style & Conversational Flow**:
+    - **NEVER Repeat or Echo the User's Question**: Do NOT start your response by repeating, rewording, or making a title/header out of what the user just asked (e.g. NEVER write "## What a RESTful API Is" or "## How REST Works in the Backend"). Jump straight into the answer.
+    - **Direct & Insightful**: Deliver the answer directly from the very first word with high technical precision, clarity, and intuition.
+    - **Code Formatting Standards (STRICT)**:
+      * ALWAYS wrap ALL code snippets, route lists, terminal commands, and ASCII architecture diagrams in standard triple-backtick Markdown blocks with the language identifier (e.g. \`\`\`typescript ... \`\`\`, \`\`\`bash ... \`\`\`, or \`\`\`text ... \`\`\`).
+      * Every code example MUST be self-contained, clean, runnable, and start with required imports/variables.
+      * Keep snippets minimal and tight (under 20 lines).
+      * ABSOLUTELY NEVER output raw text like "Copy code", "Copy", or standalone language labels outside code fences.
+    - **Adaptive Formatting**:
+      * Use bolding, bullet points, and concise tables where they make understanding effortless.
+      * Use subheadings (\`###\`) only when breaking down multi-part technical architectures, never as top-level banner titles.
+      * For follow-ups and conversational queries, keep it natural and conversational without forcing artificial summary templates.`;
 
   private static readonly CONFIG: ModelFailoverConfig = {
     primaryModel: 'openai/gpt-oss-120b',
     fallbackModels: [
-      'groq/compound',
-      'openai/gpt-oss-20b',
-      'groq/compound-mini',
-      'qwen/qwen3.6-27b'
+      'openai/gpt-oss-20b'
     ],
-    maxTokens: 3500,
+    maxTokens: 2000,
     temperature: 0.3
   };
 
@@ -67,9 +66,9 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
       { role: 'system', content: systemPromptWithContext }
     ];
 
-    // Maintain full active session history (up to recent 30 turns)
+    // Keep recent messages to control context size
     if (messages.length > 1) {
-      const historySlice = messages.slice(0, -1).slice(-30);
+      const historySlice = messages.slice(0, -1).slice(-20);
       for (const msg of historySlice) {
         if (msg.content && msg.content.trim()) {
           conversation.push({ role: msg.role, content: msg.content.trim() });
@@ -80,7 +79,7 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
     // Latest user message enriched with search context if available
     const latestUserMsg = messages[messages.length - 1]?.content || '';
     const enrichedUserContent = searchContext
-      ? `${latestUserMsg}\n\n${searchContext}`
+      ? `User Question:\n${latestUserMsg}\n\nReference Context:\n${searchContext}\n\nUse the reference context when relevant.`
       : latestUserMsg;
 
     conversation.push({ role: 'user', content: enrichedUserContent });
@@ -123,6 +122,17 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
 
         const errorText = await response.text();
         console.warn(`Model ${model} failed (${response.status}): ${errorText}`);
+
+        // Only retry transient errors (rate limit, server downtime)
+        if (![429, 500, 502, 503, 504].includes(response.status)) {
+          try {
+            const parsed = JSON.parse(errorText);
+            throw new Error(parsed.error?.message || errorText);
+          } catch {
+            throw new Error(errorText);
+          }
+        }
+
         try {
           const parsed = JSON.parse(errorText);
           lastError = new Error(parsed.error?.message || errorText);
@@ -131,6 +141,10 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
         }
       } catch (err: any) {
         if (err.name === 'AbortError') throw err;
+        // Re-throw if error was generated from non-retryable response
+        if (err.message && !candidateModels.some(m => err.message.includes(m))) {
+          throw err;
+        }
         console.warn(`Model ${model} network error:`, err?.message);
         lastError = err;
       }

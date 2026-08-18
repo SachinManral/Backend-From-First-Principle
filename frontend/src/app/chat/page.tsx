@@ -94,7 +94,9 @@ export default function ChatPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+          messages: newMessages
+            .filter(m => m.content && m.content.trim().length > 0)
+            .map(m => ({ role: m.role, content: m.content.trim() })),
           enableWebSearch
         })
       });
@@ -158,19 +160,23 @@ export default function ChatPage() {
       }
 
       setMessages(prev =>
-        prev.map(m =>
-          m.id === botMessageId ? { ...m, isStreaming: false } : m
-        )
+        prev.map(m => {
+          if (m.id === botMessageId) {
+            const finalContent = accumulatedText.trim() || '⚠️ Received an empty response from the AI model. Please try again.';
+            return { ...m, content: finalContent, isStreaming: false };
+          }
+          return m;
+        })
       );
     } catch (err: any) {
       setMessages(prev =>
         prev.map(m =>
           m.id === botMessageId
             ? {
-                ...m,
-                content: `⚠️ **Connection Error:** Could not reach AI service. (${err.message})`,
-                isStreaming: false
-              }
+              ...m,
+              content: `⚠️ **Connection Error:** Could not reach AI service. (${err.message})`,
+              isStreaming: false
+            }
             : m
         )
       );
@@ -196,8 +202,10 @@ export default function ChatPage() {
   const renderFormattedBlock = (text: string) => {
     if (!text) return null;
 
-    // Clean any accidental raw HTML tags
-    const sanitizedText = text.replace(/<(?!\/?code)(?!span)[^>]+>/g, '');
+    // Clean any accidental raw HTML tags & hallucinated copy labels
+    const sanitizedText = text
+      .replace(/<(?!\/?code)(?!span)[^>]+>/g, '')
+      .replace(/\n\s*Copy code\s*\n/gi, '\n');
 
     // Split on code fences (```)
     const parts = sanitizedText.split(/```/);
@@ -536,7 +544,7 @@ export default function ChatPage() {
 
   return (
     <div className="h-[calc(100dvh-4.25rem)] max-w-3xl mx-auto flex flex-col px-3 sm:px-6 overflow-hidden">
-      
+
       {/* Clean Minimal Header Bar */}
       <div className="py-3 border-b border-[#1a2238]/60 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
@@ -567,9 +575,8 @@ export default function ChatPage() {
         {messages.map(msg => (
           <div
             key={msg.id}
-            className={`flex items-start gap-3 ${
-              msg.role === 'user' ? 'justify-end' : 'justify-start'
-            }`}
+            className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
           >
             {msg.role === 'assistant' && (
               <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-brand-blue/30 to-brand-purple/30 border border-brand-blue/40 flex items-center justify-center shrink-0 mt-1 shadow-sm">
@@ -578,11 +585,10 @@ export default function ChatPage() {
             )}
 
             <div
-              className={`text-sm leading-relaxed ${
-                msg.role === 'user'
+              className={`text-sm leading-relaxed ${msg.role === 'user'
                   ? 'bg-[#1a2236] border border-[#2b3859] text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-[85%] shadow-sm'
                   : 'text-zinc-100 flex-1 max-w-full bg-[#0a1020]/75 border border-[#18233c] rounded-2xl p-4 sm:p-5 shadow-lg backdrop-blur-sm'
-              }`}
+                }`}
             >
               {msg.role === 'user' ? (
                 <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -655,11 +661,10 @@ export default function ChatPage() {
             <button
               type="button"
               onClick={() => setEnableWebSearch(!enableWebSearch)}
-              className={`p-1.5 rounded-full transition cursor-pointer ${
-                enableWebSearch
+              className={`p-1.5 rounded-full transition cursor-pointer ${enableWebSearch
                   ? 'bg-brand-blue/20 text-brand-blue border border-brand-blue/50'
                   : 'text-zinc-500 hover:text-zinc-300'
-              }`}
+                }`}
               title={enableWebSearch ? "Live Web Search: Enabled" : "Live Web Search: Disabled"}
             >
               <Globe className="w-4 h-4" />
