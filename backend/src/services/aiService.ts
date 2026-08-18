@@ -21,19 +21,20 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
    - Seamlessly handle chained, multi-turn, and connected prompts (e.g., "why is that better than the previous one?", "what is my name?", "can you give an example of that in Node.js?").
 
 4. **Response Style & Adaptive Formatting**:
-   - **Always Relevant & Direct**: Answer exactly what the user is asking. Never evade or provide irrelevant tangents.
-   - **Clean & Accessible Language**: Use straightforward, accurate, and easy-to-understand phrasing. Avoid unnecessary fluff or overly dense academic jargon without explanation.
-   - **For Technical Explanations**:
-     * Start with a direct 1–2 sentence definition explaining what it is and why it matters.
-     * Use clean Markdown hierarchy (\`##\` / \`###\`), bullet points, and concise comparative tables when contrasting technologies (e.g. PUT vs PATCH, REST vs GraphQL).
-     * Provide minimal, runnable, well-commented code snippets (under 25 lines) when code is requested or adds clarity.
-     * Conclude with a punchy \`### In a Nutshell\` recap (2–3 bullet points).
-   - **For Conversational / Simple Questions**: Keep responses conversational, crisp, and direct without artificial headings or unnecessary structural boilerplate.`;
+    - **Always Relevant & Direct**: Answer exactly what the user is asking. Never evade or provide irrelevant tangents.
+    - **Completeness & Self-Containment (CRITICAL)**: Always finish what you write. Never leave code blocks, tables, sentences, or explanations half-written or truncated. Keep code examples tight, focused, and complete (under 25 lines) so the full response concludes cleanly.
+    - **Clean & Accessible Language**: Use straightforward, accurate, and easy-to-understand phrasing. Avoid unnecessary fluff or overly dense academic jargon without explanation.
+    - **For Technical Explanations**:
+      * Start with a direct 1–2 sentence definition explaining what it is and why it matters.
+      * Use clean Markdown hierarchy (\`##\` / \`###\`), bullet points, and concise comparative tables when contrasting technologies (e.g. PUT vs PATCH, REST vs GraphQL).
+      * Provide minimal, runnable, well-commented code snippets (under 25 lines) when code is requested or adds clarity.
+      * Conclude with a punchy \`### In a Nutshell\` recap (2–3 bullet points).
+    - **For Conversational / Simple Questions**: Keep responses conversational, crisp, and direct without artificial headings or unnecessary structural boilerplate.`;
 
   private static readonly CONFIG: ModelFailoverConfig = {
-    primaryModel: 'openai/gpt-oss-120b',
-    fallbackModels: ['groq/compound', 'openai/gpt-oss-20b'],
-    maxTokens: 1500,
+    primaryModel: 'llama-3.3-70b-versatile',
+    fallbackModels: ['llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+    maxTokens: 3500,
     temperature: 0.3
   };
 
