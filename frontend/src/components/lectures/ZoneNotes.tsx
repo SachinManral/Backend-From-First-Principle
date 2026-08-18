@@ -328,40 +328,45 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
 
       case 'checklist':
         return (
-          <div key={idx} className="space-y-3 my-5 p-4 rounded-2xl bg-[#080d1a]/80 border border-[#1a2540]">
-            {block.items.map((item, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 text-xs md:text-sm text-zinc-300"
-              >
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span className="leading-relaxed text-zinc-200">{renderFormattedText(item)}</span>
-              </div>
-            ))}
+          <div key={idx} className="my-5 p-4 sm:p-5 rounded-2xl bg-white/[0.015] border border-white/[0.06] space-y-3">
+            <div className="text-[11px] font-mono text-zinc-400 font-medium uppercase tracking-wider mb-1 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+              <span>Production Checklist & Guidelines</span>
+            </div>
+            <div className="space-y-2.5">
+              {block.items.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 text-[13.5px] text-zinc-300 leading-relaxed"
+                >
+                  <div className="w-4 h-4 rounded-[4px] bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 mt-1">
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  </div>
+                  <span>{renderFormattedText(item)}</span>
+                </div>
+              ))}
+            </div>
           </div>
         );
 
       case 'cards':
         return (
-          <div key={idx} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+          <div key={idx} className="my-6 space-y-4">
             {block.items.map((card, cIdx) => (
-              <div
-                key={cIdx}
-                className="p-5 rounded-2xl bg-gradient-to-b from-[#0c1426]/90 to-[#060a14]/90 border border-[#1e293b] hover:border-cyan-500/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.1)] transition-all duration-300 flex flex-col justify-between space-y-3"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-300 border border-cyan-500/25">
-                      {card.badge}
-                    </span>
-                  </div>
-                  <h4 className="text-sm md:text-[15px] font-bold text-white tracking-tight">
+              <div key={cIdx} className="space-y-1.5 border-l-2 border-cyan-500/30 pl-4 py-1">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h4 className="text-[15px] font-semibold text-white tracking-tight">
                     {renderFormattedText(card.title)}
                   </h4>
-                  <p className="text-xs md:text-sm text-zinc-300 leading-relaxed font-normal">
-                    {renderFormattedText(card.desc)}
-                  </p>
+                  {card.badge && (
+                    <span className="text-[11px] font-mono text-cyan-400 font-medium bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+                      {card.badge}
+                    </span>
+                  )}
                 </div>
+                <p className="text-[14px] text-zinc-300 leading-relaxed">
+                  {renderFormattedText(card.desc)}
+                </p>
               </div>
             ))}
           </div>
@@ -383,7 +388,7 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
             id={secId}
             className="space-y-4"
           >
-            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight border-b border-[#1e293b] pb-3 flex items-center gap-2">
+            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight border-b border-white/[0.08] pb-3 flex items-center gap-2">
               <span>{renderFormattedText(section.title)}</span>
             </h2>
 
@@ -394,53 +399,36 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
         );
       })}
 
-      {/* Key Takeaways & Cheat-Sheet */}
+      {/* Summary & Key Takeaways Section */}
       {lecture.keyTakeaways && lecture.keyTakeaways.length > 0 && (
-        <div className="p-6 rounded-2xl bg-gradient-to-b from-[#091224] to-[#050812] border border-cyan-500/30 space-y-4 shadow-2xl">
-          <div className="flex items-center gap-2 text-cyan-400 font-bold text-sm">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span className="text-white text-base font-bold">First-Principles Key Takeaways</span>
+        <div className="p-6 rounded-2xl border border-cyan-500/20 bg-gradient-to-b from-cyan-950/15 via-slate-900/20 to-transparent space-y-4 shadow-xl">
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+            <div className="flex items-center gap-2.5 text-cyan-400 font-semibold text-sm">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-white text-base font-bold tracking-tight">Summary & Core Takeaways</span>
+            </div>
+            <span className="text-[11px] font-mono text-zinc-400 bg-white/[0.04] px-2.5 py-0.5 rounded-full border border-white/[0.06]">
+              Key Insights
+            </span>
           </div>
 
           <div className="space-y-3 pt-1">
             {lecture.keyTakeaways.map((takeaway, tIdx) => (
               <div
                 key={tIdx}
-                className="text-xs md:text-sm text-zinc-200 flex items-start gap-2.5"
+                className="text-[14px] text-zinc-200 flex items-start gap-3"
               >
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span className="leading-relaxed font-medium">{renderFormattedText(takeaway)}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Clean Like / Helpful Button */}
-          <div className="pt-3.5 mt-3.5 border-t border-[#1e293b] flex items-center justify-end">
-            <LikeButton targetId={lecture.slug} size="sm" />
-          </div>
-        </div>
-      )}
-
-      {/* Self-Check Questions (if provided) */}
-      {lecture.selfCheckQuestions && lecture.selfCheckQuestions.length > 0 && (
-        <div className="p-6 rounded-2xl bg-[#090e1c] border border-[#1e293b] space-y-3 shadow-lg">
-          <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-            <HelpCircle className="w-4 h-4" />
-            <span className="text-white text-sm font-bold">Self-Check Reflection</span>
-          </div>
-
-          <div className="space-y-2.5 pt-1">
-            {lecture.selfCheckQuestions.map((q, qIdx) => (
-              <div
-                key={qIdx}
-                className="text-xs md:text-sm text-zinc-200 flex items-start gap-2.5"
-              >
-                <span className="font-mono text-cyan-400 font-bold text-xs shrink-0 mt-0.5">
-                  Q{qIdx + 1}.
+                <span className="w-5 h-5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  {tIdx + 1}
                 </span>
-                <span className="leading-relaxed font-medium">{renderFormattedText(q)}</span>
+                <span className="leading-relaxed font-normal">{renderFormattedText(takeaway)}</span>
               </div>
             ))}
+          </div>
+
+          {/* Helpful Reaction Button */}
+          <div className="pt-3.5 mt-2 border-t border-white/[0.06] flex items-center justify-end">
+            <LikeButton targetId={lecture.slug} size="sm" />
           </div>
         </div>
       )}
