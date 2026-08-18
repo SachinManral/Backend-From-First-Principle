@@ -27,6 +27,14 @@ router.post('/stream', async (req: Request, res: Response) => {
     return res.end();
   }
 
+  const normalizedMessages = AIService.normalizeMessages(messages);
+
+  if (normalizedMessages.length === 0 || normalizedMessages[normalizedMessages.length - 1]?.role !== 'user') {
+    res.write(`data: ${JSON.stringify({ error: 'A valid user message is required.' })}\n\n`);
+    res.write('data: [DONE]\n\n');
+    return res.end();
+  }
+
   const groqApiKey = process.env.GROQ_API_KEY;
   const tavilyApiKey = process.env.TAVILY_API_KEY;
 
@@ -49,7 +57,7 @@ router.post('/stream', async (req: Request, res: Response) => {
   });
 
   try {
-    const latestUserMsg = messages[messages.length - 1]?.content || '';
+    const latestUserMsg = normalizedMessages[normalizedMessages.length - 1]?.content || '';
 
     // 4. Live Search Orchestration (SearchService)
     let searchContext = '';
@@ -59,7 +67,7 @@ router.post('/stream', async (req: Request, res: Response) => {
     }
 
     // 5. Context Window & Sliding Memory (AIService)
-    const conversation = AIService.buildConversationContext(messages, searchContext);
+    const conversation = AIService.buildConversationContext(normalizedMessages, searchContext);
 
     // 6. Upstream Inference Dispatch with Failover (AIService)
     const groqResponse = await AIService.fetchCompletionStream(

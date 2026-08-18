@@ -32,7 +32,7 @@ export default function ChatPage() {
     {
       id: 'welcome',
       role: 'assistant',
-      content: 'Hello! 👋 I am **Neo AI**.\n\nI can help you with backend architecture, API design, code debugging, system scaling, or general software engineering. What are you building or exploring today?'
+      content: 'Hello! I am **Neo AI**.\n\nI can help with backend architecture, API design, debugging, and scaling. What are you building today?'
     }
   ]);
   const [inputPrompt, setInputPrompt] = useState('');
@@ -95,7 +95,7 @@ export default function ChatPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: newMessages
-            .filter(m => m.content && m.content.trim().length > 0)
+            .filter(m => m.id !== 'welcome' && m.content && m.content.trim().length > 0)
             .map(m => ({ role: m.role, content: m.content.trim() })),
           enableWebSearch
         })
@@ -144,7 +144,7 @@ export default function ChatPage() {
               );
             }
             if (data.error) {
-              accumulatedText += `\n\n⚠️ **Error:** ${data.error}`;
+              accumulatedText += `\n\n**Error:** ${data.error}`;
               setMessages(prev =>
                 prev.map(m =>
                   m.id === botMessageId
@@ -162,7 +162,7 @@ export default function ChatPage() {
       setMessages(prev =>
         prev.map(m => {
           if (m.id === botMessageId) {
-            const finalContent = accumulatedText.trim() || '⚠️ Received an empty response from the AI model. Please try again.';
+            const finalContent = accumulatedText.trim() || 'Received an empty response from the AI model. Please try again.';
             return { ...m, content: finalContent, isStreaming: false };
           }
           return m;
@@ -174,7 +174,7 @@ export default function ChatPage() {
           m.id === botMessageId
             ? {
               ...m,
-              content: `⚠️ **Connection Error:** Could not reach AI service. (${err.message})`,
+              content: `**Connection Error:** Could not reach AI service. (${err.message})`,
               isStreaming: false
             }
             : m
@@ -191,7 +191,7 @@ export default function ChatPage() {
       {
         id: 'welcome',
         role: 'assistant',
-        content: 'Hello! 👋 I am **Neo AI**.\n\nI can help you with backend architecture, API design, code debugging, system scaling, or general software engineering. What are you building or exploring today?'
+        content: 'Hello! I am **Neo AI**.\n\nI can help with backend architecture, API design, debugging, and scaling. What are you building today?'
       }
     ]);
   };
@@ -218,7 +218,7 @@ export default function ChatPage() {
         // Regular Markdown text
         if (chunk) {
           segments.push(
-            <div key={`md-${i}`} className="space-y-2">
+            <div key={`md-${i}`} className="space-y-1.5">
               {renderMarkdownParagraphs(chunk)}
             </div>
           );
@@ -242,20 +242,20 @@ export default function ChatPage() {
         segments.push(
           <div
             key={`code-${i}`}
-            className="my-4 rounded-xl overflow-hidden border border-[#1e2640] bg-[#070b14] shadow-lg"
+            className="my-3 overflow-hidden rounded-lg border border-[#202944] bg-[#070b14] shadow-sm"
           >
-            <div className="flex items-center justify-between px-4 py-2 bg-[#0d1322] border-b border-[#1e2640] text-xs font-mono text-zinc-400">
+            <div className="flex items-center justify-between px-3 py-2 bg-[#0d1322] border-b border-[#202944] text-xs font-mono text-zinc-400">
               <div className="flex items-center gap-2.5">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]/70" />
                   <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]/70" />
                   <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]/70" />
                 </div>
-                <span className="font-semibold text-zinc-300 uppercase tracking-wider text-[11px] ml-1">{lang}</span>
+                <span className="font-semibold text-zinc-300 uppercase text-[11px] ml-1">{lang}</span>
               </div>
               <button
                 onClick={() => handleCopy(code, `code-${i}`)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#141c30] hover:bg-[#1c2742] hover:text-white transition cursor-pointer text-zinc-300 text-xs font-sans"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#12192b] hover:bg-[#1a2338] hover:text-white transition cursor-pointer text-zinc-300 text-xs font-sans"
               >
                 {copiedId === `code-${i}` ? (
                   <>
@@ -270,7 +270,7 @@ export default function ChatPage() {
                 )}
               </button>
             </div>
-            <div className="p-4 overflow-x-auto">
+            <div className="p-3 overflow-x-auto">
               <CodeHighlighter code={code} language={lang} />
             </div>
           </div>
@@ -302,12 +302,12 @@ export default function ChatPage() {
       const bodyRows = parsedRows.slice(1);
 
       return (
-        <div key={`tbl-${keyIdx}`} className="my-3.5 overflow-x-auto rounded-xl border border-[#1e2638] bg-[#0c1220] shadow-sm">
+        <div key={`tbl-${keyIdx}`} className="my-3 overflow-x-auto rounded-lg border border-[#202944] bg-[#0b1120]">
           <table className="w-full text-left text-xs font-sans">
-            <thead className="bg-[#11182c] border-b border-[#1e2638] text-zinc-200">
+            <thead className="bg-[#101729] border-b border-[#202944] text-zinc-200">
               <tr>
                 {headerRow.map((h, hIdx) => (
-                  <th key={hIdx} className="px-3.5 py-2.5 font-semibold">
+                  <th key={hIdx} className="px-3 py-2 font-semibold">
                     {renderInlineText(h)}
                   </th>
                 ))}
@@ -315,9 +315,9 @@ export default function ChatPage() {
             </thead>
             <tbody className="divide-y divide-[#182136] text-zinc-300">
               {bodyRows.map((row, rIdx) => (
-                <tr key={rIdx} className="hover:bg-[#141b2e]/60 transition">
+                <tr key={rIdx} className="hover:bg-[#141b2e]/50 transition">
                   {row.map((cell, cIdx) => (
-                    <td key={cIdx} className="px-3.5 py-2.5 leading-relaxed">
+                    <td key={cIdx} className="px-3 py-2 leading-6">
                       {renderInlineText(cell)}
                     </td>
                   ))}
@@ -336,7 +336,7 @@ export default function ChatPage() {
       return (
         <p
           key={`quote-${keyIdx}`}
-          className="my-2 pl-3 border-l-2 border-zinc-700 text-sm text-zinc-300 italic leading-relaxed"
+          className="my-2 pl-3 border-l-2 border-brand-blue/45 text-sm text-zinc-300 italic leading-6"
         >
           {renderInlineText(combined)}
         </p>
@@ -372,35 +372,35 @@ export default function ChatPage() {
 
       // Horizontal rules
       if (trimmed === '---' || trimmed === '***' || trimmed === '___') {
-        nodes.push(<hr key={lIdx} className="my-4 border-[#1e2640]" />);
+        nodes.push(<hr key={lIdx} className="my-3 border-[#202944]" />);
         return;
       }
 
       // Headings (H1 to H5 support) with crisp hierarchy & accents
       if (trimmed.startsWith('#### ') || trimmed.startsWith('##### ')) {
         nodes.push(
-          <h4 key={lIdx} className="text-sm sm:text-base font-bold text-zinc-100 mt-4 mb-1.5 font-sans tracking-tight">
+          <h4 key={lIdx} className="text-sm font-semibold text-zinc-100 mt-3 mb-1 font-sans">
             {renderInlineText(trimmed.replace(/^#{4,5}\s*/, ''))}
           </h4>
         );
         return;
       } else if (trimmed.startsWith('### ')) {
         nodes.push(
-          <h3 key={lIdx} className="text-base sm:text-lg font-bold text-white mt-5 mb-2 font-sans tracking-tight">
+          <h3 key={lIdx} className="text-base font-semibold text-white mt-4 mb-1.5 font-sans">
             {renderInlineText(trimmed.replace('### ', ''))}
           </h3>
         );
         return;
       } else if (trimmed.startsWith('## ')) {
         nodes.push(
-          <h2 key={lIdx} className="text-lg sm:text-xl font-bold text-white mt-6 mb-2.5 font-sans tracking-tight">
+          <h2 key={lIdx} className="text-base sm:text-lg font-semibold text-white mt-4 mb-2 font-sans">
             {renderInlineText(trimmed.replace('## ', ''))}
           </h2>
         );
         return;
       } else if (trimmed.startsWith('# ')) {
         nodes.push(
-          <h1 key={lIdx} className="text-xl sm:text-2xl font-black text-white mt-6 mb-3 font-sans tracking-tight">
+          <h1 key={lIdx} className="text-lg sm:text-xl font-semibold text-white mt-4 mb-2 font-sans">
             {renderInlineText(trimmed.replace('# ', ''))}
           </h1>
         );
@@ -416,16 +416,16 @@ export default function ChatPage() {
         const bulletText = trimmed.substring(2);
         if (isIndented) {
           nodes.push(
-            <div key={lIdx} className="flex items-start gap-2 my-1 pl-5 sm:pl-6 text-zinc-300 text-sm leading-relaxed">
+            <div key={lIdx} className="flex items-start gap-2 my-1 pl-5 sm:pl-6 text-zinc-300 text-sm leading-6">
               <span className="text-zinc-500 font-medium text-xs shrink-0 mt-0.5 select-none">–</span>
-              <span className="leading-relaxed">{renderInlineText(bulletText)}</span>
+              <span>{renderInlineText(bulletText)}</span>
             </div>
           );
         } else {
           nodes.push(
-            <div key={lIdx} className="flex items-start gap-2.5 my-1.5 pl-1 text-zinc-200 text-sm leading-relaxed">
+            <div key={lIdx} className="flex items-start gap-2.5 my-1 pl-1 text-zinc-200 text-sm leading-6">
               <span className="text-zinc-500 font-bold select-none text-sm leading-relaxed shrink-0">•</span>
-              <span className="leading-relaxed">{renderInlineText(bulletText)}</span>
+              <span>{renderInlineText(bulletText)}</span>
             </div>
           );
         }
@@ -436,11 +436,11 @@ export default function ChatPage() {
       if (/^\d+\.\s/.test(trimmed)) {
         const match = trimmed.match(/^(\d+)\.\s(.*)/);
         nodes.push(
-          <div key={lIdx} className="flex items-start gap-2.5 my-1.5 pl-1 text-zinc-200 text-sm leading-relaxed">
-            <span className="text-zinc-400 font-mono font-medium text-xs shrink-0 mt-0.5 select-none">
+          <div key={lIdx} className="flex items-start gap-2.5 my-1 pl-1 text-zinc-200 text-sm leading-6">
+            <span className="text-brand-blue/80 font-mono font-medium text-xs shrink-0 mt-1 select-none">
               {match ? match[1] : '1'}.
             </span>
-            <span className="leading-relaxed">{renderInlineText(match ? match[2] : trimmed)}</span>
+            <span>{renderInlineText(match ? match[2] : trimmed)}</span>
           </div>
         );
         return;
@@ -448,7 +448,7 @@ export default function ChatPage() {
 
       // Default Paragraph
       nodes.push(
-        <p key={lIdx} className="text-sm md:text-[15px] leading-7 text-zinc-200 my-1.5">
+        <p key={lIdx} className="text-sm md:text-[15px] leading-6 text-zinc-200 my-1">
           {renderInlineText(line)}
         </p>
       );
@@ -515,7 +515,7 @@ export default function ChatPage() {
         return (
           <code
             key={i}
-            className="px-1.5 py-0.5 mx-0.5 rounded bg-[#131b2e] border border-[#223052] font-mono text-[12px] text-cyan-300 font-medium"
+            className="px-1.5 py-0.5 mx-0.5 rounded-md bg-[#12192b] border border-[#263350] font-mono text-[12px] text-cyan-300 font-medium"
           >
             {inner}
           </code>
@@ -524,7 +524,7 @@ export default function ChatPage() {
 
       if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
         return (
-          <strong key={i} className="font-semibold text-white">
+          <strong key={i} className="font-semibold text-zinc-50">
             {part.slice(2, -2)}
           </strong>
         );
@@ -532,7 +532,7 @@ export default function ChatPage() {
 
       if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
         return (
-          <em key={i} className="italic text-zinc-200">
+          <em key={i} className="italic text-zinc-300">
             {part.slice(1, -1)}
           </em>
         );
@@ -570,7 +570,7 @@ export default function ChatPage() {
       {/* Main Message Thread */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 min-h-0 overflow-y-auto py-5 space-y-5 scrollbar-thin pr-1"
+        className="flex-1 min-h-0 overflow-y-auto py-5 space-y-4 scrollbar-thin pr-1"
       >
         {messages.map(msg => (
           <div
@@ -579,7 +579,7 @@ export default function ChatPage() {
               }`}
           >
             {msg.role === 'assistant' && (
-              <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-brand-blue/30 to-brand-purple/30 border border-brand-blue/40 flex items-center justify-center shrink-0 mt-1 shadow-sm">
+              <div className="w-7 h-7 rounded-lg bg-[#101729] border border-[#263350] flex items-center justify-center shrink-0 mt-1 shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-brand-blue" />
               </div>
             )}
@@ -587,7 +587,7 @@ export default function ChatPage() {
             <div
               className={`text-sm leading-relaxed ${msg.role === 'user'
                   ? 'bg-[#1a2236] border border-[#2b3859] text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-[85%] shadow-sm'
-                  : 'text-zinc-100 flex-1 max-w-full bg-[#0a1020]/75 border border-[#18233c] rounded-2xl p-4 sm:p-5 shadow-lg backdrop-blur-sm'
+                  : 'text-zinc-100 flex-1 max-w-full bg-[#0d1424]/70 border border-[#202944] rounded-lg px-4 py-3 shadow-sm'
                 }`}
             >
               {msg.role === 'user' ? (
@@ -653,7 +653,7 @@ export default function ChatPage() {
             }}
             placeholder="Ask Neo AI anything about backend engineering, APIs, code..."
             disabled={isStreaming}
-            className="w-full bg-transparent text-sm text-white placeholder-zinc-500 outline-none resize-none max-h-32 pr-20 py-1.5 leading-6"
+            className="w-full bg-transparent text-sm text-white placeholder-zinc-500 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/60 resize-none max-h-32 pr-20 py-1.5 leading-6"
           />
 
           <div className="absolute right-3 flex items-center gap-2">
