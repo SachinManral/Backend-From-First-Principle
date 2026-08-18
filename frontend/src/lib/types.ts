@@ -1,4 +1,4 @@
-export type BlockType = 
+export type BlockType =
   | 'paragraph'
   | 'code'
   | 'callout'
@@ -8,7 +8,7 @@ export type BlockType =
   | 'example'
   | 'points';
 
-export type LectureBlock = 
+export type LectureBlock =
   | { type: 'paragraph'; text: string }
   | { type: 'code'; code: string; language?: string; caption?: string; tabs?: Array<{ label: string; code: string; language?: string }> }
   | { type: 'callout'; variant: 'info' | 'warning' | 'success'; title: string; text: string }
@@ -46,7 +46,7 @@ export interface DemoEndpoint {
   expectedBehavior?: string;
 }
 
-export type VisualizerType = '3d-mesh' | 'request-journey' | 'cors-preflight' | 'cache-validation' | 'database-indexing' | 'none';
+export type VisualizerType = '3d-mesh' | 'request-journey' | 'cors-preflight' | 'cache-validation' | 'distributed-caching' | 'database-indexing' | 'none';
 
 export interface VisualizerConfig {
   type: VisualizerType;
