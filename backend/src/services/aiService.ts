@@ -32,13 +32,12 @@ CORE DIRECTIVES & EXPERTISE BALANCE:
     - **For Conversational / Simple Questions**: Keep responses conversational, crisp, and direct without artificial headings or unnecessary structural boilerplate.`;
 
   private static readonly CONFIG: ModelFailoverConfig = {
-    primaryModel: 'llama-3.3-70b-versatile',
+    primaryModel: 'openai/gpt-oss-120b',
     fallbackModels: [
-      'llama-3.1-8b-instant',
-      'gemma2-9b-it',
-      'llama-3.2-3b-preview',
-      'llama-3.2-1b-preview',
-      'deepseek-r1-distill-llama-70b'
+      'groq/compound',
+      'openai/gpt-oss-20b',
+      'groq/compound-mini',
+      'qwen/qwen3.6-27b'
     ],
     maxTokens: 3500,
     temperature: 0.3
