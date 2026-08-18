@@ -16,6 +16,17 @@ export const isPostgres = !!databaseUrl;
 let pgPool: pg.Pool | null = null;
 let sqliteDb: InstanceType<typeof Database> | null = null;
 
+// Always initialize local SQLite fallback so synchronous demo routes never crash
+const dataDir = path.resolve(__dirname, '../../data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const dbPath = path.join(dataDir, 'dev.db');
+sqliteDb = new Database(dbPath, { verbose: process.env.NODE_ENV === 'test' ? undefined : undefined });
+sqliteDb.pragma('journal_mode = WAL');
+sqliteDb.pragma('foreign_keys = ON');
+
 if (isPostgres) {
   console.log('[DATABASE] 🐘 Connecting to Cloud PostgreSQL (Neon / Supabase / Render / Railway)...');
   pgPool = new Pool({
@@ -28,16 +39,6 @@ if (isPostgres) {
     connectionTimeoutMillis: 5000,
   });
 } else {
-  // Store database file on disk in backend/data/dev.db
-  const dataDir = path.resolve(__dirname, '../../data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  const dbPath = path.join(dataDir, 'dev.db');
-  sqliteDb = new Database(dbPath, { verbose: process.env.NODE_ENV === 'test' ? undefined : undefined });
-  sqliteDb.pragma('journal_mode = WAL');
-  sqliteDb.pragma('foreign_keys = ON');
   console.log(`[SQLITE DB] 📦 Initialized local SQLite at: ${dbPath}`);
 }
 

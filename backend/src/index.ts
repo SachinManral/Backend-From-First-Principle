@@ -19,7 +19,7 @@ import apiDesignRouter from './routes/demos/apiDesign.js';
 import chatRouter from './routes/chat.js';
 import postmanRouter from './routes/postman.js';
 import deviceStateRouter from './routes/deviceState.js';
-import { initDatabase } from './db/index.js';
+import { initDatabase, isPostgres, dbQueryOne } from './db/index.js';
 
 dotenv.config();
 
@@ -88,15 +88,37 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 });
 
 // Root API Directory & Health Check
-app.get('/', (_req: Request, res: Response) => {
+app.get('/', async (_req: Request, res: Response) => {
+  let dbHealthy = false;
+  let totalLikesStored = 0;
+  try {
+    const row = await dbQueryOne<{ total: string | number }>('SELECT COUNT(*) as total FROM device_likes');
+    totalLikesStored = row ? parseInt(String(row.total), 10) : 0;
+    dbHealthy = true;
+  } catch (err: any) {
+    dbHealthy = false;
+  }
+
   res.json({
     name: "Backend Engineering — First Principles Live Lab API",
     status: "ONLINE",
     port: PORT,
     environment: process.env.NODE_ENV || 'development',
+    database: {
+      activeType: isPostgres ? "PostgreSQL (Cloud Persistent)" : "SQLite (Local Ephemeral Disk)",
+      isPersistent: isPostgres,
+      healthy: dbHealthy,
+      totalLikesStored,
+      notice: isPostgres
+        ? "✅ Connected to Cloud PostgreSQL. Likes & progress are permanently stored."
+        : "⚠️ Running on SQLite ephemeral disk. Set DATABASE_URL on Render to prevent resets on redeploy."
+    },
     frontendOrigin: FRONTEND_ORIGIN,
     docs: "Hit any /api/demo/* endpoint directly from the browser playground, curl, or Postman.",
     endpoints: {
+      dbStatus: "/api/db-status",
+      likes: "/api/likes",
+      likesStream: "/api/likes/stream",
       echo: "/api/demo/echo",
       status: "/api/demo/status/:code",
       corsSimple: "/api/demo/cors/simple",
@@ -116,6 +138,38 @@ app.get('/', (_req: Request, res: Response) => {
       routingV2: "/api/demo/routing/v2/products",
       postmanCollection: "/api/export/postman"
     }
+  });
+});
+
+// Database Diagnostics Endpoint
+app.get('/api/db-status', async (_req: Request, res: Response) => {
+  let dbHealthy = false;
+  let totalLikesStored = 0;
+  let totalProgressRecords = 0;
+  let error: string | null = null;
+
+  try {
+    const likeRow = await dbQueryOne<{ total: string | number }>('SELECT COUNT(*) as total FROM device_likes');
+    totalLikesStored = likeRow ? parseInt(String(likeRow.total), 10) : 0;
+    const progRow = await dbQueryOne<{ total: string | number }>('SELECT COUNT(*) as total FROM device_progress');
+    totalProgressRecords = progRow ? parseInt(String(progRow.total), 10) : 0;
+    dbHealthy = true;
+  } catch (err: any) {
+    dbHealthy = false;
+    error = err.message || String(err);
+  }
+
+  res.json({
+    status: dbHealthy ? "OK" : "ERROR",
+    activeDatabase: isPostgres ? "PostgreSQL (Cloud Persistent - Neon/Supabase/Render)" : "SQLite (Local File - Ephemeral)",
+    isPersistent: isPostgres,
+    databaseUrlProvided: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL),
+    totalLikesStored,
+    totalProgressRecords,
+    error,
+    recommendation: isPostgres
+      ? "Database is connected to cloud PostgreSQL. Data will persist across all deployments."
+      : "DATABASE_URL is missing in environment variables. Add DATABASE_URL in Render Dashboard under 'Environment' to keep likes permanent."
   });
 });
 
