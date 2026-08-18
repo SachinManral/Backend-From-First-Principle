@@ -46,7 +46,7 @@ export interface DemoEndpoint {
   expectedBehavior?: string;
 }
 
-export type VisualizerType = '3d-mesh' | 'request-journey' | 'cors-preflight' | 'cache-validation' | 'none';
+export type VisualizerType = '3d-mesh' | 'request-journey' | 'cors-preflight' | 'cache-validation' | 'database-indexing' | 'none';
 
 export interface VisualizerConfig {
   type: VisualizerType;

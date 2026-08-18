@@ -17,17 +17,29 @@ export default function Sidebar({ lectures, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { isCompleted, toggleComplete, getCompletionPercentage } = useProgress();
 
-  // Group lectures by phase
-  const phases = [
-    { id: 1, title: 'Phase 1 — Story & Philosophy' },
-    { id: 2, title: 'Phase 2 — HTTP Deep Dive' },
-    { id: 3, title: 'Phase 3 — Production Projects' },
-  ];
+  // Dynamic Phases derived from active lectures
+  const phaseMetadata: Record<number, string> = {
+    1: 'Phase 1 — Story & Philosophy',
+    2: 'Phase 2 — HTTP Deep Dive',
+    3: 'Phase 3 — Backend Architecture & Layering',
+    4: 'Phase 4 — Data Persistence & Storage Engines',
+    5: 'Phase 5 — Performance & Distributed Systems',
+    6: 'Phase 6 — Scaling & Production DevOps',
+  };
+
+  const activePhaseIds = Array.from(new Set(lectures.map(l => l.phase))).sort((a, b) => a - b);
+  const phases = activePhaseIds.map(phaseId => ({
+    id: phaseId,
+    title: phaseMetadata[phaseId] || lectures.find(l => l.phase === phaseId)?.phaseTitle || `Phase ${phaseId}`
+  }));
 
   const [expandedPhases, setExpandedPhases] = useState<Record<number, boolean>>({
     1: true,
     2: true,
-    3: true
+    3: true,
+    4: true,
+    5: true,
+    6: true
   });
 
   const togglePhase = (id: number) => {

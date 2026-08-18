@@ -524,6 +524,117 @@ export const DEMO_CATALOG: DemoEndpoint[] = [
     defaultBody: {
       newName: "Cloned Distributed Sockets Gateway (v2)"
     }
+  },
+  {
+    id: 'dbIndexingBenchmark',
+    title: '28. B-Tree Index Scan vs Full Table Scan Benchmark',
+    category: 'Databases & Storage',
+    method: 'POST',
+    path: '/api/demo/database/index-benchmark',
+    description: 'Simulates querying 1,000,000 PostgreSQL rows with B-Tree Index (O(log N)) vs sequential scan (O(N)), returning EXPLAIN ANALYZE and buffer page I/O metrics.',
+    conceptNote: 'Demonstrates why B-Tree indexes turn multi-second 10,000-page disk scans into sub-millisecond 3-page pointer hops.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      email: 'alice@company.com',
+      useIndex: true
+    },
+    customControls: [
+      {
+        type: 'toggle',
+        label: 'Index Strategy',
+        key: 'useIndex',
+        defaultValue: 'true',
+        options: [
+          { label: 'B-Tree Index (O(log N))', value: 'true' },
+          { label: 'Full Table Scan (O(N))', value: 'false' }
+        ]
+      },
+      {
+        type: 'input',
+        label: 'Target Email Lookup',
+        key: 'email',
+        defaultValue: 'alice@company.com'
+      }
+    ]
+  },
+  {
+    id: 'sqlInjectionPrevention',
+    title: '29. SQL Injection vs Parameterized Prepared Statements',
+    category: 'Databases & Security',
+    method: 'POST',
+    path: '/api/demo/database/sql-injection',
+    description: 'Compares raw string concatenation vulnerability against parameterized queries ($1), showing how prepared statements isolate user input from executable bytecode.',
+    conceptNote: 'Proves why parameterized queries eliminate SQL injection by compiling the query AST before receiving parameter payload bytes.',
+    defaultHeaders: {
+      'Content-Type': 'application/json'
+    },
+    defaultBody: {
+      input: "' OR '1'='1",
+      mode: 'parameterized'
+    },
+    customControls: [
+      {
+        type: 'select',
+        label: 'Defense Mode',
+        key: 'mode',
+        defaultValue: 'parameterized',
+        options: [
+          { label: '🛡️ Parameterized Query ($1)', value: 'parameterized' },
+          { label: '🚨 Vulnerable String Interpolation', value: 'vulnerable' }
+        ]
+      },
+      {
+        type: 'select',
+        label: 'Attack Payload Preset',
+        key: 'input',
+        defaultValue: "' OR '1'='1",
+        options: [
+          { label: "Auth Bypass: ' OR '1'='1", value: "' OR '1'='1" },
+          { label: "Admin Comment: admin' --", value: "admin' --" },
+          { label: "Drop Table: '; DROP TABLE users; --", value: "'; DROP TABLE users; --" },
+          { label: "Valid Clean Input: alice@company.com", value: "alice@company.com" }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'dbPagination',
+    title: '30. Deterministic LIMIT & OFFSET Database Pagination',
+    category: 'Databases & API Patterns',
+    method: 'GET',
+    path: '/api/demo/database/paginate?page=1&limit=3',
+    description: 'Demonstrates safe SQL pagination using ORDER BY, LIMIT, and OFFSET with full pagination metadata (page, limit, totalPages, hasNextPage).',
+    conceptNote: 'Prevents unbounded SELECT * memory exhaustion by chunking result sets at the database query level.',
+    defaultHeaders: {
+      'Accept': 'application/json'
+    },
+    customControls: [
+      {
+        type: 'select',
+        label: 'Page Number',
+        key: 'page',
+        defaultValue: '1',
+        options: [
+          { label: 'Page 1 (Records 1-3)', value: '1' },
+          { label: 'Page 2 (Records 4-6)', value: '2' },
+          { label: 'Page 3 (Records 7-9)', value: '3' },
+          { label: 'Page 4 (Record 10)', value: '4' }
+        ]
+      },
+      {
+        type: 'select',
+        label: 'Page Limit (Chunk Size)',
+        key: 'limit',
+        defaultValue: '3',
+        options: [
+          { label: 'Limit 3 per page', value: '3' },
+          { label: 'Limit 5 per page', value: '5' },
+          { label: 'Limit 10 per page', value: '10' }
+        ]
+      }
+    ]
   }
 ];
 

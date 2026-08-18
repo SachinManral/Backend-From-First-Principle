@@ -14,12 +14,23 @@ export default function ProgressPage() {
   const completedCount = completedSlugs.length;
   const percentage = getCompletionPercentage(total);
 
-  // Group lectures by phase
-  const phases = [
-    { id: 1, title: 'Phase 1 — Story & Philosophy', desc: 'Core language-agnostic mental models and reasons protocols exist' },
-    { id: 2, title: 'Phase 2 — HTTP Deep Dive', desc: 'Protocol anatomy, CORS, caching, streaming, compression, and status codes' },
-    { id: 3, title: 'Phase 3 — Production-Grade Projects', desc: 'Distributed systems, message queues, rate limiters, and scaling architectures' },
-  ];
+  // Dynamic Phase Catalog
+  const phaseMetadata: Record<number, { title: string; desc: string }> = {
+    1: { title: 'Phase 1 — Story & Philosophy', desc: 'Core language-agnostic mental models and reasons protocols exist' },
+    2: { title: 'Phase 2 — HTTP Deep Dive', desc: 'Protocol anatomy, CORS, caching, streaming, compression, and status codes' },
+    3: { title: 'Phase 3 — Backend Architecture & Layering', desc: 'Controllers, services, repositories, middlewares, and REST API design' },
+    4: { title: 'Phase 4 — Data Persistence & Storage Engines', desc: 'PostgreSQL, schemas, migrations with dbmate, B-Tree indexes, and triggers' },
+    5: { title: 'Phase 5 — Performance & Distributed Systems', desc: 'Caching (Redis), message queues, task workers, and search engines' },
+    6: { title: 'Phase 6 — Scaling & Production DevOps', desc: 'Zero-downtime deployments, Docker containers, CI/CD, and system design' },
+  };
+
+  // Group lectures by active phases present in curriculum
+  const activePhaseIds = Array.from(new Set(lectures.map(l => l.phase))).sort((a, b) => a - b);
+  const phases = activePhaseIds.map(phaseId => ({
+    id: phaseId,
+    title: phaseMetadata[phaseId]?.title || lectures.find(l => l.phase === phaseId)?.phaseTitle || `Phase ${phaseId}`,
+    desc: phaseMetadata[phaseId]?.desc || 'Core foundational milestones for backend engineering.'
+  }));
 
   return (
     <div className="space-y-8 pb-16">
@@ -91,7 +102,7 @@ export default function ProgressPage() {
               <div className="space-y-3">
                 {phaseLectures.length === 0 ? (
                   <div className="p-5 rounded-2xl bg-secondary/30 border border-border text-xs text-muted-foreground italic text-center">
-                    Upcoming lectures in Phase 3 will appear here automatically.
+                    Upcoming lectures will appear here automatically.
                   </div>
                 ) : (
                   phaseLectures.map(lecture => {

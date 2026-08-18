@@ -315,6 +315,32 @@ export default function ZoneNotes({ lecture }: ZoneNotesProps) {
           </div>
         );
 
+      case 'cards':
+        return (
+          <div key={idx} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-5">
+            {block.items.map((card, cIdx) => (
+              <div
+                key={cIdx}
+                className="p-5 rounded-2xl bg-[#090d16] border border-[#1e2640] hover:border-brand-blue/50 transition duration-300 shadow-xl flex flex-col justify-between space-y-3"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-blue/15 text-brand-blue border border-brand-blue/30">
+                      {card.badge}
+                    </span>
+                  </div>
+                  <h4 className="text-sm md:text-base font-bold text-white tracking-tight">
+                    {renderFormattedText(card.title)}
+                  </h4>
+                  <p className="text-xs md:text-sm text-zinc-300 leading-relaxed font-normal">
+                    {renderFormattedText(card.desc)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+
       default:
         return null;
     }

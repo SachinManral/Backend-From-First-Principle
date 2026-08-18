@@ -16,6 +16,7 @@ import authRouter from './routes/demos/auth.js';
 import validationRouter from './routes/demos/validation.js';
 import architectureRouter from './routes/demos/architecture.js';
 import apiDesignRouter from './routes/demos/apiDesign.js';
+import databaseRouter from './routes/demos/database.js';
 import chatRouter from './routes/chat.js';
 import postmanRouter from './routes/postman.js';
 import deviceStateRouter from './routes/deviceState.js';
@@ -189,6 +190,7 @@ app.use('/api/demo', authRouter);
 app.use('/api/demo/validation', validationRouter);
 app.use('/api/demo/architecture', architectureRouter);
 app.use('/api/demo/api-design', apiDesignRouter);
+app.use('/api/demo/database', databaseRouter);
 
 // Mount AI Chatbot Router
 app.use('/api/chat', chatRouter);
