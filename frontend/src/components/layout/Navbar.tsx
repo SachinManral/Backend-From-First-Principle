@@ -25,8 +25,9 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
     }
 
     const checkApi = async () => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       try {
-        const res = await fetch(`${API_BASE_URL}/`, { cache: 'no-store' });
+        const res = await fetch(`${API_BASE_URL}/api/health`, { cache: 'no-store' });
         setApiOnline(res.ok);
       } catch {
         setApiOnline(false);
@@ -34,8 +35,20 @@ export default function Navbar({ onToggleSidebar, isSidebarOpen, showSidebarTogg
     };
 
     checkApi();
-    const interval = setInterval(checkApi, 10000);
-    return () => clearInterval(interval);
+    // Relaxed 60s interval to prevent keeping cloud databases awake
+    const interval = setInterval(checkApi, 60000);
+
+    const onVisibilityChange = () => {
+      if (typeof document !== 'undefined' && !document.hidden) {
+        checkApi();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
   }, []);
 
   return (

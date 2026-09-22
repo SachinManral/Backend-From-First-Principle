@@ -105,8 +105,14 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
     // 3. Real-Time Server-Sent Events (SSE) Stream for sub-millisecond like updates
     let eventSource: EventSource | null = null;
+    let sseActive = false;
+
     try {
       eventSource = new EventSource(`${API_BASE_URL}/api/likes/stream`);
+
+      eventSource.onopen = () => {
+        sseActive = true;
+      };
 
       eventSource.addEventListener('like_update', (event) => {
         try {
@@ -123,14 +129,16 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       });
 
       eventSource.onerror = () => {
-        // If SSE disconnects, browser automatically attempts reconnect
+        sseActive = false;
       };
-    } catch (e) {
-      console.warn('SSE not supported or connection failed, relying on background polling:', e);
+    } catch {
+      sseActive = false;
     }
 
-    // 4. Fallback interval polling (every 10s) to guarantee resilience across intermittent networks
+    // 4. Resilience polling: Only poll if SSE is NOT active, and poll at a relaxed 60s interval
+    // Also pause completely if document is in background (hidden)
     const interval = setInterval(async () => {
+      if (sseActive || (typeof document !== 'undefined' && document.hidden)) return;
       try {
         const likesRes = await fetch(`${API_BASE_URL}/api/likes?deviceId=${devId}`, { cache: 'no-store' });
         if (likesRes.ok) {
@@ -138,13 +146,27 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
           if (likesData.likesMap) setLikesMap(likesData.likesMap);
         }
       } catch {}
-    }, 10000);
+    }, 60000);
+
+    // Refresh when user returns to tab if SSE had dropped
+    const onVisibilityChange = () => {
+      if (typeof document !== 'undefined' && !document.hidden && !sseActive) {
+        fetch(`${API_BASE_URL}/api/likes?deviceId=${devId}`, { cache: 'no-store' })
+          .then(res => res.json())
+          .then(data => {
+            if (data.likesMap) setLikesMap(data.likesMap);
+          })
+          .catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
       if (eventSource) {
         eventSource.close();
       }
       clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 

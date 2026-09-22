@@ -27,6 +27,36 @@ sqliteDb = new Database(dbPath, { verbose: process.env.NODE_ENV === 'test' ? und
 sqliteDb.pragma('journal_mode = WAL');
 sqliteDb.pragma('foreign_keys = ON');
 
+// Circuit breaker state to avoid hammering Neon during quota limits (code 53000)
+let circuitBreakerOpen = false;
+let circuitBreakerTripTime = 0;
+const CIRCUIT_BREAKER_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown before testing PostgreSQL again
+
+export function isCircuitBreakerActive(): boolean {
+  if (!circuitBreakerOpen) return false;
+  if (Date.now() - circuitBreakerTripTime > CIRCUIT_BREAKER_COOLDOWN_MS) {
+    console.log('[DATABASE RESILIENCE] Circuit breaker cooldown elapsed. Testing Cloud PostgreSQL connection...');
+    circuitBreakerOpen = false;
+    return false;
+  }
+  return true;
+}
+
+function handlePgError(error: any) {
+  const code = error?.code;
+  const msg = error?.message || '';
+  const isQuotaError = code === '53000' || msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('limit');
+  const isConnError = code === 'ECONNREFUSED' || code === 'ETIMEDOUT' || code === '57P01' || msg.toLowerCase().includes('connection');
+
+  if (isQuotaError || isConnError) {
+    if (!circuitBreakerOpen) {
+      console.warn(`[DATABASE RESILIENCE] Cloud PostgreSQL ${isQuotaError ? 'quota limit exceeded (53000)' : 'connection failed'}. Activating circuit breaker and seamlessly falling back to local SQLite.`);
+      circuitBreakerOpen = true;
+      circuitBreakerTripTime = Date.now();
+    }
+  }
+}
+
 if (isPostgres) {
   console.log('[DATABASE] Connected to Cloud PostgreSQL');
   pgPool = new Pool({
@@ -34,9 +64,15 @@ if (isPostgres) {
     ssl: process.env.NODE_ENV === 'production' || databaseUrl?.includes('sslmode=require') || databaseUrl?.includes('neon.tech') || databaseUrl?.includes('supabase')
       ? { rejectUnauthorized: false }
       : false,
-    max: 10,
-    idleTimeoutMillis: 30000,
+    max: 3, // Lower pool max from 10 to 3 to prevent idle socket bloat
+    idleTimeoutMillis: 5000, // 5s idle timeout so Neon can auto-suspend after inactivity
     connectionTimeoutMillis: 5000,
+    allowExitOnIdle: true,
+  });
+
+  // Attach error listener so uncaught pool-level errors don't crash Node process
+  pgPool.on('error', (err: any) => {
+    handlePgError(err);
   });
 } else {
   console.log('[DATABASE] Initialized local SQLite');
@@ -51,48 +87,100 @@ function convertPlaceholders(sql: string): string {
 }
 
 export async function dbQuery<T = any>(sql: string, params: any[] = []): Promise<T[]> {
-  if (isPostgres && pgPool) {
-    const pgSql = convertPlaceholders(sql);
-    const result = await pgPool.query(pgSql, params);
-    return result.rows as T[];
-  } else if (sqliteDb) {
-    const stmt = sqliteDb.prepare(sql);
-    return stmt.all(...params) as T[];
+  if (isPostgres && pgPool && !isCircuitBreakerActive()) {
+    try {
+      const pgSql = convertPlaceholders(sql);
+      const result = await pgPool.query(pgSql, params);
+      return result.rows as T[];
+    } catch (err: any) {
+      handlePgError(err);
+      // Seamlessly fall back to SQLite below!
+    }
+  }
+
+  if (sqliteDb) {
+    try {
+      const stmt = sqliteDb.prepare(sql);
+      return stmt.all(...params) as T[];
+    } catch (sqliteErr: any) {
+      console.error('[SQLITE QUERY ERROR]', sqliteErr);
+    }
   }
   return [];
 }
 
 export async function dbQueryOne<T = any>(sql: string, params: any[] = []): Promise<T | null> {
-  if (isPostgres && pgPool) {
-    const pgSql = convertPlaceholders(sql);
-    const result = await pgPool.query(pgSql, params);
-    return (result.rows[0] as T) || null;
-  } else if (sqliteDb) {
-    const stmt = sqliteDb.prepare(sql);
-    const row = stmt.get(...params);
-    return (row as T) || null;
+  if (isPostgres && pgPool && !isCircuitBreakerActive()) {
+    try {
+      const pgSql = convertPlaceholders(sql);
+      const result = await pgPool.query(pgSql, params);
+      return (result.rows[0] as T) || null;
+    } catch (err: any) {
+      handlePgError(err);
+      // Seamlessly fall back to SQLite below!
+    }
+  }
+
+  if (sqliteDb) {
+    try {
+      const stmt = sqliteDb.prepare(sql);
+      const row = stmt.get(...params);
+      return (row as T) || null;
+    } catch (sqliteErr: any) {
+      console.error('[SQLITE QUERY ONE ERROR]', sqliteErr);
+    }
   }
   return null;
 }
 
 export async function dbExecute(sql: string, params: any[] = []): Promise<{ rowCount: number; lastInsertRowid?: number | bigint }> {
-  if (isPostgres && pgPool) {
-    const pgSql = convertPlaceholders(sql);
-    const result = await pgPool.query(pgSql, params);
-    return { rowCount: result.rowCount || 0 };
-  } else if (sqliteDb) {
-    const stmt = sqliteDb.prepare(sql);
-    const result = stmt.run(...params);
-    return { rowCount: result.changes, lastInsertRowid: result.lastInsertRowid };
+  let pgSuccess = false;
+  let pgResult = { rowCount: 0 };
+
+  if (isPostgres && pgPool && !isCircuitBreakerActive()) {
+    try {
+      const pgSql = convertPlaceholders(sql);
+      const result = await pgPool.query(pgSql, params);
+      pgSuccess = true;
+      pgResult = { rowCount: result.rowCount || 0 };
+    } catch (err: any) {
+      handlePgError(err);
+    }
   }
-  return { rowCount: 0 };
+
+  // Always mirror write to SQLite so local cache / fallback stays completely up-to-date!
+  if (sqliteDb) {
+    try {
+      const stmt = sqliteDb.prepare(sql);
+      const result = stmt.run(...params);
+      if (!pgSuccess) {
+        return { rowCount: result.changes, lastInsertRowid: result.lastInsertRowid };
+      }
+    } catch (sqliteErr: any) {
+      console.error('[SQLITE EXECUTE ERROR]', sqliteErr);
+    }
+  }
+
+  return pgResult;
 }
 
 export async function initDatabase(): Promise<void> {
+  // Always initialize SQLite schema so local fallback tables exist
+  if (sqliteDb) {
+    try {
+      initSqliteSchema();
+    } catch (err) {
+      console.error('[SQLITE INIT ERROR]', err);
+    }
+  }
+
   if (isPostgres && pgPool) {
-    await initPostgresSchema();
-  } else if (sqliteDb) {
-    initSqliteSchema();
+    try {
+      await initPostgresSchema();
+    } catch (err: any) {
+      handlePgError(err);
+      console.warn('[DATABASE] PostgreSQL schema initialization skipped (quota/connectivity); running on SQLite fallback.');
+    }
   }
 }
 

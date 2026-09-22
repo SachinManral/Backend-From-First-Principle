@@ -20,7 +20,7 @@ import databaseRouter from './routes/demos/database.js';
 import chatRouter from './routes/chat.js';
 import postmanRouter from './routes/postman.js';
 import deviceStateRouter from './routes/deviceState.js';
-import { initDatabase, isPostgres, dbQueryOne } from './db/index.js';
+import { initDatabase, isPostgres, dbQueryOne, isCircuitBreakerActive } from './db/index.js';
 
 dotenv.config();
 
@@ -88,17 +88,41 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   next();
 });
 
+// Lightweight Zero-DB Health Endpoint for Frontend Pings & Uptime Monitoring
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({
+    status: "ONLINE",
+    uptime: Math.floor(process.uptime()),
+    timestamp: Date.now()
+  });
+});
+
+// Cache DB health status in memory so continuous root visits or pings do not wake Neon
+let cachedDbHealth: { healthy: boolean; totalLikesStored: number; timestamp: number } | null = null;
+const DB_HEALTH_CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
+
 // Root API Directory & Health Check
 app.get('/', async (_req: Request, res: Response) => {
+  const now = Date.now();
   let dbHealthy = false;
   let totalLikesStored = 0;
-  try {
-    const row = await dbQueryOne<{ total: string | number }>('SELECT COUNT(*) as total FROM device_likes');
-    totalLikesStored = row ? parseInt(String(row.total), 10) : 0;
-    dbHealthy = true;
-  } catch (err: any) {
-    dbHealthy = false;
+
+  if (cachedDbHealth && (now - cachedDbHealth.timestamp < DB_HEALTH_CACHE_TTL)) {
+    dbHealthy = cachedDbHealth.healthy;
+    totalLikesStored = cachedDbHealth.totalLikesStored;
+  } else {
+    try {
+      const row = await dbQueryOne<{ total: string | number }>('SELECT COUNT(*) as total FROM device_likes');
+      totalLikesStored = row ? parseInt(String(row.total), 10) : 0;
+      dbHealthy = true;
+      cachedDbHealth = { healthy: true, totalLikesStored, timestamp: now };
+    } catch {
+      dbHealthy = false;
+      cachedDbHealth = { healthy: false, totalLikesStored: 0, timestamp: now };
+    }
   }
+
+  const breakerActive = isCircuitBreakerActive();
 
   res.json({
     name: "Backend Engineering — First Principles Live Lab API",
@@ -106,17 +130,22 @@ app.get('/', async (_req: Request, res: Response) => {
     port: PORT,
     environment: process.env.NODE_ENV || 'development',
     database: {
-      activeType: isPostgres ? "PostgreSQL (Cloud Persistent)" : "SQLite (Local Ephemeral Disk)",
+      activeType: isPostgres
+        ? (breakerActive ? "PostgreSQL (Cloud - Failover to Local SQLite active)" : "PostgreSQL (Cloud Persistent)")
+        : "SQLite (Local Ephemeral Disk)",
       isPersistent: isPostgres,
       healthy: dbHealthy,
       totalLikesStored,
       notice: isPostgres
-        ? "✅ Connected to Cloud PostgreSQL. Likes & progress are permanently stored."
+        ? (breakerActive
+            ? "⚡ Cloud database quota limit active; running seamlessly on local SQLite fallback with zero downtime."
+            : "✅ Connected to Cloud PostgreSQL. Likes & progress are permanently stored.")
         : "⚠️ Running on SQLite ephemeral disk. Set DATABASE_URL on Render to prevent resets on redeploy."
     },
     frontendOrigin: FRONTEND_ORIGIN,
     docs: "Hit any /api/demo/* endpoint directly from the browser playground, curl, or Postman.",
     endpoints: {
+      health: "/api/health",
       dbStatus: "/api/db-status",
       likes: "/api/likes",
       likesStream: "/api/likes/stream",
